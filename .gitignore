@@ -1,0 +1,6 @@
+node_modules
+Results
+mochawesome-report
+ChromeDriver.txt
+credentials.js
+test.js
