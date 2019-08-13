@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generateMochawesome": "marge ./Results/results.json --reportTitle 'Everypig Results' --autoOpen"
+    "generateMochawesome": "marge ./Results/results-*.json --reportTitle 'Everypig Results' --autoOpen"
   },
   "repository": {
     "type": "git",
