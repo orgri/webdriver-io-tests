@@ -52,11 +52,13 @@ module.exports = class Page {
     }
 
     uploadMedia(file) {
-        let idx = isMobile ? "2" : "1";
-        let script = "document.getElementsByTagName('input')[IDX].style.display = 'block'".replace(/IDX/, idx);
+        const path = require('path')
+        const pathToMedia = path.resolve(browser.config.mediaPath, file);
+        const idx = isMobile ? "2" : "1";
+        const script = "document.getElementsByTagName('input')[IDX].style.display = 'block'".replace(/IDX/, idx);
         browser.execute(script);
         this.inputFile.waitForDisplayed();
-        this.inputFile.setValueAndWait(browser.config.mediaPath + file);
+        this.inputFile.setValueAndWait(pathToMedia);
         this.removeMediaButton.waitForExist();
         return this;
     }
