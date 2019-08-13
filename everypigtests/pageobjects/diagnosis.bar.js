@@ -19,16 +19,16 @@ class DiagnosisBar extends ReportPage {
     get groupInfoColl() { return $('.group-info-collapse'); }
     get diagnosInfoColl() { return $('.diagnose-collapse'); }
 
-    clickSave() { return this.saveBtn.waitAndClick() && this; }
-    clickGroupInfoTab() { return this.groupInfoTab.waitAndClick() && this; }
-    clickDiagnosInfoCol() { return this.diagnosInfoColl.waitAndClick() && this; }
+    clickSave() { return this.saveBtn.waitClick() && this; }
+    clickGroupInfoTab() { return this.groupInfoTab.waitClick() && this; }
+    clickDiagnosInfoCol() { return this.diagnosInfoColl.waitClick() && this; }
 
-    setType(type, index) { return this.paramRow(index).$('span*=' + type).waitAndClick() && this; }
-    setAlert(index) { return this.paramRow(index).$('.unchecked').waitAndClick() && this; }
-    addNote(index) { return this.paramRow(index).$(this.addNoteBtn).waitAndClick() && this; }
+    setType(type, index) { return this.paramRow(index).$('span*=' + type).waitClick() && this; }
+    setAlert(index) { return this.paramRow(index).$('.unchecked').waitClick() && this; }
+    addNote(index) { return this.paramRow(index).$(this.addNoteBtn).waitClick() && this; }
     setComment(text, index) {
         this.paramRow(index).$(this.commentClosed).isExisting() && this.addNote(index);
-        this.paramRow(index).$(this.comment).setValueAndWait(text);
+        this.paramRow(index).$(this.comment).waitSetValue(text);
         return this;
     }
 
@@ -49,9 +49,9 @@ class DiagnosisBar extends ReportPage {
         const reComment = /(?<=Notes:\s)(.|\n)+?(?=\nSee)/g;
 
         data.amount = this.getNumber(this.diagnosInfoColl);
-        data.name = this.getArray(dRows, reName); //this.diagnosInfoRows.map(el => (el.getText().match(reName) || [])[0]);
-        data.type = this.getArray(dRows, reType); //this.diagnosInfoRows.map(el => (el.getText().match(reType) || [])[0]);
-        data.comment = this.getArray(dNote, reComment); //this.diagnosNoteRows.map(el => (el.getText().match(reComment) || [])[0]);
+        data.name = this.getArray(dRows, reName);
+        data.type = this.getArray(dRows, reType);
+        data.comment = this.getArray(dNote, reComment);
 
         return data;
     }

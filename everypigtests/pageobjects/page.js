@@ -23,11 +23,11 @@ module.exports = class Page {
     get nextPageBtn() { return $('.paginate_button.next'); }
     get prevPageBtn() { return $('.paginate_button.previous'); }
 
-    clickCheckup() { this.isMobile ? this.mCheckup.waitAndClick() : this.checkup.waitAndClick(); }
-    clickBarnSheets() { return this.barnsheets.waitAndClick() && this; }
-    setElemsOnPage(number) { return this.pagination.waitAndClick().$('option=' + number).waitAndClick() && this; }
-    clickNextPage() { return this.nextPageBtn.waitAndClick() && this; }
-    clickPrevPage() { return this.prevPageBtn.waitAndClick() && this; }
+    clickCheckup() { this.isMobile ? this.mCheckup.waitClick() : this.checkup.waitClick(); }
+    clickBarnSheets() { return this.barnsheets.waitClick() && this; }
+    setElemsOnPage(number) { return this.pagination.waitClick().$('option=' + number).waitClick() && this; }
+    clickNextPage() { return this.nextPageBtn.waitClick() && this; }
+    clickPrevPage() { return this.prevPageBtn.waitClick() && this; }
 
     pause(timeout) {
         if (timeout === undefined) {
@@ -58,7 +58,7 @@ module.exports = class Page {
         const script = "document.getElementsByTagName('input')[IDX].style.display = 'block'".replace(/IDX/, idx);
         browser.execute(script);
         this.inputFile.waitForDisplayed();
-        this.inputFile.setValueAndWait(pathToMedia);
+        this.inputFile.waitSetValue(pathToMedia);
         this.removeMediaButton.waitForExist();
         return this;
     }

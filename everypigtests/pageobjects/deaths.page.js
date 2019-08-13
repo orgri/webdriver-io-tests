@@ -13,7 +13,7 @@ class DeathsPage extends ReportPage {
     get selectWrapper() { return '.select-mort-reason-wrapper'; }
     get isMortReason() { return $('.add-mortality-reason').isExisting(); }
 
-    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitAndClick() && this; }
+    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
 
     setChronic(number, index) { return this.input('Chronic', index).setValue(number) && this; }
     setAcute(number, index) { return this.input('Acute', index).setValue(number) && this; }

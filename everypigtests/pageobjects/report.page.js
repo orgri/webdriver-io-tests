@@ -37,28 +37,28 @@ module.exports = class ReportPage extends Page {
     close() {
         if (this.isMobile) {
             this.box.scrollIntoView(true);
-            this.mClose.waitAndClick();
+            this.mClose.waitClick();
         } else {
-            this.closeBtn.waitAndClick();
+            this.closeBtn.waitClick();
         }
         return this;
     }
-    cancel() { return this.cancelBtn.waitAndClick() && this; }
+    cancel() { return this.cancelBtn.waitClick() && this; }
     submit() {
         this.resetIndex();
         if (this.isSubmitDisabled) {
             return this;
         } else if (this.isMobile) {
-            this.mSubmitBtn.waitAndClick();
+            this.mSubmitBtn.waitClick();
         } else if (this.submitBtn.isExisting()) {
-            this.submitBtn.waitAndClick();
+            this.submitBtn.waitClick();
         }
         return this;
     }
-    mBack() { return this.mBackLink.waitAndClick() && this; }
+    mBack() { return this.mBackLink.waitClick() && this; }
     mClickNext() {
         this.mNextBtn.isExisting() && this.mNextBtn.isDisplayed()
-            && this.mNextBtn.waitAndClick();
+            && this.mNextBtn.waitClick();
         return this;
     }
 
@@ -97,7 +97,7 @@ module.exports = class ReportPage extends Page {
     mobileRow(text) { return $(this.mRowPicker + '*=' + text); }
     input(name, index) { return this.paramRow(index).$(this.inputWrapper + '*=' + name).$('<input>'); }
     inputLabel(name, index) { return this.paramRow(index).$(this.labelWrapper + '*=' + name); }
-    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitAndClick() && this; }
+    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
     selectInput(index) { return this.paramRow(index).$('<input>'); }
     isSelected(text) { return this.mobileRow(text).$(this.selectIcon).isExisting(); }
 
@@ -105,7 +105,7 @@ module.exports = class ReportPage extends Page {
         this.waitForOpen().clickSelectParam(index);
         expect(this.selectInput(index).getAttribute('aria-expanded'), 'isExpanded').to.equal('true');
 
-        this.selectInput(index).setValueAndWait(type);
+        this.selectInput(index).waitSetValue(type);
         expect(this.selectInput(index).getAttribute('value'), 'inputValue of select').to.equal(type);
 
         browser.keys('Tab');
@@ -117,37 +117,37 @@ module.exports = class ReportPage extends Page {
 
     mSetReportParam(type) {
         $(this.mRowPicker).waitForExist(5000);
-        this.mobileRow(type).waitAndClick();
+        this.mobileRow(type).waitClick();
         return this;
     }
 
     addRow() {
-        this.addRowBtn.waitAndClick();
+        this.addRowBtn.waitClick();
         this.index++;
         return this;
     }
 
     addNote() {
-        $(this.addNoteBtn).waitAndClick();
+        $(this.addNoteBtn).waitClick();
         $(this.comment).waitForExist();
         return this;
     }
 
     setComment(text) {
         $(this.commentClosed).isExisting() && this.addNote();
-        $(this.comment).setValueAndWait(text);
+        $(this.comment).waitSetValue(text);
         return this;
     }
 
     removeComment() {
         $(this.removeCommentBtn).isExisting() && $(this.removeCommentBtn).isDisplayed()
-            && $(this.removeCommentBtn).waitAndClick();
+            && $(this.removeCommentBtn).waitClick();
         return this;
     }
 
     deleteRow(index) {
         if ($(this.trashBtn).isDisplayed()) {
-            this.paramRow(index).$(this.trashBtn).waitAndClick();
+            this.paramRow(index).$(this.trashBtn).waitClick();
             this.index > 0 && this.index--;
         }
         return this;
@@ -164,6 +164,6 @@ module.exports = class ReportPage extends Page {
     }
 
     resetIndex() { this.index = 0; }
-    mSetSearch(text) { return this.mSearch.setValueAndWait(text) && this; }
+    mSetSearch(text) { return this.mSearch.waitSetValue(text) && this; }
 
 }

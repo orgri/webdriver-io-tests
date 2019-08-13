@@ -12,8 +12,8 @@ class MovementsPage extends ReportPage {
     get selectWrapper() { return '.movement-type-select'; }
     get labelWrapper() { return '.input-label'; }
     
-    setHeads(number, index) { return this.input('Head', index).setValueAndWait(number) && this; }
-    setAvgWeight(number, index) { return this.input('Est. Avg. Weight', index).setValueAndWait(number) && this; }
+    setHeads(number, index) { return this.input('Head', index).waitSetValue(number) && this; }
+    setAvgWeight(number, index) { return this.input('Est. Avg. Weight', index).waitSetValue(number) && this; }
  
     setCondition(condition, index) {
         switch (condition) {
@@ -33,7 +33,7 @@ class MovementsPage extends ReportPage {
         return this;
     }
 
-    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitAndClick() && this; }
+    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
 
     setShipment(nHeads, weight, condition, index) {
         if (this.isMobile) {

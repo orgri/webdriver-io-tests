@@ -13,28 +13,28 @@ class MedicationsPage extends ReportPage {
     get total() { return $('#head-total-count'); }
  
     setHead(number, index) {
-        this.inputLabel('Head', index).waitAndClick();
+        this.inputLabel('Head', index).waitClick();
         this.input('Head Treated', index).addValue(number);
         browser.keys('Tab');
         return this;
     }
     setUnits(number, index) {
-        this.input('Units', index).setValueAndWait(number);
+        this.input('Units', index).waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
     setGals(number, index) {
-        this.input('Gals', index).setValueAndWait(number);
+        this.input('Gals', index).waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
     setCcs(number, index) {
-        this.input('ccs', index).setValueAndWait(number);
+        this.input('ccs', index).waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
     setMls(number, index) {
-        this.input('Milliliters', index).setValueAndWait(number);
+        this.input('Milliliters', index).waitSetValue(number);
         browser.keys('Tab');
         return this;
     }

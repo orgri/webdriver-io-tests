@@ -3,7 +3,7 @@ var ReportPage = require('./report.page');
 
 class BarnSheetsPage extends ReportPage {
 
-/********************************************** Navigation *****************************************************/
+    /********************************************** Navigation *****************************************************/
 
     get groupsTab() { return $('a[href*="/barnsheets/groups"]'); }
     get farmsTab() { return $('a[href*="/barnsheets/farms"]'); }
@@ -14,14 +14,14 @@ class BarnSheetsPage extends ReportPage {
     get mediaTab() { return $('div[class="scrollable-content"] a[href*="/media"]'); }
     get dcTab() { return $('.item=Daily Checkups'); }
 
-    clickTreatsTab() { return this.treatsTab.waitAndClick() && this; }
-    clickDiagnosTab() { return this.diagnosTab.waitAndClick() && this; }
-    clickMovesTab() { return this.pigMovesTab.waitAndClick() && this; }
-    clickMediaTab() { return this.mediaTab.waitAndClick() && this; }
-    clickDcTab() { return this.dcTab.waitAndClick() && this; }
-    clickFarmsTab() { return this.farmsTab.waitAndClick() && this; }
-    clickGroupsTab() { return this.groupsTab.waitAndClick() && this; }
-    clickCompaniesTab() { return this.companiesTab.waitAndClick() && this; }
+    clickTreatsTab() { return this.treatsTab.waitClick() && this; }
+    clickDiagnosTab() { return this.diagnosTab.waitClick() && this; }
+    clickMovesTab() { return this.pigMovesTab.waitClick() && this; }
+    clickMediaTab() { return this.mediaTab.waitClick() && this; }
+    clickDcTab() { return this.dcTab.waitClick() && this; }
+    clickFarmsTab() { return this.farmsTab.waitClick() && this; }
+    clickGroupsTab() { return this.groupsTab.waitClick() && this; }
+    clickCompaniesTab() { return this.companiesTab.waitClick() && this; }
 
     open(path) {
         if (path === undefined) {
@@ -43,7 +43,7 @@ class BarnSheetsPage extends ReportPage {
         return this;
     }
 
-/********************************************* Barnsheets Tables ****************************************************/
+    /********************************************* Barnsheets Tables ****************************************************/
 
     get inputSearch() { return $('input[placeholder="Search..."]'); }
     get tableRow() { return '.table-row'; }
@@ -63,14 +63,14 @@ class BarnSheetsPage extends ReportPage {
             .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
     }
 
-    setSearch(name) { return this.inputSearch.setValueAndWait(name) && this; }
-    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitAndClick() && this; }
-    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitAndClick() && this; }
+    setSearch(name) { return this.inputSearch.waitSetValue(name) && this; }
+    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this; }
+    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this; }
     groupHeader(name) { return $('.group-name=' + name); }
 
-    choose(name) { return $('*=' + name).waitAndClick() && this; }
+    choose(name) { return $('*=' + name).waitClick() && this; }
 
-    isCellExist(date, str) { return $(this.tableRow + '*=' + date).$(this.tableItem + '*=' + str).isExisting() ; }
+    isCellExist(date, str) { return $(this.tableRow + '*=' + date).$(this.tableItem + '*=' + str).isExisting(); }
     cell(date, column = 0, row = 0) { return this.tableRowsWith(date)[row].$$(this.tableItem)[column]; }
     dateCell(date) { return this.cell(date).getText(); }
     mediaLabel(date) { return this.cell(date).$('.media-label').getText(); }
@@ -84,10 +84,10 @@ class BarnSheetsPage extends ReportPage {
     mrCell(date) { return this.cell(date, 8).getText(); }
     weightCell(date) { return this.cell(date, 9).getText(); }
 
-    clickMenuCell(date) { return this.cell(date, 10).$('.fa.fa-dots-three-horizontal').waitAndClick() && this; }
-    clickOption(option) { return this.dropdownMenu.$('.list-item-li' + '=' + option).waitAndClick() && this; }
+    clickMenuCell(date) { return this.cell(date, 10).$('.fa.fa-dots-three-horizontal').waitClick() && this; }
+    clickOption(option) { return this.dropdownMenu.$('.list-item-li' + '=' + option).waitClick() && this; }
 
-/********************************************* Edit Checkup page ****************************************************/
+    /********************************************* Edit Checkup page ****************************************************/
 
     get rightButton() { return $('.CheckupNavigation .fa.fa-arrow-right'); }
     get leftButton() { return $('.CheckupNavigation .fa.fa-arrow-left'); }
@@ -102,22 +102,22 @@ class BarnSheetsPage extends ReportPage {
     get nOfAudio() { return this.section('Audio').getText().match(/[0-9]+/)[0]; }
     get reComment() { return /(?<=Notes\n)(.|\n)+?(?=\nSee)/g; }
 
-    clickRight() { return this.rightButton.waitAndClick() && this; }
-    clickLeft() { return this.leftButton.waitAndClick() && this; }
-    clickEscape() { return this.escapeButton.waitAndClick() && this; }
-    clickSave() { return this.saveButton.waitAndClick() && this; }
-    clickCloseDC() { return this.closeDCButton.waitAndClick() && this; }
+    clickRight() { return this.rightButton.waitClick() && this; }
+    clickLeft() { return this.leftButton.waitClick() && this; }
+    clickEscape() { return this.escapeButton.waitClick() && this; }
+    clickSave() { return this.saveButton.waitClick() && this; }
+    clickCloseDC() { return this.closeDCButton.waitClick() && this; }
 
     section(type) { return $(this.sectionWrapper + '*=' + type); }
     chooseSection(item) {
         this.section(item).isExisting() &&
-            $(this.sectionHeader + '*=' + item).$('.button').waitAndClick();
-        this.clear();
+            $(this.sectionHeader + '*=' + item).$('.button').waitClick();
+        this.waitLoader().clear();
         return this;
     }
 
     isMoveExist(type) { return this.section('Move').$('.info-row*=' + type).isExisting(); }
-    deathReasonCollapse(idx = 0) { return this.deathReasons[idx].waitAndClick() && this; }
+    deathReasonCollapse(idx = 0) { return this.deathReasons[idx].waitClick() && this; }
 
     moveRowInfo(type) {
         return (this.isMoveExist(type)) ?
@@ -128,19 +128,21 @@ class BarnSheetsPage extends ReportPage {
     deathRowInfo(type) {
         const reNumber = /(\d+)$/u;
         return (this.isReasonExist) ?
-            this.deathReasons.map(el => (el.$('span*=' + type).getText().match(reNumber) || [])[0]) :
-            (this.section('Dead').$('.item*=' + type).$('div[class^="value"]').getText().match(reNumber) || [])[0];
+            this.deathReasons.map(el => (el.$('span*=' + type)
+                .getText().match(reNumber) || [])[0]) :
+            (this.section('Dead').$('.item*=' + type).$('div[class^="value"]')
+                .getText().match(reNumber) || [])[0];
     }
 
     get moveInfo() {
         let obj = new Object();
 
-        obj.amount = this.getNumber(this.section('Move'));//.getText().match(/[0-9]+/)[0];
+        obj.amount = this.getNumber(this.section('Move'));
         obj.added = this.moveRowInfo('Added');
         obj.removed = this.moveRowInfo('Removed');
         obj.weight = this.moveRowInfo('Weight');
         obj.condition = this.moveRowInfo('Condition');
-        obj.comment = this.getString(this.section('Move'), this.reComment);//.getText().match(reComment) || [])[0];
+        obj.comment = this.getString(this.section('Move'), this.reComment);
 
         return obj;
     }
@@ -214,6 +216,7 @@ class BarnSheetsPage extends ReportPage {
     clear() {
         this.removeComment().clearMedia();
         const rows = $$(this.rowIndex).length;
+        console.log('rows', rows);
         for (let i = 0; i < rows - 1; i++) {
             this.deleteRow();
         }
@@ -223,7 +226,7 @@ class BarnSheetsPage extends ReportPage {
     clearMedia() {
         const rows = $$('asset-wrapper').length;
         for (let i = 0; i < rows; i++) {
-            this.removeMediaButton.waitAndClick();
+            this.removeMediaButton.waitClick();
             browser.pause(500);
         }
         return this;
@@ -288,10 +291,10 @@ class BarnSheetsPage extends ReportPage {
             .submit().waitLoader();
     }
 
-/********************************************** Diagnosis tab *****************************************************/
+    /********************************************** Diagnosis tab *****************************************************/
 
     get block() { return '.UserPanel'; }
-    clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitAndClick() && this; }
+    clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitClick() && this; }
 
     get diagnosInfo() {
         let obj = new Object();
@@ -306,13 +309,13 @@ class BarnSheetsPage extends ReportPage {
         return obj;
     }
 
-/********************************************** Movements tab *****************************************************/
+    /********************************************** Movements tab *****************************************************/
 
     moveTabInfo(date) {
         let data = new Object();
         const selector = $$(this.block + '*=' + date);
         const reHeads = /(?<=(Head Transferred|Head Placed)\n)(\d+)/u;
-        const reWeight =/(?<=(Est. Avg. Weight)\n)([\d\.]+)/u;
+        const reWeight = /(?<=(Est. Avg. Weight)\n)([\d\.]+)/u;
         const reCondition = /(?<=(Condition at Arrival)\n)(.+)/u;
 
         data.amount = selector.length + '';
@@ -323,18 +326,18 @@ class BarnSheetsPage extends ReportPage {
         return data;
     }
 
-/**********************************************Media tab*****************************************************/
+    /**********************************************Media tab*****************************************************/
 
     get scale() { return $('.current-scale.visible'); }
     get mediaViewer() { return $('.mediaViewer.is-open'); }
 
-    clickOnImg(name) { return $('div[style*="NAME"]'.replace(/NAME/, name)).waitAndClick() && this; }
-    clickScalePlus() { return $('.fa.fa-search-plus').waitAndClick() && this; }
-    clickScaleMinus() { return $('.fa.fa-search-minus').waitAndClick() && this; }
-    clickScaleOrig() { return $('.fa.fa-maximize').waitAndClick() && this; }
-    clickNextImg() { return $('div[class*="nav-next"]').waitAndClick() && this; }
-    clickPrevImg() { return $('div[class*="nav-prev"]').waitAndClick() && this; }
-    clickCloseImg() { return $('.header-btn__close').waitAndClick() && this; }
+    clickOnImg(name) { return $('div[style*="NAME"]'.replace(/NAME/, name)).waitClick() && this; }
+    clickScalePlus() { return $('.fa.fa-search-plus').waitClick() && this; }
+    clickScaleMinus() { return $('.fa.fa-search-minus').waitClick() && this; }
+    clickScaleOrig() { return $('.fa.fa-maximize').waitClick() && this; }
+    clickNextImg() { return $('div[class*="nav-next"]').waitClick() && this; }
+    clickPrevImg() { return $('div[class*="nav-prev"]').waitClick() && this; }
+    clickCloseImg() { return $('.header-btn__close').waitClick() && this; }
 
 }
 
