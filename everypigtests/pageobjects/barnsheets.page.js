@@ -249,7 +249,7 @@ class BarnSheetsPage extends ReportPage {
         const rows = $$('asset-wrapper').length;
         for (let i = 0; i < rows; i++) {
             this.removeMediaButton.waitClick();
-            browser.pause(500);
+            browser.pause(1000);
         }
         return this;
     }
@@ -353,7 +353,7 @@ class BarnSheetsPage extends ReportPage {
     get scale() { return $('.current-scale.visible'); }
     get mediaViewer() { return $('.mediaViewer.is-open'); }
 
-    clickOnImg(name) { return $('div[style*="NAME"]'.replace(/NAME/, name)).waitClick() && this; }
+    clickOnImg() { return $('.bg-image').waitClick() && this; }
     clickScalePlus() { return $('.fa.fa-search-plus').waitClick() && this; }
     clickScaleMinus() { return $('.fa.fa-search-minus').waitClick() && this; }
     clickScaleOrig() { return $('.fa.fa-maximize').waitClick() && this; }

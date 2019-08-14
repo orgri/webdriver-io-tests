@@ -23,7 +23,7 @@ module.exports = class Page {
     get nextPageBtn() { return $('.paginate_button.next'); }
     get prevPageBtn() { return $('.paginate_button.previous'); }
 
-    clickCheckup() { this.isMobile ? this.mCheckup.waitClick() : this.checkup.waitClick(); }
+    clickCheckup() { this.isMobile ? this.mCheckup.waitClick() : this.checkup.waitClick(); return this; }
     clickBarnSheets() { return this.barnsheets.waitClick() && this; }
     setElemsOnPage(number) { return this.pagination.waitClick().$('option=' + number).waitClick() && this; }
     clickNextPage() { return this.nextPageBtn.waitClick() && this; }
@@ -51,6 +51,13 @@ module.exports = class Page {
         return this;
     }
 
+    waitUploader() {
+        browser.waitUntil(() => {
+            return (this.notification.isExisting() || this.removeMediaButton.isExisting())
+        }, 60000, 'uploader');
+        return this;
+    }
+
     uploadMedia(file) {
         const path = require('path')
         const pathToMedia = path.resolve(browser.config.mediaPath, file);
@@ -59,12 +66,13 @@ module.exports = class Page {
         browser.execute(script);
         this.inputFile.waitForDisplayed();
         this.inputFile.waitSetValue(pathToMedia);
-        this.removeMediaButton.waitForExist();
+        this.waitUploader();
+        this.notification.isExisting() && browser.pause(5000);
         return this;
     }
     getArray(selector, regex) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
     getString(selector, regex) { return (selector.getText().match(regex) || [])[0]; }
-    getNumber(selector) { return selector.getText().match(/[0-9]+/)[0]; }
-    getFloat(selector) { return selector.getText().match(/[\d+\.]+/u)[0]; }
+    getNumber(selector) { return (selector.getText().match(/[0-9]+/) || [])[0]; }
+    getFloat(selector) { return (selector.getText().match(/[\d+\.]+/u) || [])[0]; }
 
 }

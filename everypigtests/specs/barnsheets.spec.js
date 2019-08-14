@@ -633,9 +633,9 @@ describe('Edit Water usage', () => {
     });
 });
 
-describe('Edit Media', () => {
-    let date;
-    const photo = tdata.randPhoto;
+describe.only('Edit Media', () => {
+    let date, scale;
+    const photo = tdata.randArrayPhoto(2);
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
@@ -643,7 +643,7 @@ describe('Edit Media', () => {
 
     it('Make changes to checkup', () => {
         sheetsPage.choose(date[1]).waitLoader().chooseSection('Media').waitLoader()
-            .uploadMedia(photo)
+            .uploadMedia(photo[0]).uploadMedia(photo[1])
             .uploadMedia(tdata.randVideo)
             .uploadMedia(tdata.randAudio)
             .submit().waitLoader().section('Media').scrollIntoView({ block: 'center' });
@@ -654,7 +654,7 @@ describe('Edit Media', () => {
     });
 
     it('Media changes(nOfMedia)', () => {
-        expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('2');
+        expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('3');
     });
 
     it('Save and review', () => {
@@ -678,7 +678,8 @@ describe('Edit Media', () => {
     });
 
     it('Open image', () => {
-        sheetsPage.clickOnImg(photo);
+        sheetsPage.clickOnImg();
+        scale = +sheetsPage.clickScaleOrig().scale.getText().slice(0, -1);
 
         expect(sheetsPage.mediaViewer.isDisplayed(), 'mediaViewer').to.equal(true);
     });
@@ -686,19 +687,19 @@ describe('Edit Media', () => {
     it('Scale minus image', () => {
         sheetsPage.clickScaleMinus();
 
-        expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.be.below(100);
+        expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.be.below(scale);
     });
 
     it('Scale original image', () => {
         sheetsPage.clickScaleOrig();
 
-        expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.equal(100);
+        expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.equal(scale);
     });
 
     it('Scale plus image', () => {
         sheetsPage.clickScalePlus();
 
-        expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.be.above(100);
+        expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.be.above(scale);
     });
 
     it('Next image', () => {

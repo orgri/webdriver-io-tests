@@ -45,6 +45,9 @@ class TestData {
     randArrayCheckups(length) { return Array.from(Array(length), () => this.randCheckupData); }
     randArrayComments(length) { return Array.from(Array(length), () => this.randComment); }
     randArrayDiagnosType(length) { return Array.from(Array(length), () => this.randDiagnosType); }
+    randArrayPhoto(length) { return Array.from(Array(length), () => this.randPhoto); }
+    randArrayVideo(length) { return Array.from(Array(length), () => this.randVideo); }
+    randArrayAudio(length) { return Array.from(Array(length), () => this.randAudio); }
 
     randArrayTreats(length) {
         let mySet = new Set();
