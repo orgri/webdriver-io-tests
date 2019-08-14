@@ -87,6 +87,29 @@ class BarnSheetsPage extends ReportPage {
     clickMenuCell(date) { return this.cell(date, 10).$('.fa.fa-dots-three-horizontal').waitClick() && this; }
     clickOption(option) { return this.dropdownMenu.$('.list-item-li' + '=' + option).waitClick() && this; }
 
+    chooseRandGroup(farmPrefix = 'TA_Farm', groupPrefix = 'TA_PigGroup') {
+        this.open().clickFarmsTab().setElemsOnPage(100).waitLoader();
+        let rows = this.tableItemsWith(farmPrefix);
+        rows[tdata.rand(rows.length - 1)].waitClick();
+        this.waitLoader();
+        if (this.tableRows.length < 2) {
+            this.chooseRandGroup();
+        } else {
+            this.setElemsOnPage(100).waitLoader();
+            rows = this.tableItemsWith(groupPrefix);
+            rows[tdata.rand(rows.length - 1)].waitClick();
+            this.waitLoader();
+        }
+        return this;
+    }
+
+    getRandDates(number = 1) {
+        let idx = tdata.rand(this.tableRows.length - 2);
+        idx = idx < number ? number : idx;
+        return Array.from(Array(number + 1), (val, index) =>
+            this.checkupRows[idx - index].getText());
+    }
+
     /********************************************* Edit Checkup page ****************************************************/
 
     get rightButton() { return $('.CheckupNavigation .fa.fa-arrow-right'); }
@@ -216,7 +239,6 @@ class BarnSheetsPage extends ReportPage {
     clear() {
         this.removeComment().clearMedia();
         const rows = $$(this.rowIndex).length;
-        console.log('rows', rows);
         for (let i = 0; i < rows - 1; i++) {
             this.deleteRow();
         }
