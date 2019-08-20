@@ -1,4 +1,4 @@
-module.exports = class Page {    
+module.exports = class Page {
     constructor() {
         this.baseUrl = browser.config.baseUrl;
     }
@@ -7,14 +7,10 @@ module.exports = class Page {
     get onNet() { return $(".NetworkNotificationBox*=Back Online"); }
     get offNet() { return $(".NetworkNotificationBox*=No Internet Connection"); }
     get synced() { return $(".NetworkNotificationBox*=Syncing data"); }
-    get checkup() { return $('.sidebar').$('.item-name*=Checkup'); }
-    get mCheckup() { return $('.main-footer.hide-for-large').$('.title=Checkup'); }
-    get barnsheets() { return $('.sidebar').$('.item-name*=Barn'); }
     get invis() { return $(".NetworkNotificationBox.visible"); }
     get isMobile() { return $('.AppContainer.isMobile').isExisting(); }
     get isOffNet() { return this.offNet.isExisting(); }
     get notification() { return $('.rrt-text'); }
-    get inputFile() { return isMobile ? $$('input[type="file"]')[1] : $$('input[type="file"]')[0]; }
     get mediaUploader() { return $('.MediaUploader'); }
     get removeMediaButton() { return this.mediaUploader.$('.asset-wrapper').$('.fa.fa-trash-o'); }
     get image() { return this.mediaUploader.$('.asset-wrapper').$('.image'); }
@@ -22,12 +18,32 @@ module.exports = class Page {
     get pagination() { return $('.CustomSelect  '); }
     get nextPageBtn() { return $('.paginate_button.next'); }
     get prevPageBtn() { return $('.paginate_button.previous'); }
+    get barnsheets() { return $('.sidebar').$('.item-name*=Barn'); }
 
-    clickCheckup() { this.isMobile ? this.mCheckup.waitClick() : this.checkup.waitClick(); return this; }
+    get checkup() {
+        return isMobile
+            ? $('.main-footer a[href="/daily-checkup"]')
+            : $('.sidebar').$('.item-name*=Checkup');
+    }
+    get farmfeed() {
+        return isMobile
+            ? $('.main-footer a[href="/farmfeed"]')
+            : $('.sidebar').$('.item-name*=Farmfeed');
+    }
+
+    get inputFile() {
+        return isMobile ? $$('input[type="file"]')[1] : $$('input[type="file"]')[0];
+    }
+
+    clickCheckup() { return this.checkup.waitClick() && this; }
     clickBarnSheets() { return this.barnsheets.waitClick() && this; }
-    setElemsOnPage(number) { return this.pagination.waitClick().$('option=' + number).waitClick() && this; }
+    clickFarmfeed() { return this.farmfeed.waitClick() && this; }
     clickNextPage() { return this.nextPageBtn.waitClick() && this; }
     clickPrevPage() { return this.prevPageBtn.waitClick() && this; }
+
+    setElemsOnPage(number) {
+        return this.pagination.waitClick().$('option=' + number).waitClick() && this;
+    }
 
     pause(timeout) {
         if (timeout === undefined) {
@@ -51,10 +67,19 @@ module.exports = class Page {
         return this;
     }
 
+    waitLoader() {
+        if ($('.preloader.is-active').isExisting()) {
+            browser.waitUntil(() => {
+                return !($('.preloader.is-active').isExisting())
+            }, 5000, 'loader');
+        }
+        return this;
+    }
+
     waitUploader() {
         browser.waitUntil(() => {
             return (this.notification.isExisting() || this.removeMediaButton.isExisting())
-        }, 60000, 'uploader');
+        }, 90000, 'Time to upload is exceeded 90000ms');
         return this;
     }
 
@@ -70,9 +95,10 @@ module.exports = class Page {
         this.notification.isExisting() && browser.pause(5000);
         return this;
     }
+
     getArray(selector, regex) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
     getString(selector, regex) { return (selector.getText().match(regex) || [])[0]; }
-    getNumber(selector) { return (selector.getText().match(/[0-9]+/) || [])[0]; }
+    getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
     getFloat(selector) { return (selector.getText().match(/[\d+\.]+/u) || [])[0]; }
 
 }

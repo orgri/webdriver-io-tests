@@ -34,14 +34,6 @@ class BarnSheetsPage extends ReportPage {
     }
 
     waitForOpen() { return $(this.tableItem).waitForExist() && this; }
-    waitLoader() {
-        if ($('.preloader.is-active').isExisting()) {
-            browser.waitUntil(() => {
-                return !($('.preloader.is-active').isExisting())
-            }, 5000, 'loader');
-        }
-        return this;
-    }
 
     /********************************************* Barnsheets Tables ****************************************************/
 
