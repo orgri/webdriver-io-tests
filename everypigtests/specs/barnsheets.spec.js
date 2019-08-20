@@ -633,7 +633,7 @@ describe('Edit Water usage', () => {
     });
 });
 
-describe.only('Edit Media', () => {
+describe('Edit Media', () => {
     let date, scale;
     const photo = tdata.randArrayPhoto(2);
 
