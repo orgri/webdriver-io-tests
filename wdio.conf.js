@@ -23,11 +23,12 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './everypigtests/specs/**/*.js'
+        './everypigtests/specs/**/barnsheets.spec.js',
+        './everypigtests/specs/**/checkup.spec.js'
     ],
     // Patterns to exclude.
     exclude: [
-        './everypigtests/specs/**/test.js'
+        //'./everypigtests/specs/**/test.js'
     ],
     //
     // ============
@@ -98,7 +99,7 @@ exports.config = {
     //
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
-    bail: 0,
+    bail: 5,
     //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
@@ -111,7 +112,7 @@ exports.config = {
     pauseTimeout: 300,
     syncTimeout: 1500,
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 30000,
+    waitforTimeout: 60000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
@@ -194,6 +195,8 @@ exports.config = {
         global.isSafari = browser.capabilities['browserName'] == 'Safari';
         global.isChrome = browser.capabilities['browserName'] == 'chrome';
         global.isMobile = capabilities['goog:chromeOptions'].propertyIsEnumerable('mobileEmulation');
+        global.isIOS = isMobile && capabilities['goog:chromeOptions'].mobileEmulation.deviceName.includes('iPhone');
+
         let timeout = this.pauseTimeout;
         browser.setTimeout({ 'implicit': 100, 'pageLoad': 15000, });
 
