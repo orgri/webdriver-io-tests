@@ -19,10 +19,11 @@ module.exports = class ReportPage extends Page {
     get mNextBtnDisabled() { return $('.button.primary.disabled'); }
     get mSubmitBtn() { return $('.StickyFooter').$('.button*=Continue'); }
     get mSubmitBtnDisabled() { return $('.button.primary.disabled.sticky-footer'); }
-    get mSearch() { return $('input[placeholder="Search..."]'); }
+    get inputSearch() { return $('input[placeholder="Search..."]'); }
     get mClose() { return $('.back-link.hide-for-large'); }
     get mBackLink() { return $('div[class^="mobile-header"]').$('a[class^="back-link"]'); }
     get isNextDisabled() { return this.mNextBtnDisabled.isExisting(); }
+    
     get isSubmitDisabled() {
         return (this.isMobile) ? this.mSubmitBtnDisabled.isExisting()
             : this.submitBtnDisabled.isExisting();
@@ -34,6 +35,7 @@ module.exports = class ReportPage extends Page {
         this.box.waitForDisplayed();
         return this;
     }
+
     close() {
         if (this.isMobile) {
             this.box.scrollIntoView(true);
@@ -43,7 +45,9 @@ module.exports = class ReportPage extends Page {
         }
         return this;
     }
+
     cancel() { return this.cancelBtn.waitClick() && this; }
+
     submit() {
         this.resetIndex();
         if (this.isSubmitDisabled) {
@@ -55,7 +59,9 @@ module.exports = class ReportPage extends Page {
         }
         return this;
     }
+
     mBack() { return this.mBackLink.waitClick() && this; }
+
     mClickNext() {
         this.mNextBtn.isExisting() && this.mNextBtn.isDisplayed()
             && this.mNextBtn.waitClick();
@@ -116,7 +122,8 @@ module.exports = class ReportPage extends Page {
     }
 
     mSetReportParam(type) {
-        $(this.mRowPicker).waitForExist(5000);
+        this.waitLoader();
+        $(this.mRowPicker).isExisting() || this.clickSelectParam();
         this.mobileRow(type).waitClick();
         return this;
     }
@@ -155,7 +162,7 @@ module.exports = class ReportPage extends Page {
 
     clear() {
         this.removeComment();
-        const rows = $$(this.row).length;
+        const rows = $$(this.rowIndex).length;
         for (let i = 0; i < rows; i++) {
             this.deleteRow();
         }
@@ -164,6 +171,6 @@ module.exports = class ReportPage extends Page {
     }
 
     resetIndex() { this.index = 0; }
-    mSetSearch(text) { return this.mSearch.waitSetValue(text) && this; }
+    setSearch(text) { return this.inputSearch.waitSetValue(text) && this; }
 
 }
