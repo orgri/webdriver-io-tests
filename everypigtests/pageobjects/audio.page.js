@@ -21,8 +21,8 @@ class AudioPage extends ReportPage {
     }
 
     record() { return this.recordBtn.waitClick() && this; }
-    continue() { return this.continueBtn.waitClick() && this; }
-    save() { return this.saveBtn.waitClick() && this; }
+    continue() { return this.continueBtn.waitClick() && this.waitLoader(); }
+    save() { return this.saveBtn.waitClick() && this.waitLoader(); }
 
     waitForOpen() { return this.recordBtn.waitForExist() && this; }
 

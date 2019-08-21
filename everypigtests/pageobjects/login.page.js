@@ -21,7 +21,7 @@ class LoginPage extends Page {
     }
 
     waitForLogin() { 
-        this.header.waitForDisplayed();
+        this.header.waitForDisplayed(60000);
         this.waitForSync();
         return this;
     }

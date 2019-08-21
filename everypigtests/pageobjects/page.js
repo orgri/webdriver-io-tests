@@ -35,14 +35,15 @@ module.exports = class Page {
         return isMobile ? $$('input[type="file"]')[1] : $$('input[type="file"]')[0];
     }
 
-    clickCheckup() { return this.checkup.waitClick() && this; }
-    clickBarnSheets() { return this.barnsheets.waitClick() && this; }
-    clickFarmfeed() { return this.farmfeed.waitClick() && this; }
-    clickNextPage() { return this.nextPageBtn.waitClick() && this; }
-    clickPrevPage() { return this.prevPageBtn.waitClick() && this; }
+    clickCheckup() { return this.checkup.waitClick() && this.waitLoader(); }
+    clickBarnSheets() { return this.barnsheets.waitClick() && this.waitLoader(); }
+    clickFarmfeed() { return this.farmfeed.waitClick() && this.waitLoader(); }
+    clickNextPage() { return this.nextPageBtn.waitClick() && this.waitLoader(); }
+    clickPrevPage() { return this.prevPageBtn.waitClick() && this.waitLoader(); }
 
     setElemsOnPage(number) {
-        return this.pagination.waitClick().$('option=' + number).waitClick() && this;
+        return this.pagination.waitClick()
+            .$('option=' + number).waitClick() && this.waitLoader();
     }
 
     pause(timeout) {
@@ -56,7 +57,7 @@ module.exports = class Page {
 
     waitForSync() {
         browser.pause(browser.config.syncTimeout);
-        this.onNet.waitForExist();
+        this.onNet.waitForExist(100000);
         browser.pause(browser.config.syncTimeout);
         return this;
     }
@@ -71,7 +72,7 @@ module.exports = class Page {
         if ($('.preloader.is-active').isExisting()) {
             browser.waitUntil(() => {
                 return !($('.preloader.is-active').isExisting())
-            }, 5000, 'loader');
+            }, 15000, 'Wait loader time is exceeded 10000ms');
         }
         return this;
     }
@@ -93,6 +94,18 @@ module.exports = class Page {
         this.inputFile.waitSetValue(pathToMedia);
         this.waitUploader();
         this.notification.isExisting() && browser.pause(5000);
+        return this;
+    }
+
+    netOff() {
+        browser.setNetworkConditions({ latency: 0, throughput: 0, offline: true });
+        this.waitForOff();
+        return this;
+    }
+
+    netOn(sync = true) {
+        browser.deleteNetworkConditions();
+        sync && this.waitForSync();
         return this;
     }
 

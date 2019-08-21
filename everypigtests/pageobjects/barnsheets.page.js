@@ -4,7 +4,7 @@ var ReportPage = require('./report.page');
 class BarnSheetsPage extends ReportPage {
 
     /********************************************** Navigation *****************************************************/
-
+    get barnsheetsUrl() { return this.baseUrl + '/barnsheets'; }
     get groupsTab() { return $('a[href*="/barnsheets/groups"]'); }
     get farmsTab() { return $('a[href*="/barnsheets/farms"]'); }
     get companiesTab() { return $('a[href*="/barnsheets/companies"]'); }
@@ -14,25 +14,21 @@ class BarnSheetsPage extends ReportPage {
     get mediaTab() { return $('div[class="scrollable-content"] a[href*="/media"]'); }
     get dcTab() { return $('.item=Daily Checkups'); }
 
-    clickTreatsTab() { return this.treatsTab.waitClick() && this; }
-    clickDiagnosTab() { return this.diagnosTab.waitClick() && this; }
-    clickMovesTab() { return this.pigMovesTab.waitClick() && this; }
-    clickMediaTab() { return this.mediaTab.waitClick() && this; }
-    clickDcTab() { return this.dcTab.waitClick() && this; }
-    clickFarmsTab() { return this.farmsTab.waitClick() && this; }
-    clickGroupsTab() { return this.groupsTab.waitClick() && this; }
-    clickCompaniesTab() { return this.companiesTab.waitClick() && this; }
+    clickTreatsTab() { return this.treatsTab.waitClick() && this.waitLoader(); }
+    clickDiagnosTab() { return this.diagnosTab.waitClick() && this.waitLoader(); }
+    clickMovesTab() { return this.pigMovesTab.waitClick() && this.waitLoader(); }
+    clickMediaTab() { return this.mediaTab.waitClick() && this.waitLoader(); }
+    clickDcTab() { return this.dcTab.waitClick() && this.waitLoader(); }
+    clickFarmsTab() { return this.farmsTab.waitClick() && this.waitLoader(); }
+    clickGroupsTab() { return this.groupsTab.waitClick() && this.waitLoader(); }
+    clickCompaniesTab() { return this.companiesTab.waitClick() && this.waitLoader(); }
 
-    open(path) {
-        if (path === undefined) {
-            browser.url(this.baseUrl + '/barnsheets');
-            this.waitForOpen();
-        } else {
-            browser.url(path);
-        }
+    open(path = this.barnsheetsUrl) {
+        browser.url(path);
+        this.waitLoader();
         return this;
     }
-
+    
     waitForOpen() { return $(this.tableItem).waitForExist() && this; }
 
     /********************************************* Barnsheets Tables ****************************************************/
@@ -55,12 +51,12 @@ class BarnSheetsPage extends ReportPage {
             .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
     }
 
-    setSearch(name) { return this.inputSearch.waitSetValue(name) && this; }
-    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this; }
-    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this; }
+    setSearch(name) { return this.inputSearch.waitSetValue(name) && this.waitLoader(); }
+    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this.waitLoader(); }
+    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this.waitLoader(); }
     groupHeader(name) { return $('.group-name=' + name); }
 
-    choose(name) { return $('*=' + name).waitClick() && this; }
+    choose(name) { return $('*=' + name).waitClick() && this.waitLoader(); }
 
     isCellExist(date, str) { return $(this.tableRow + '*=' + date).$(this.tableItem + '*=' + str).isExisting(); }
     cell(date, column = 0, row = 0) { return this.tableRowsWith(date)[row].$$(this.tableItem)[column]; }
@@ -76,11 +72,11 @@ class BarnSheetsPage extends ReportPage {
     mrCell(date) { return this.cell(date, 8).getText(); }
     weightCell(date) { return this.cell(date, 9).getText(); }
 
-    clickMenuCell(date) { return this.cell(date, 10).$('.fa.fa-dots-three-horizontal').waitClick() && this; }
-    clickOption(option) { return this.dropdownMenu.$('.list-item-li' + '=' + option).waitClick() && this; }
+    clickMenuCell(date) { return this.cell(date, 10).$('.fa.fa-dots-three-horizontal').waitClick() && this.waitLoader(); }
+    clickOption(option) { return this.dropdownMenu.$('.list-item-li' + '=' + option).waitClick() && this.waitLoader(); }
 
     chooseRandGroup(farmPrefix = 'TA_Farm', groupPrefix = 'TA_PigGroup') {
-        this.open().clickFarmsTab().setElemsOnPage(100).waitLoader();
+        this.open().clickFarmsTab().setElemsOnPage(100);
         let rows = this.tableItemsWith(farmPrefix);
         rows[tdata.rand(rows.length - 1)].waitClick();
         this.waitLoader();
@@ -117,11 +113,11 @@ class BarnSheetsPage extends ReportPage {
     get nOfAudio() { return this.section('Audio').getText().match(/[0-9]+/)[0]; }
     get reComment() { return /(?<=Notes\n)(.|\n)+?(?=\nSee)/g; }
 
-    clickRight() { return this.rightButton.waitClick() && this; }
-    clickLeft() { return this.leftButton.waitClick() && this; }
-    clickEscape() { return this.escapeButton.waitClick() && this; }
-    clickSave() { return this.saveButton.waitClick() && this; }
-    clickCloseDC() { return this.closeDCButton.waitClick() && this; }
+    clickRight() { return this.rightButton.waitClick() && this.waitLoader(); }
+    clickLeft() { return this.leftButton.waitClick() && this.waitLoader(); }
+    clickEscape() { return this.escapeButton.waitClick() && this.waitLoader(); }
+    clickSave() { return this.saveButton.waitClick() && this.waitLoader(); }
+    clickCloseDC() { return this.closeDCButton.waitClick() && this.waitLoader(); }
 
     section(type) { return $(this.sectionWrapper + '*=' + type); }
     chooseSection(item) {
@@ -132,7 +128,7 @@ class BarnSheetsPage extends ReportPage {
     }
 
     isMoveExist(type) { return this.section('Move').$('.info-row*=' + type).isExisting(); }
-    deathReasonCollapse(idx = 0) { return this.deathReasons[idx].waitClick() && this; }
+    deathReasonCollapse(idx = 0) { return this.deathReasons[idx].waitClick() && this.waitLoader(); }
 
     moveRowInfo(type) {
         return (this.isMoveExist(type)) ?
@@ -254,7 +250,7 @@ class BarnSheetsPage extends ReportPage {
         const tempsPage = require('../pageobjects/temps.page');
         const waterPage = require('../pageobjects/water.page');
 
-        this.waitLoader().chooseSection('Move');
+        this.chooseSection('Move');
         for (let i = 0, n = +data.moves.amount; i < n; i++) {
             (i === 0) || movePage.addRow();
             movePage.clickSelectParam().setMovement(data.moves.type[i],
@@ -262,7 +258,7 @@ class BarnSheetsPage extends ReportPage {
         }
         movePage.setComment(data.moves.comment).submit();
 
-        this.waitLoader().chooseSection('Dead');
+        this.chooseSection('Dead');
         if ($(this.rowIndex).isExisting()) {
             for (let i = 0, n = data.deaths.reasons.length; i < n; i++) {
                 (i === 0) || deathPage.addRow();
@@ -274,7 +270,7 @@ class BarnSheetsPage extends ReportPage {
         }
         deathPage.setComment(data.deaths.comment).submit();
 
-        this.waitLoader().chooseSection('Medic');
+        this.chooseSection('Medic');
         for (let i = 0, n = +data.treats.amount; i < n; i++) {
             (i === 0) || treatPage.addRow();
             treatPage.setTreat(data.treats.name[i], data.treats.heads[i],
@@ -283,32 +279,32 @@ class BarnSheetsPage extends ReportPage {
         //treatPage.setTotal(total + '');
         treatPage.setComment(data.treats.comment).submit();
 
-        this.waitLoader().chooseSection('Sympt');
+        this.chooseSection('Sympt');
         for (let i = 0; i < +data.sympts.amount; i++) {
             (i === 0) || symptomPage.addRow();
             symptomPage.setSymptom(data.sympts.name[i]);
         }
         symptomPage.setComment(data.sympts.comment).submit();
 
-        this.waitLoader().chooseSection('Temps');
+        this.chooseSection('Temps');
         tempsPage.setTemps(data.temps.high, data.temps.low).submit();
 
-        this.waitLoader().chooseSection('Water');
+        this.chooseSection('Water');
         waterPage.setGals(data.water.consumed).submit();
 
-        this.waitLoader().chooseSection('Notes').setComment(data.comment).submit().waitLoader();
+        this.chooseSection('Notes').setComment(data.comment).submit();
 
-        this.chooseSection('Media').waitLoader()
+        this.chooseSection('Media')
             .uploadMedia(data.files.pic)
             .uploadMedia(data.files.video)
             .uploadMedia(data.files.audio)
-            .submit().waitLoader();
+            .submit();
     }
 
     /********************************************** Diagnosis tab *****************************************************/
 
     get block() { return '.UserPanel'; }
-    clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitClick() && this; }
+    clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitClick() && this.waitLoader(); }
 
     get diagnosInfo() {
         let obj = new Object();
@@ -345,7 +341,7 @@ class BarnSheetsPage extends ReportPage {
     get scale() { return $('.current-scale.visible'); }
     get mediaViewer() { return $('.mediaViewer.is-open'); }
 
-    clickOnImg() { return $('.bg-image').waitClick() && this; }
+    clickOnImg() { return $('.bg-image').waitClick() && this.waitLoader(); }
     clickScalePlus() { return $('.fa.fa-search-plus').waitClick() && this; }
     clickScaleMinus() { return $('.fa.fa-search-minus').waitClick() && this; }
     clickScaleOrig() { return $('.fa.fa-maximize').waitClick() && this; }

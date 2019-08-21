@@ -5,6 +5,8 @@ class CheckupPage extends ReportPage {
     constructor() {
         super();
         this.id = '0';
+        this.farm,
+        this.group
     }
 
 /********************************************** Navigation *****************************************************/
@@ -13,24 +15,28 @@ class CheckupPage extends ReportPage {
     get groupRow() { return '.DailyCheckupsGroupRow'; }
     get rowDC() { return '.row-content'; }
     get farmName() { return isMobile ? $('.main-header h1') : $('.farm-information h1'); }
+    get groupName() { return isMobile ? $('.main-header h1') : $('.Breadcrumbs .nowActive'); }
     get backLink() { return $('.main-header').$('.back-link'); }
     get modalWrapper() { return $('.ModalsContainer.isOpen'); }
+    get offlineWarning() { return $('.offline-no-checkup-warning'); }
 
-    setId() { this.id = this.myUrl.match(/[0-9]+$/)[0]; return this; }
+    setId() { this.id = (this.myUrl.match(/[0-9]+$/) || ['0'])[0]; return this; }
+    setFarm() { this.farm = this.farmName.getText(); return this; }
+    setGroup(row) { this.group = this.getString(row.$('.group-name'), /(?<=Group\s•\s)(.+)/u); return this;}
     rowWith(str) { return $(this.rowDC + '*=' + str); }
-    clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this; }
-    clickCheckupTab() { return $('.item=Checkup').waitClick() && this; }
-    clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this; }
+    clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this.waitLoader(); }
+    clickCheckupTab() { return $('.item=Checkup').waitClick() && this.waitLoader(); }
+    clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     isPageOf(regex) { return browser.getUrl().includes(regex); }
 
     chooseFarm(name) {
         return $(this.farmRow + '*=' + name)
-            .$$('.button').slice(-1)[0].waitClick() && this;
+            .$$('.button').slice(-1)[0].waitClick() && this.waitLoader();
     }
 
     chooseGroup(name) {
         return $(this.groupRow + '*=' + name)
-            .$$('.button').slice(-1)[0].waitClick() && this;
+            .$$('.button').slice(-1)[0].waitClick() && this.waitLoader();
     }
  
     open(path = this.checkupUrl) {
@@ -39,19 +45,21 @@ class CheckupPage extends ReportPage {
         return this;
     }
 
-    openCurrent() { return this.open(this.checkupUrl + this.id); }
+    openCurrent() { return this.open(this.checkupUrl + this.id) && this.waitLoader(); }
 
-    chooseRandCheckup(newdc = false) {
-        this.open().setElemsOnPage(100).waitLoader();
+    chooseRandCheckup() {
+        !this.offNet.isExisting() && this.open();
+        this.clickCheckup().setElemsOnPage(100);
         const rows = $$(this.rowDC + ' .button');
         rows[tdata.rand(rows.length - 1)].waitClick();
-        this.waitLoader();
+        this.waitLoader().setFarm();
         const openGroups = $$(this.rowDC + ' .red-marker').length / 2;
         if (openGroups === 0) {
             this.chooseRandCheckup();
         } else {
             const id = tdata.rand(openGroups - 1);
-            if (!newdc || rows[id].getText() !== 'Update') {
+            if (rows[id].getText() === 'Start') {
+                this.setGroup($$(this.rowDC)[id]);
                 rows[id].waitClick();
             } else {
                 this.chooseRandCheckup();
@@ -72,8 +80,6 @@ class CheckupPage extends ReportPage {
     get reComment() { return /(?<=Notes\n)(.|\n)+?(?=\nSee)/g; }
     get noBtn() { return '.button=No'; }
     get submitBtn() { return $('.button.big-button'); }
-    get offlineBtn() { return $('.offline-submit-body').$('bottom-btn'); }
-    get offlineWarning() { return $('.offline-no-checkup-warning'); }
 
     get pigsUnderCare() {
         return $$('.PigsUnderCareLine').slice(-1)[0].$('<strong>').getText();
@@ -95,9 +101,9 @@ class CheckupPage extends ReportPage {
             : $('.FarmProfileHeader').$('.checkin-btn');
     }
 
-    clickCheckin() { return this.checkinBtn.waitClick() && this; }
-    clickAudio() { return this.audioBtn.waitClick() && this; }
-    submitDC() { return this.submitBtn.waitClick() && this; }
+    clickCheckin() { return this.checkinBtn.waitClick() && this.waitLoader(); }
+    clickAudio() { return this.audioBtn.waitClick() && this.waitLoader(); }
+    submitDC() { return this.submitBtn.waitClick() && this.waitLoader(); }
 
     clickNoToReport(input) {
         this.section(input).$(this.noBtn).waitClick();
@@ -137,7 +143,7 @@ class CheckupPage extends ReportPage {
 
     get isReasonExist() { return this.section(1).$(this.collapseWrapper).isExisting(); }
     get reasons() { return this.section(1).$$(this.collapseWrapper); }
-    reasonCollapse(idx = 0) { return this.reasons[idx].waitClick() && this; }
+    reasonCollapse(idx = 0) { return this.reasons[idx].waitClick() && this.waitLoader(); }
 
     deathRowInfo(type) {
         return (this.isReasonExist)

@@ -43,10 +43,10 @@ module.exports = class ReportPage extends Page {
         } else {
             this.closeBtn.waitClick();
         }
-        return this;
+        return this.waitLoader();
     }
 
-    cancel() { return this.cancelBtn.waitClick() && this; }
+    cancel() { return this.cancelBtn.waitClick() && this.waitLoader(); }
 
     submit() {
         this.resetIndex();
@@ -57,15 +57,15 @@ module.exports = class ReportPage extends Page {
         } else if (this.submitBtn.isExisting()) {
             this.submitBtn.waitClick();
         }
-        return this;
+        return this.waitLoader();
     }
 
-    mBack() { return this.mBackLink.waitClick() && this; }
+    mBack() { return this.mBackLink.waitClick() && this.waitLoader(); }
 
     mClickNext() {
         this.mNextBtn.isExisting() && this.mNextBtn.isDisplayed()
             && this.mNextBtn.waitClick();
-        return this;
+        return this.waitLoader();
     }
 
 /********************************************** Report Actions *****************************************************/
@@ -171,6 +171,6 @@ module.exports = class ReportPage extends Page {
     }
 
     resetIndex() { this.index = 0; }
-    setSearch(text) { return this.inputSearch.waitSetValue(text) && this; }
-
+    setSearch(text) { return this.inputSearch.waitSetValue(text) && this.waitLoader(); }
+    clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
 }
