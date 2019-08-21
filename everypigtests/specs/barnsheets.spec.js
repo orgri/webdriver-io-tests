@@ -6,53 +6,53 @@ describe('Barnsheets Navigation', () => {
     const groupName = 'TA_PigGroup_0000_0001';
 
     it('Open and Search farm', () => {
-        sheetsPage.open().setSearch(farmName).waitLoader();
+        sheetsPage.open().setSearch(farmName);
         expect(sheetsPage.tableItemsWith(farmName), 'tableItemsWith(farmName) length')
             .to.have.lengthOf(sheetsPage.tableRows.length - 1);
     });
 
     it('Choose farm', () => {
-        sheetsPage.choose(farmName).waitLoader();
+        sheetsPage.choose(farmName);
         expect($('.farm-info-wrapper h1').getText(), 'farmName').to.equal(farmName);
     });
 
     it('Set pagination', () => {
-        sheetsPage.setElemsOnPage(10).waitLoader();
+        sheetsPage.setElemsOnPage(10);
 
         expect(sheetsPage.tableRows, 'length').to.have.lengthOf(11);
 
-        sheetsPage.setElemsOnPage(100).waitLoader();
+        sheetsPage.setElemsOnPage(100);
 
         expect(sheetsPage.tableRows, 'length').to.have.lengthOf.above(10);
     });
 
     it('Search group', () => {
-        sheetsPage.setSearch(groupName).waitLoader();
+        sheetsPage.setSearch(groupName);
 
         expect(sheetsPage.tableItemsWith(groupName), 'tableItemsWith(groupName) length')
             .to.have.lengthOf(sheetsPage.tableRows.length - 1);
     });
 
     it('Choose group', () => {
-        sheetsPage.choose(groupName).waitLoader();
+        sheetsPage.choose(groupName);
         groupUrl = browser.getUrl();
         expect($('.group-info-wrapper .group-name').getText(), 'groupName').to.equal(groupName);
     });
 
     it('Treatments tab', () => {
-        sheetsPage.clickTreatsTab().waitLoader();
+        sheetsPage.clickTreatsTab();
     });
     it('Diagnosis tab', () => {
-        sheetsPage.clickDiagnosTab().waitLoader();
+        sheetsPage.clickDiagnosTab();
     });
     it('Pig movements tab', () => {
-        sheetsPage.clickMovesTab().waitLoader();
+        sheetsPage.clickMovesTab();
     });
     it('Media tab', () => {
-        sheetsPage.clickMediaTab().waitLoader();
+        sheetsPage.clickMediaTab();
     });
     it('Daily Checkups tab', () => {
-        sheetsPage.clickDcTab().waitLoader();
+        sheetsPage.clickDcTab();
     });
 
 });
@@ -64,131 +64,131 @@ describe('Barnsheets Tabs and Sorting', () => {
     });
 
     it('Farms tab', () => {
-        sheetsPage.clickFarmsTab().waitLoader();
+        sheetsPage.clickFarmsTab();
     });
 
     it('Filter by Disabled', () => {
-        sheetsPage.clickFilterBy('Disabled').waitLoader();
+        sheetsPage.clickFilterBy('Disabled');
     });
 
     it('Filter by Active', () => {
-        sheetsPage.clickFilterBy('Active').waitLoader();
+        sheetsPage.clickFilterBy('Active');
     });
 
     it('Filter by All Farms', () => {
-        sheetsPage.clickFilterBy('All Farms').waitLoader();
+        sheetsPage.clickFilterBy('All Farms');
     });
 
     it('Sort by farm type', () => {
-        sheetsPage.clickSortBy('Type').waitLoader();
+        sheetsPage.clickSortBy('Type');
     });
 
     it('Sort by Open Groups', () => {
-        sheetsPage.clickSortBy('Open Groups').waitLoader();
+        sheetsPage.clickSortBy('Open Groups');
     });
 
     it('Sort by Inventory', () => {
-        sheetsPage.clickSortBy('Inventory').waitLoader();
+        sheetsPage.clickSortBy('Inventory');
     });
 
     it('Sort by Compliance', () => {
-        sheetsPage.clickSortBy('Compliance').waitLoader();
+        sheetsPage.clickSortBy('Compliance');
     });
 
     it('Sort by Mort. Rate', () => {
-        sheetsPage.clickSortBy('Mort. Rate').waitLoader();
+        sheetsPage.clickSortBy('Mort. Rate');
     });
 
     it('Sort by farm', () => {
-        sheetsPage.clickSortBy('Farm').waitLoader();
+        sheetsPage.clickSortBy('Farm');
     });
 
     it('Set pagination', () => {
-        sheetsPage.setElemsOnPage(100).waitLoader();
+        sheetsPage.setElemsOnPage(100);
     });
 
     it('Next page', () => {
-        sheetsPage.clickNextPage().waitLoader();
+        sheetsPage.clickNextPage();
     });
 
     it('Previous page', () => {
-        sheetsPage.clickPrevPage().waitLoader();
+        sheetsPage.clickPrevPage();
     });
 
     it('Groups tab', () => {
-        sheetsPage.clickBarnSheets().clickGroupsTab().waitLoader();
+        sheetsPage.clickBarnSheets().clickGroupsTab();
     });
 
     it('Filter by Closed', () => {
-        sheetsPage.clickFilterBy('Closed').waitLoader();
+        sheetsPage.clickFilterBy('Closed');
     });
 
     it('Filter by Open', () => {
-        sheetsPage.clickFilterBy('Open').waitLoader();
+        sheetsPage.clickFilterBy('Open');
     });
 
     it('Filter by All Groups', () => {
-        sheetsPage.clickFilterBy('All Groups').waitLoader();
+        sheetsPage.clickFilterBy('All Groups');
     });
 
     it('Sort by farm type', () => {
-        sheetsPage.clickSortBy('Type').waitLoader();
+        sheetsPage.clickSortBy('Type');
     });
 
     it('Sort by Group ID', () => {
-        sheetsPage.clickSortBy('Group').waitLoader();
+        sheetsPage.clickSortBy('Group');
     });
 
     it('Sort by Inventory', () => {
-        sheetsPage.clickSortBy('Inventory').waitLoader();
+        sheetsPage.clickSortBy('Inventory');
     });
 
     it('Sort by farm', () => {
-        sheetsPage.clickSortBy('Farm').waitLoader();
+        sheetsPage.clickSortBy('Farm');
     });
 
     it('Sort by Start Date', () => {
-        sheetsPage.clickSortBy('Start').waitLoader();
+        sheetsPage.clickSortBy('Start');
     });
 
     it('Sort by Pigs In', () => {
-        sheetsPage.clickSortBy('Pigs In').waitLoader();
+        sheetsPage.clickSortBy('Pigs In');
     });
 
     it('Sort by Mort. Rate', () => {
-        sheetsPage.clickSortBy('Mort. Rate').waitLoader();
+        sheetsPage.clickSortBy('Mort. Rate');
     });
 
     it('Sort by Est. Avg. Wt', () => {
-        sheetsPage.clickSortBy('Est. Avg.').waitLoader();
+        sheetsPage.clickSortBy('Est. Avg.');
     });
 
     it('Sort by Compliance', () => {
-        sheetsPage.clickSortBy('Compliance').waitLoader();
+        sheetsPage.clickSortBy('Compliance');
     });
 
     it('Sort by Status', () => {
-        sheetsPage.clickSortBy('Status').waitLoader();
+        sheetsPage.clickSortBy('Status');
     });
 
     it('Companies tab', () => {
-        sheetsPage.clickCompaniesTab().waitLoader();
+        sheetsPage.clickCompaniesTab();
     });
 
     it('Filter by Active', () => {
-        sheetsPage.clickFilterBy('Active').waitLoader();
+        sheetsPage.clickFilterBy('Active');
     });
 
     it('Filter by Incomplete', () => {
-        sheetsPage.clickFilterBy('Incomplete').waitLoader();
+        sheetsPage.clickFilterBy('Incomplete');
     });
 
     it('Filter by All Companies', () => {
-        sheetsPage.clickFilterBy('All Companies').waitLoader();
+        sheetsPage.clickFilterBy('All Companies');
     });
 
     it('Choose company', () => {
-        sheetsPage.choose('TA_Tenant').waitLoader();
+        sheetsPage.choose('TA_Tenant');
     });
 });
 
@@ -211,14 +211,13 @@ describe('Edit Moves', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Move');
+        sheetsPage.choose(date[1]).chooseSection('Move');
         movePage.setShipment(test.heads[0], test.weight, test.condition)
             .addRow().clickSelectParam().setTransfer(test.heads[1])
             .addRow().clickSelectParam().setFixAdding(test.heads[2])
             .addRow().clickSelectParam().setFixRemoving(test.heads[3])
             .addRow().clickSelectParam().setFixAdding(test.heads[4])
             .setComment(test.comment).submit();
-        sheetsPage.waitLoader();
         rslt = sheetsPage.moveInfo;
 
         expect(rslt.amount, 'amount of moves').to.equal(test.amount);
@@ -257,7 +256,7 @@ describe('Edit Moves', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(pigs in)', () => {
@@ -281,7 +280,7 @@ describe('Edit Moves', () => {
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(pigs in)', () => {
@@ -305,7 +304,7 @@ describe('Edit Moves', () => {
     });
 
     it('Pig movements Tab', () => {
-        sheetsPage.clickMovesTab().waitLoader();
+        sheetsPage.clickMovesTab();
         rslt = sheetsPage.moveTabInfo(localDate);
 
         expect(rslt.amount, 'amount of moves').to.equal('2');
@@ -342,17 +341,16 @@ describe('Edit Deaths', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Dead');
+        sheetsPage.choose(date[1]).chooseSection('Dead');
         deathPage.setMortWithReason(test.reasons[0], test.chronic[0])
             .addRow().setMortWithReason(test.reasons[1], '0', test.acute[1])
             .addRow().setMortWithReason(test.reasons[2], '0', '0', test.euthanas[2])
             .setComment(test.comment).submit();
-        sheetsPage.waitLoader();
     });
 
     it('Collapse reasons', () => {
-        sheetsPage.deathReasonCollapse(0).deathReasonCollapse(1)
-            .deathReasonCollapse(2).waitLoader();
+        sheetsPage.deathReasonCollapse(0)
+            .deathReasonCollapse(1).deathReasonCollapse(2);
     });
 
     it('Deaths changes(amount)', () => {
@@ -384,7 +382,7 @@ describe('Edit Deaths', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(deaths)', () => {
@@ -402,7 +400,7 @@ describe('Edit Deaths', () => {
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(deaths)', () => {
@@ -431,13 +429,13 @@ describe('Edit Treats', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Medication');
+        sheetsPage.choose(date[1]).chooseSection('Medication');
         treatPage.setWithCcsDosage(test.treats[0], test.heads[0], test.dosage[0])
             .addRow().setWithGalsDosage(test.treats[1], test.heads[1], test.dosage[1], test.gals)
             .addRow().setWithMlsDosage(test.treats[2], test.heads[2], test.dosage[2])
             .addRow().setWithoutDosage(test.treats[3], test.heads[3]).setTotal(test.total)
             .setComment(test.comment).submit();
-        sheetsPage.waitLoader().section('Medic').scrollIntoView({ block: 'center' });
+        sheetsPage.section('Medic').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.treatInfo;
 
         expect(rslt.amount, 'amount of treats').to.equal(test.amount);
@@ -468,7 +466,7 @@ describe('Edit Treats', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(total treats)', () => {
@@ -476,18 +474,18 @@ describe('Edit Treats', () => {
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
     it('Table changes(total treats)', () => {
         expect(sheetsPage.treatsCell(date[1]), 'treatsCell (after save)').to.equal(test.total);
     });
 
     it('Treatments tab', () => {
-        sheetsPage.clickTreatsTab().waitLoader();
+        sheetsPage.clickTreatsTab();
     });
 
     it('Set pagination', () => {
-        sheetsPage.setElemsOnPage(100).waitLoader();
+        sheetsPage.setElemsOnPage(100);
     });
 
     it('Treatments Tab (amount)', () => {
@@ -523,13 +521,13 @@ describe('Edit Symptoms', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Symptom');
+        sheetsPage.choose(date[1]).chooseSection('Symptom');
         symptomPage.setSymptom(test.sympt[0])
             .addRow().setSymptom(test.sympt[1])
             .addRow().setSymptom(test.sympt[2])
             .addRow().setSymptom(test.sympt[3])
             .setComment(test.comment).submit();
-        sheetsPage.waitLoader().section('Sympt').scrollIntoView({ block: 'center' });
+        sheetsPage.section('Sympt').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.symptInfo;
 
         expect(rslt.amount, 'amount of symptoms').to.equal(test.amount + '');
@@ -546,7 +544,7 @@ describe('Edit Symptoms', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(total symptoms)', () => {
@@ -554,7 +552,7 @@ describe('Edit Symptoms', () => {
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(total symptoms)', () => {
@@ -573,9 +571,9 @@ describe('Edit Temps', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Temps');
+        sheetsPage.choose(date[1]).chooseSection('Temps');
         tempsPage.setTemps(high + '', low + '').setComment(comment).submit();
-        sheetsPage.waitLoader().section('Temps').scrollIntoView({ block: 'center' });
+        sheetsPage.section('Temps').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.tempsInfo;
     });
 
@@ -592,11 +590,11 @@ describe('Edit Temps', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 });
 
@@ -612,7 +610,7 @@ describe('Edit Water usage', () => {
     it('Make changes to checkup', () => {
         sheetsPage.choose(date[1]).waitLoader().chooseSection('Water Usage');
         waterPage.setGals(consumed + '').setComment(comment).submit();
-        sheetsPage.waitLoader().section('Water Usage').scrollIntoView({ block: 'center' });
+        sheetsPage.section('Water Usage').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.waterInfo;
     });
 
@@ -625,11 +623,11 @@ describe('Edit Water usage', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 });
 
@@ -642,11 +640,12 @@ describe('Edit Media', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Media').waitLoader()
+        sheetsPage.choose(date[1]).chooseSection('Media')
             .uploadMedia(photo[0]).uploadMedia(photo[1])
             .uploadMedia(tdata.randVideo)
             .uploadMedia(tdata.randAudio)
-            .submit().waitLoader().section('Media').scrollIntoView({ block: 'center' });
+            .submit()
+            .section('Media').scrollIntoView({ block: 'center' });
     });
 
     it('Media changes(nOfAudio)', () => {
@@ -658,7 +657,7 @@ describe('Edit Media', () => {
     });
 
     it('Save and review', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(media label)', () => {
@@ -666,7 +665,7 @@ describe('Edit Media', () => {
     });
 
     it('Save edits', () => {
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.clickSave();
     });
 
     it('Table changes(media label)', () => {
@@ -674,7 +673,7 @@ describe('Edit Media', () => {
     });
 
     it('Media tab', () => {
-        sheetsPage.clickMediaTab().waitLoader();
+        sheetsPage.clickMediaTab();
     });
 
     it('Open image', () => {
@@ -728,7 +727,7 @@ describe('Edit Diagnosis', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.clickMenuCell(date[1]).waitLoader().clickOption('Edit Diagnosis').waitLoader();
+        sheetsPage.clickMenuCell(date[1]).clickOption('Edit Diagnosis');
         dBar.clear().setDiagnos(test.diseases[0], test.types[0], test.comments[0]).setAlert()
             .addRow().setDiagnos(test.diseases[1], test.types[1], test.comments[1])
             .addRow().setDiagnos(test.diseases[2], test.types[2], test.comments[2])
@@ -740,7 +739,7 @@ describe('Edit Diagnosis', () => {
     });
 
     it('Open Diagnosis tab', () => {
-        sheetsPage.clickDiagnosTab().waitLoader();
+        sheetsPage.clickDiagnosTab();
         rslt = sheetsPage.diagnosInfo;
     });
 
@@ -759,7 +758,7 @@ describe('Edit Diagnosis', () => {
     }
 
     it('Open Diagnosis edit', () => {
-        sheetsPage.clickDiagnosMenu().clickOption('Edit Diagnosis').waitLoader();
+        sheetsPage.clickDiagnosMenu().clickOption('Edit Diagnosis');
     });
 
     it('Collapse diagnosis info', () => {
@@ -790,8 +789,8 @@ describe('Edit Diagnosis', () => {
     });
 
     it('Delete Diagnosis', () => {
-        sheetsPage.clickDiagnosMenu().clickOption('Delete Diagnosis').waitLoader()
-            .clickDiagnosMenu().clickOption('Delete Diagnosis').waitLoader().pause();
+        sheetsPage.clickDiagnosMenu().clickOption('Delete Diagnosis')
+            .clickDiagnosMenu().clickOption('Delete Diagnosis').pause();
     });
 
     it('Notification about update Diagnosis', () => {
@@ -803,7 +802,7 @@ describe('Edit Diagnosis', () => {
     });
 
     it('View Checkup', () => {
-        sheetsPage.clickDiagnosMenu().clickOption('View Checkup').waitLoader();
+        sheetsPage.clickDiagnosMenu().clickOption('View Checkup');
 
         rslt = sheetsPage.diagnosInfo;
     });
@@ -836,11 +835,11 @@ describe('Edit full checkup', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().createCheckup(test);
+        sheetsPage.choose(date[1]).createCheckup(test);
     });
 
     it('Moves changes', () => {
-        sheetsPage.closeBtn.isExisting() && sheetsPage.close().waitLoader();
+        sheetsPage.closeBtn.isExisting() && sheetsPage.close();
         rslt = sheetsPage.moveInfo;
         const heads = [].concat(rslt.added, rslt.removed);
 
@@ -902,7 +901,7 @@ describe('Edit full checkup', () => {
     });
 
     it('Save changes', () => {
-        sheetsPage.clickSave().waitLoader().clickSave().waitLoader();
+        sheetsPage.clickSave().clickSave();
     });
 
     it('Table changes(deaths)', () => {
@@ -939,21 +938,21 @@ describe('Edit few checkups', () => {
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates(3);
         invBefore = +sheetsPage.inventoryCell(date[0]);
-        sheetsPage.choose(date[1]).waitLoader();
+        sheetsPage.choose(date[1]);
         tdata.toStringVal(test);
     });
 
     for (let i = 0, length = test.length - 1; i <= length; i++) {
         it((i + 1) + '-checkup', () => {
-            sheetsPage.closeBtn.isExisting() && sheetsPage.close().waitLoader();
+            sheetsPage.closeBtn.isExisting() && sheetsPage.close();
             (i === 0) || sheetsPage.rightButton.isExisting() && sheetsPage.clickRight();
-            sheetsPage.waitLoader().createCheckup(test[i]);
+            sheetsPage.createCheckup(test[i]);
         });
     }
 
     it('Save edits', () => {
-        sheetsPage.closeBtn.isExisting() && sheetsPage.close().waitLoader();
-        sheetsPage.clickSave().waitLoader();
+        sheetsPage.closeBtn.isExisting() && sheetsPage.close();
+        sheetsPage.clickSave();
     });
 
     for (let i = 0, length = test.length - 1; i <= length; i++) {
@@ -980,13 +979,13 @@ describe('Edit few checkups', () => {
 
     for (let i = 0, length = test.length - 1; i <= length; i++) {
         it('Display changes ' + (i + 1) + '-checkup', () => {
-            sheetsPage.choose(date[i + 1]).waitLoader();
+            sheetsPage.choose(date[i + 1]);
 
             expect(sheetsPage.moveInfo.amount, 'amount of moves').to.equal(test[i].moves.amount);
         });
 
         it('Choose and Close section, ' + (i + 1) + '-checkup', () => {
-            sheetsPage.chooseSection('Move').close().waitLoader();
+            sheetsPage.chooseSection('Move').close();
         });
 
         it('Moves changes, ' + (i + 1) + '-checkup', () => {
@@ -1051,7 +1050,7 @@ describe('Edit few checkups', () => {
         });
 
         it('Close, ' + (i + 1) + '-checkup', () => {
-            sheetsPage.clickCloseDC().waitLoader();
+            sheetsPage.clickCloseDC();
         });
     }
 });

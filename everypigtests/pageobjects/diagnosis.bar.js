@@ -19,9 +19,9 @@ class DiagnosisBar extends ReportPage {
     get groupInfoColl() { return $('.group-info-collapse'); }
     get diagnosInfoColl() { return $('.diagnose-collapse'); }
 
-    clickSave() { return this.saveBtn.waitClick() && this; }
-    clickGroupInfoTab() { return this.groupInfoTab.waitClick() && this; }
-    clickDiagnosInfoCol() { return this.diagnosInfoColl.waitClick() && this; }
+    clickSave() { return this.saveBtn.waitClick() && this.waitLoader(); }
+    clickGroupInfoTab() { return this.groupInfoTab.waitClick() && this.waitLoader(); }
+    clickDiagnosInfoCol() { return this.diagnosInfoColl.waitClick() && this.waitLoader(); }
 
     setType(type, index) { return this.paramRow(index).$('span*=' + type).waitClick() && this; }
     setAlert(index) { return this.paramRow(index).$('.unchecked').waitClick() && this; }
