@@ -3,29 +3,28 @@ const checkupPage = require('../pageobjects/checkup.page');
 
 describe('Daily Checkup Navigation', () => {
     const farmName = 'TA_Farm_0000';
-    let groupName, dcStatus;
 
     it('Open', () => {
-        checkupPage.open().waitLoader();
+        checkupPage.open();
 
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(25);
     });
 
     it('Set pagination', () => {
-        checkupPage.setElemsOnPage(100).waitLoader()
+        checkupPage.setElemsOnPage(100)
             .pagination.scrollIntoView({ block: 'center' });
 
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
     it('Search farm', () => {
-        checkupPage.setSearch(farmName).waitLoader();
+        checkupPage.setSearch(farmName);
 
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(1);
     });
 
     it('Choose farm', () => {
-        checkupPage.chooseFarm(farmName).waitLoader();
+        checkupPage.chooseFarm(farmName);
 
         expect(checkupPage.farmName.getText(), 'farm name').to.equal(farmName);
     });
@@ -38,20 +37,19 @@ describe('Daily Checkup Navigation', () => {
         if (checkupPage.checkinBtn.getProperty('disabled')) {
             this.skip();
         } else {
-            checkupPage.clickCheckin().waitLoader();
+            checkupPage.clickCheckin();
 
             expect(checkupPage.checkinState.getText(), 'checkinState').to.equal('You\'re checked in at this farm');
         }
     });
 
     it('Choose group', () => {
-        let i = 0, rows = $$(checkupPage.groupRow);
+        let i = 0, dcStatus, rows = $$(checkupPage.groupRow);
         do {
             dcStatus = rows[i].$('.button').getText();
             i++;
-        } while (dcStatus === 'Update')
-        groupName = checkupPage.getString(rows[i - 1].$('.group-name'), /(?<=Group\s•\s)(.+)/u);
-        checkupPage.chooseGroup(groupName).waitLoader();
+        } while (dcStatus !== 'Start')
+        checkupPage.setGroup(rows[--i]).chooseGroup(checkupPage.group);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -61,19 +59,19 @@ describe('Daily Checkup Navigation', () => {
     });
 
     it('Group info Tab', () => {
-        checkupPage.clickGroupInfoTab().waitLoader();
+        checkupPage.clickGroupInfoTab();
 
         expect($(checkupPage.collapseWrapper).getText(), 'checkup section existing').to.equal(groupName);
     });
 
     it('Checkup Tab', () => {
-        checkupPage.clickCheckupTab().waitLoader();
+        checkupPage.clickCheckupTab();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Leave checkup', () => {
-        checkupPage.clickFarmfeed().waitLoader();
+        checkupPage.clickFarmfeed();
         if (dcStatus === 'Update') {
             expect(checkupPage.modalWrapper.isExisting(), 'modal window existing').to.equal(false);
         } else {
@@ -85,7 +83,7 @@ describe('Daily Checkup Navigation', () => {
         if (dcStatus === 'Update') {
             this.skip();
         } else {
-            checkupPage.clickToModal('Cancel').waitLoader();
+            checkupPage.clickToModal('Cancel');
 
             expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
         }
@@ -95,10 +93,16 @@ describe('Daily Checkup Navigation', () => {
         if (dcStatus === 'Up-to-date') {
             this.skip();
         } else {
-            checkupPage.clickFarmfeed().waitLoader().clickToModal('Yes').waitLoader();
+            checkupPage.clickFarmfeed().clickToModal('Yes');
 
             expect(browser.getUrl(), 'checkup url').to.match(/(\/farmfeed)$/);
         }
+    });
+
+    it('Clear Search farm', () => {
+        checkupPage.clickCheckup().clearSearch();
+
+        expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
 });
@@ -106,11 +110,13 @@ describe('Daily Checkup Navigation', () => {
 describe('Report Movements', () => {
     const movePage = require('../pageobjects/movements.page');
     const test = tdata.randMovesData();
-    let rslt = undefined;
+    let rslt;
 
     it('Choose random group', () => {
         checkupPage.chooseRandCheckup();
         tdata.toStringVal(test);
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Choose movements', () => {
@@ -125,7 +131,7 @@ describe('Report Movements', () => {
             .addRow().clickSelectParam().setFixAdding(test.heads[2])
             .addRow().clickSelectParam().setFixRemoving(test.heads[3])
             .addRow().clickSelectParam().setFixAdding(test.heads[4])
-            .setComment(test.comment).submit().waitLoader();
+            .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
@@ -177,8 +183,10 @@ describe('Report Deaths', () => {
 
     it('Choose random group', () => {
         admin.openPrefs().setOnMortReason();
-        checkupPage.chooseRandCheckup().setId();
+        checkupPage.chooseRandCheckup();
         tdata.toStringVal(test);
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Choose deaths', () => {
@@ -191,13 +199,13 @@ describe('Report Deaths', () => {
         deathPage.setMortWithReason(test.reasons[0], test.chronic[0])
             .addRow().setMortWithReason(test.reasons[1], '0', test.acute[1])
             .addRow().setMortWithReason(test.reasons[2], '0', '0', test.euthanas[2])
-            .setComment(test.comment).submit().waitLoader();
+            .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
 
     it('Collapse reasons', () => {
-        checkupPage.reasonCollapse(0).reasonCollapse(1).reasonCollapse(2).waitLoader();
+        checkupPage.reasonCollapse(0).reasonCollapse(1).reasonCollapse(2);
     });
 
     it('Amount', () => {
@@ -238,6 +246,8 @@ describe('Report Treats', () => {
     it('Choose random group', () => {
         checkupPage.chooseRandCheckup();
         tdata.toStringVal(test);
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Choose mediacations', () => {
@@ -251,7 +261,7 @@ describe('Report Treats', () => {
             .addRow().setWithGalsDosage(test.treats[1], test.heads[1], test.dosage[1], test.gals)
             .addRow().setWithMlsDosage(test.treats[2], test.heads[2], test.dosage[2])
             .addRow().setWithoutDosage(test.treats[3], test.heads[3]).setTotal(test.total)
-            .setComment(test.comment).submit().waitLoader();
+            .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
@@ -296,6 +306,8 @@ describe('Report Symptoms', () => {
 
     it('Choose random group', () => {
         checkupPage.chooseRandCheckup();
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Choose symptoms', () => {
@@ -309,7 +321,7 @@ describe('Report Symptoms', () => {
             .addRow().setSymptom(test.sympt[1])
             .addRow().setSymptom(test.sympt[2])
             .addRow().setSymptom(test.sympt[3])
-            .setComment(test.comment).submit().waitLoader();
+            .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
@@ -341,6 +353,8 @@ describe('Report Temps', () => {
 
     it('Choose random group', () => {
         checkupPage.chooseRandCheckup();
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Choose temps', () => {
@@ -350,7 +364,7 @@ describe('Report Temps', () => {
     });
 
     it('Fill report', () => {
-        tempsPage.setTemps(high + '', low + '').setComment(comment).submit().waitLoader();
+        tempsPage.setTemps(high + '', low + '').setComment(comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
@@ -378,6 +392,8 @@ describe('Report Water usage', () => {
 
     it('Choose random group', () => {
         checkupPage.chooseRandCheckup();
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Choose water usage', () => {
@@ -387,7 +403,7 @@ describe('Report Water usage', () => {
     });
 
     it('Fill report', () => {
-        waterPage.setGals(consumed + '').setComment(comment).submit().waitLoader();
+        waterPage.setGals(consumed + '').setComment(comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
@@ -412,13 +428,15 @@ describe('Add Media', () => {
 
     it('Choose random group', () => {
         checkupPage.chooseRandCheckup();
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Upload media', () => {
         checkupPage.clearMedia()
             .uploadMedia(tdata.randPhoto)
             .uploadMedia(tdata.randVideo)
-            .uploadMedia(tdata.randAudio).waitLoader();
+            .uploadMedia(tdata.randAudio);
     });
 
     it('Amount', () => {
@@ -439,7 +457,7 @@ describe('Add Media', () => {
         it('Record audio', () => {
             audioPage.record();
             browser.pause(5000);
-            audioPage.record().continue().setComment(comment).save().waitLoader();
+            audioPage.record().continue().setComment(comment).save();
 
             expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
         });
@@ -461,7 +479,9 @@ describe('Add Media', () => {
 describe('Create empty checkup', () => {
 
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup(true);
+        checkupPage.chooseRandCheckup();
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Create checkup', () => {
@@ -469,11 +489,13 @@ describe('Create empty checkup', () => {
         for (let i = 0; i < length; i++) {
             checkupPage.clickNoToReport(i);
         }
+        checkupPage.submitDC().clickToModal('OK');
+
+        expect($(checkupPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
 
     it('Moves report', () => {
-        //checkupPage.closeBtn.isExisting() && checkupPage.close().waitLoader();
-        checkupPage.openCurrent().waitLoader();
+        checkupPage.openCurrent();
 
         expect(checkupPage.isEmpty(0), 'isEmpty').to.equal(true);
     });
@@ -528,16 +550,20 @@ describe('Create full checkup', () => {
 
     it('Choose random group', () => {
         admin.openPrefs().setOffMortReason();
-        checkupPage.chooseRandCheckup(true);
+        checkupPage.chooseRandCheckup();
         tdata.toStringVal(test);
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Create checkup', () => {
         checkupPage.createCheckup(test).submitDC().clickToModal('OK');
+
+        expect($(checkupPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
 
     it('Moves report', () => {
-        checkupPage.openCurrent().waitLoader();
+        checkupPage.openCurrent();
         rslt = checkupPage.moveInfo;
         const heads = [].concat(rslt.added, rslt.removed);
 
