@@ -24,7 +24,12 @@ exports.config = {
     //
     specs: [
         './everypigtests/specs/**/barnsheets.spec.js',
-        './everypigtests/specs/**/checkup.spec.js'
+        './everypigtests/specs/**/checkup.spec.js',
+        './everypigtests/specs/**/offline.checkup.spec.js',
+        './everypigtests/specs/**/move.spec.js',
+        './everypigtests/specs/**/symptom.spec.js',
+        './everypigtests/specs/**/treat.spec.js',
+        './everypigtests/specs/**/death.spec.js',
     ],
     // Patterns to exclude.
     exclude: [
@@ -61,9 +66,9 @@ exports.config = {
         browserName: 'chrome',
         'goog:chromeOptions': {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
+            //mobileEmulation: { 'deviceName': 'Pixel 2' },
             'args': ['--window-size=1440,900',
-                    //'--headless', '--disable-gpu',
-                    //'--start-fullscreen',
+                    '--headless', '--disable-gpu',
                     '--use-fake-device-for-media-stream',
                     '--use-fake-ui-for-media-stream',
                     '--use-gpu-in-tests',
@@ -112,7 +117,7 @@ exports.config = {
     pauseTimeout: 300,
     syncTimeout: 1500,
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 60000,
+    waitforTimeout: 10000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
