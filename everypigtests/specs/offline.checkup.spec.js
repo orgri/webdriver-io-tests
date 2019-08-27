@@ -244,7 +244,7 @@ describe('Report Deaths', () => {
         this.currentTest._currentRetry > 0
             && this.currentTest.title == 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(0);
+                .chooseRandCheckup().chooseSection(1);
     });
 
     it('Choose random group', () => {
@@ -358,7 +358,7 @@ describe('Report Treats', () => {
         this.currentTest._currentRetry > 0
             && this.currentTest.title == 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(0);
+                .chooseRandCheckup().chooseSection(2);
     });
 
     it('Choose random group', () => {
@@ -468,7 +468,7 @@ describe('Report Symptoms', () => {
         this.currentTest._currentRetry > 0
             && this.currentTest.title == 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(0);
+                .chooseRandCheckup().chooseSection(3);
     });
 
     it('Choose random group', () => {
@@ -552,7 +552,7 @@ describe('Report Temps', () => {
             this.currentTest._currentRetry > 0
                 && this.currentTest.title == 'Fill report'
                 && checkupPage.netOn(false).open().netOff()
-                    .chooseRandCheckup().chooseSection(0);
+                    .chooseRandCheckup().chooseSection(4);
         });
 
     it('Choose random group', () => {
@@ -625,7 +625,7 @@ describe('Report Water usage', () => {
         this.currentTest._currentRetry > 0
             && this.currentTest.title == 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(0);
+                .chooseRandCheckup().chooseSection(5);
     });
 
     it('Choose random group', () => {
