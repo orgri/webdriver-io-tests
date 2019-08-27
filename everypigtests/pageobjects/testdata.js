@@ -282,7 +282,7 @@ class TestData {
         return faker.random.arrayElement(
             ["3FLEX® 250", "3FLEX® 50", "Activate® 1 Gal", "Activate® 5 Gal", "Aivlosin® 160",
                 "Aivlosin® 400", "Amoxicillin Sol.", "Amoxicillin Sol. RED 187.5", "Amoxicillin Sol. RED 37.5",
-                "Apple Cider Vinegar", "Apple Cider Vinegar Oral", "Aspirin Liquid Concentrate + Caffeine",
+                /*"Apple Cider Vinegar",*/ "Apple Cider Vinegar Oral", "Aspirin Liquid Concentrate + Caffeine",
                 "Aspirin, Liquid Concentrate", "BVS Concentrate", "Baytril® 100 Injectable Solution",
                 "Blue 2 Liquid", "Bluelite-Swine®", "Ceftiflex®", "Circumvent® PCV G2 100",
                 "Circumvent® PCV G2 500", "Circumvent® PCV-M G2 100", "Circumvent® PCV-M G2 500",
