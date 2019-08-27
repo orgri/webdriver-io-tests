@@ -144,11 +144,14 @@ class CheckupPage extends ReportPage {
     get isReasonExist() { return this.section(1).$(this.collapseWrapper).isExisting(); }
     get reasons() { return this.section(1).$$(this.collapseWrapper); }
     reasonCollapse(idx = 0) { return this.reasons[idx].waitClick() && this.waitLoader(); }
+    isDeathExist(type) { return this.section(1).$('.item*=' + type).isExisting(); }
 
     deathRowInfo(type) {
         return (this.isReasonExist)
             ? this.reasons.map(el => this.getNumber( el.$('span*=' + type) ) )
-            : this.getNumber(this.section(1).$('.item*=' + type).$('div[class^="value"]'));
+            : this.isDeathExist(type)
+                ? this.getFloat(this.section(1).$('.item*=' + type).$('div[class^="value"]'))
+                : '0';
     }
 
     get moveInfo() {
