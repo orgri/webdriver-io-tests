@@ -112,6 +112,6 @@ module.exports = class Page {
     getArray(selector, regex) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
     getString(selector, regex) { return (selector.getText().match(regex) || [])[0]; }
     getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
-    getFloat(selector) { return (selector.getText().match(/[\d+\.]+/u) || [])[0]; }
+    getFloat(selector) { return (selector.getText().match(/[\d\.]+/u) || ['0'])[0]; }
 
 }
