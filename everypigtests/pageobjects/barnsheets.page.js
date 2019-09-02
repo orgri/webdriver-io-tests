@@ -13,6 +13,9 @@ class BarnSheetsPage extends ReportPage {
     get pigMovesTab() { return $('a[href*="/pig-movements"]'); }
     get mediaTab() { return $('div[class="scrollable-content"] a[href*="/media"]'); }
     get dcTab() { return $('.item=Daily Checkups'); }
+    get farmName() { return $('.farm-information h1'); }
+    get groupName() { return $('.group-info-wrapper .group-name'); }
+    get companyName() { return $('.CompanyProfileHeader .company-name'); }
 
     clickTreatsTab() { return this.treatsTab.waitClick() && this.waitLoader(); }
     clickDiagnosTab() { return this.diagnosTab.waitClick() && this.waitLoader(); }
@@ -37,6 +40,8 @@ class BarnSheetsPage extends ReportPage {
     get tableRow() { return '.table-row'; }
     get tableRows() { return $$(this.tableRow); }
     get tableItem() { return '.FlexTableItem'; }
+    get tableColumns() { return $(this.tableRow).$$(this.tableItem); }
+    get tableHeader() { return $('div[class^=panel-heading]'); }
     get sortWrapper() { return '.allow-sort-column'; }
     get filterWrapper() { return $('div[class^="table-filter"]'); }
     get sectionWrapper() { return '.Section'; }
@@ -45,13 +50,20 @@ class BarnSheetsPage extends ReportPage {
     get isCheckupsTable() { return $(this.tableRow + '=Date').isExisting(); }
     get dropdownMenu() { return $('.dropdown-layout.isOpen'); }
 
-    tableItemsWith(str) { return $$(this.tableItem + '*=' + str); }
-    tableRowsWith(str) {
-        return $$(this.tableRow + '*=' + str)
-            .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
+    tableItemsWith(str) {
+        str = str ? ('*=' + str) : '';
+        return $$(this.tableItem + str);
     }
 
-    setSearch(name) { return this.inputSearch.waitSetValue(name) && this.waitLoader(); }
+    tableRowsWith(str) {
+        if (str) {
+            return $$(this.tableRow + '*=' + str)
+                .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
+        } else {
+            return $$(this.tableRow);
+        }
+    }
+
     clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this.waitLoader(); }
     clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this.waitLoader(); }
     groupHeader(name) { return $('.group-name=' + name); }
@@ -300,6 +312,9 @@ class BarnSheetsPage extends ReportPage {
             .uploadMedia(data.files.audio)
             .submit();
     }
+    /********************************************** Treatments tab *****************************************************/
+
+    get chart() { return $('.chart-block'); }
 
     /********************************************** Diagnosis tab *****************************************************/
 

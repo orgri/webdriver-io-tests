@@ -7,23 +7,25 @@ describe('Barnsheets Navigation', () => {
 
     it('Open and Search farm', () => {
         sheetsPage.open().setSearch(farmName);
+
         expect(sheetsPage.tableItemsWith(farmName), 'tableItemsWith(farmName) length')
             .to.have.lengthOf(sheetsPage.tableRows.length - 1);
     });
 
     it('Choose farm', () => {
         sheetsPage.choose(farmName);
-        expect($('.farm-info-wrapper h1').getText(), 'farmName').to.equal(farmName);
+
+        expect(sheetsPage.farmName.getText(), 'farmName').to.equal(farmName);
     });
 
     it('Set pagination', () => {
         sheetsPage.setElemsOnPage(10);
 
-        expect(sheetsPage.tableRows, 'length').to.have.lengthOf(11);
+        expect(sheetsPage.tableRows, 'table rows').to.have.lengthOf(11);
 
         sheetsPage.setElemsOnPage(100);
 
-        expect(sheetsPage.tableRows, 'length').to.have.lengthOf.above(10);
+        expect(sheetsPage.tableRows, 'table rows').to.have.lengthOf.above(10);
     });
 
     it('Search group', () => {
@@ -36,23 +38,41 @@ describe('Barnsheets Navigation', () => {
     it('Choose group', () => {
         sheetsPage.choose(groupName);
         groupUrl = browser.getUrl();
-        expect($('.group-info-wrapper .group-name').getText(), 'groupName').to.equal(groupName);
+
+        expect(sheetsPage.groupName.getText(), 'groupName').to.equal(groupName);
     });
 
     it('Treatments tab', () => {
         sheetsPage.clickTreatsTab();
+
+        expect(sheetsPage.chart.isExisting(), 'isChart').to.equal(true);
     });
+
     it('Diagnosis tab', () => {
         sheetsPage.clickDiagnosTab();
+
+        expect(browser.getUrl(), 'diagnosis tab url')
+            .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/diagnoses)$/);
     });
+
     it('Pig movements tab', () => {
         sheetsPage.clickMovesTab();
+
+        expect($(sheetsPage.block).isExisting(), 'is UserPanel').to.equal(true);
     });
+
     it('Media tab', () => {
         sheetsPage.clickMediaTab();
+
+        expect(browser.getUrl(), 'media tab url')
+            .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/media)$/);
     });
+
     it('Daily Checkups tab', () => {
         sheetsPage.clickDcTab();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
 });
@@ -60,135 +80,275 @@ describe('Barnsheets Navigation', () => {
 describe('Barnsheets Tabs and Sorting', () => {
 
     it('Open', () => {
-        sheetsPage.clickBarnSheets().waitForOpen();
+        sheetsPage.clickBarnSheets();
+
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/groups)$/);
     });
 
     it('Farms tab', () => {
         sheetsPage.clickFarmsTab();
+
+        expect(sheetsPage.tableColumns, 'tableColumns number').to.have.lengthOf(8);
     });
+
+/*******************************************************************************
+Check correctness of data filtering and sorting by end-to-end tests
+is costly in time, thats why is checked only UI activity changes.
+These fuctionality must be checked by Unit tests.
+*******************************************************************************/
 
     it('Filter by Disabled', () => {
         sheetsPage.clickFilterBy('Disabled');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('Disabled');
     });
 
     it('Filter by Active', () => {
         sheetsPage.clickFilterBy('Active');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('Active');
     });
 
     it('Filter by All Farms', () => {
         sheetsPage.clickFilterBy('All Farms');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('All Farms');
     });
 
     it('Sort by farm type', () => {
         sheetsPage.clickSortBy('Type');
+
+        expect(sheetsPage.cell(0, 1, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Sort by Open Groups', () => {
         sheetsPage.clickSortBy('Open Groups');
+
+        expect(sheetsPage.cell(0, 2, 1).getAttribute('class'), 
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Sort by Inventory', () => {
         sheetsPage.clickSortBy('Inventory');
+
+        expect(sheetsPage.cell(0, 3, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Sort by Compliance', () => {
         sheetsPage.clickSortBy('Compliance');
+
+        expect(sheetsPage.cell(0, 6, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Sort by Mort. Rate', () => {
         sheetsPage.clickSortBy('Mort. Rate');
+
+        expect(sheetsPage.cell(0, 4, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Sort by farm', () => {
         sheetsPage.clickSortBy('Farm');
+
+        expect(sheetsPage.cell(0, 0, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Set pagination', () => {
         sheetsPage.setElemsOnPage(100);
+
+        expect(sheetsPage.tableRows, 'length').to.have.lengthOf(101);
     });
 
     it('Next page', () => {
         sheetsPage.clickNextPage();
+
+        expect(sheetsPage.tableRows, 'length').to.have.lengthOf(2);
     });
 
     it('Previous page', () => {
         sheetsPage.clickPrevPage();
+
+        expect(sheetsPage.tableRows, 'length').to.have.lengthOf(101);
     });
 
     it('Groups tab', () => {
         sheetsPage.clickBarnSheets().clickGroupsTab();
+
+        expect(sheetsPage.tableColumns, 'tableColumns number').to.have.lengthOf(12);
     });
 
     it('Filter by Closed', () => {
         sheetsPage.clickFilterBy('Closed');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('Closed');
     });
 
     it('Filter by Open', () => {
         sheetsPage.clickFilterBy('Open');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('Open');
     });
 
     it('Filter by All Groups', () => {
         sheetsPage.clickFilterBy('All Groups');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('All Groups');
     });
 
-    it('Sort by farm type', () => {
+    it('Sort by farm type(groups tab)', () => {
         sheetsPage.clickSortBy('Type');
+
+        expect(sheetsPage.cell(0, 2, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Group ID', () => {
+    it('Sort by Group ID(groups tab)', () => {
         sheetsPage.clickSortBy('Group');
+
+        expect(sheetsPage.cell(0, 0, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Inventory', () => {
+    it('Sort by Inventory(groups tab)', () => {
         sheetsPage.clickSortBy('Inventory');
+
+        expect(sheetsPage.cell(0, 5, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by farm', () => {
+    it('Sort by farm(groups tab)', () => {
         sheetsPage.clickSortBy('Farm');
+
+        expect(sheetsPage.cell(0, 1, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Start Date', () => {
+    it('Sort by Start Date(groups tab)', () => {
         sheetsPage.clickSortBy('Start');
+
+        expect(sheetsPage.cell(0, 3, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Pigs In', () => {
+    it('Sort by Pigs In(groups tab)', () => {
         sheetsPage.clickSortBy('Pigs In');
+
+        expect(sheetsPage.cell(0, 4, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Mort. Rate', () => {
+    it('Sort by Mort. Rate(groups tab)', () => {
         sheetsPage.clickSortBy('Mort. Rate');
+
+        expect(sheetsPage.cell(0, 6, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Est. Avg. Wt', () => {
+    it('Sort by Est. Avg. Wt(groups tab)', () => {
         sheetsPage.clickSortBy('Est. Avg.');
+
+        expect(sheetsPage.cell(0, 7, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Compliance', () => {
+    it('Sort by Compliance(groups tab)', () => {
         sheetsPage.clickSortBy('Compliance');
+
+        expect(sheetsPage.cell(0, 9, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
-    it('Sort by Status', () => {
+    it('Sort by Status(groups tab)', () => {
         sheetsPage.clickSortBy('Status');
+
+        expect(sheetsPage.cell(0, 10, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Companies tab', () => {
         sheetsPage.clickCompaniesTab();
+
+        expect(browser.getUrl(), 'companies tab url')
+            .to.match(/(\/barnsheets\/companies)$/);
     });
 
     it('Filter by Active', () => {
         sheetsPage.clickFilterBy('Active');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('Active');
     });
 
     it('Filter by Incomplete', () => {
         sheetsPage.clickFilterBy('Incomplete');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('Incomplete');
     });
 
     it('Filter by All Companies', () => {
         sheetsPage.clickFilterBy('All Companies');
+
+        expect(sheetsPage.filterWrapper.$('div[class*=active]').getText(),
+            'active filter tab').to.have.string('All Companies');
+    });
+
+    it('Sort by farms(companies tab)', () => {
+        sheetsPage.clickSortBy('Farms');
+
+        expect(sheetsPage.cell(0, 1, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
+    });
+
+    it('Sort by Open Groups(companies tab)', () => {
+        sheetsPage.clickSortBy('Open Groups');
+
+        expect(sheetsPage.cell(0, 2, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
+    });
+
+    it('Sort by Inventory(companies tab)', () => {
+        sheetsPage.clickSortBy('Inventory');
+
+        expect(sheetsPage.cell(0, 3, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
+    });
+
+    it('Sort by Compliance(companies tab)', () => {
+        sheetsPage.clickSortBy('Compliance');
+
+        expect(sheetsPage.cell(0, 6, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
+    });
+
+    it('Sort by Mort. Rate(companies tab)', () => {
+        sheetsPage.clickSortBy('Mort. Rate');
+
+        expect(sheetsPage.cell(0, 4, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
+    });
+
+    it('Sort by company(companies tab)', () => {
+        sheetsPage.clickSortBy('Company');
+
+        expect(sheetsPage.cell(0, 0, 1).getAttribute('class'),
+            'attribute class=sorted' ).to.match(/sorted$/);
     });
 
     it('Choose company', () => {
         sheetsPage.choose('TA_Tenant');
+
+        expect(sheetsPage.companyName.getText(), 'tenant name').to.equal('TA_Tenant');
     });
 });
 
@@ -208,6 +368,9 @@ describe('Edit Moves', () => {
         deaths = (sheetsPage.deathsCell(date[1]) === '-') ? 0 : (+sheetsPage.deathsCell(date));
         totalMoved = (invBefore + headMoves + corrected - deaths) + '';
         tdata.toStringVal(test);
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -338,6 +501,9 @@ describe('Edit Deaths', () => {
         weightBefore = sheetsPage.weightCell(date[1]);
         mrBefore = sheetsPage.mrCell(date[1]);
         tdata.toStringVal(test);
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -346,6 +512,8 @@ describe('Edit Deaths', () => {
             .addRow().setMortWithReason(test.reasons[1], '0', test.acute[1])
             .addRow().setMortWithReason(test.reasons[2], '0', '0', test.euthanas[2])
             .setComment(test.comment).submit();
+
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     });
 
     it('Collapse reasons', () => {
@@ -426,6 +594,9 @@ describe('Edit Treats', () => {
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
         tdata.toStringVal(test);
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -482,6 +653,8 @@ describe('Edit Treats', () => {
 
     it('Treatments tab', () => {
         sheetsPage.clickTreatsTab();
+
+        expect(sheetsPage.chart.isExisting(), 'isChart').to.equal(true);
     });
 
     it('Set pagination', () => {
@@ -518,6 +691,9 @@ describe('Edit Symptoms', () => {
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -568,6 +744,9 @@ describe('Edit Temps', () => {
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -575,6 +754,8 @@ describe('Edit Temps', () => {
         tempsPage.setTemps(high + '', low + '').setComment(comment).submit();
         sheetsPage.section('Temps').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.tempsInfo;
+
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     });
 
     it('Temps changes(high temp)', () => {
@@ -605,6 +786,9 @@ describe('Edit Water usage', () => {
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -612,6 +796,8 @@ describe('Edit Water usage', () => {
         waterPage.setGals(consumed + '').setComment(comment).submit();
         sheetsPage.section('Water Usage').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.waterInfo;
+
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     });
 
     it('Water changes(consumed)', () => {
@@ -637,22 +823,36 @@ describe('Edit Media', () => {
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
+    });
+
+    it('Choose media', () => {
+        sheetsPage.choose(date[1]).chooseSection('Media');
+
+        expect(sheetsPage.mediaUploader.isExisting(), 'media uploader').to.equal(true);
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).chooseSection('Media')
+        sheetsPage.reload().clearMedia()
             .uploadMedia(photo[0]).uploadMedia(photo[1])
             .uploadMedia(tdata.randVideo)
             .uploadMedia(tdata.randAudio)
-            .submit()
-            .section('Media').scrollIntoView({ block: 'center' });
-    });
+            .submit();
+        
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
+    },1);
 
     it('Media changes(nOfAudio)', () => {
+        sheetsPage.section('Audio').scrollIntoView({ block: 'center' });
+
         expect(sheetsPage.nOfAudio, 'nOfAudio').to.equal('1');
     });
 
     it('Media changes(nOfMedia)', () => {
+        sheetsPage.section('Media').scrollIntoView({ block: 'center' });
+
         expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('3');
     });
 
@@ -674,22 +874,29 @@ describe('Edit Media', () => {
 
     it('Media tab', () => {
         sheetsPage.clickMediaTab();
+
+        expect(browser.getUrl(), 'media tab url')
+            .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/media)/);
     });
 
     it('Open image', () => {
         sheetsPage.clickOnImg();
-        scale = +sheetsPage.clickScaleOrig().scale.getText().slice(0, -1);
 
         expect(sheetsPage.mediaViewer.isDisplayed(), 'mediaViewer').to.equal(true);
     });
 
     it('Scale minus image', () => {
+        scale = +sheetsPage.clickScaleOrig().scale.getText().slice(0, -1);
         sheetsPage.clickScaleMinus();
 
         expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.be.below(scale);
     });
 
     it('Scale original image', () => {
+        if (!sheetsPage.mediaViewer.isDisplayed()) {
+            sheetsPage.reload().clickOnImg();
+            browser.pause(2500);
+        }
         sheetsPage.clickScaleOrig();
 
         expect(+sheetsPage.scale.getText().slice(0, -1), 'scale percent').to.equal(scale);
@@ -724,6 +931,9 @@ describe('Edit Diagnosis', () => {
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
@@ -732,6 +942,8 @@ describe('Edit Diagnosis', () => {
             .addRow().setDiagnos(test.diseases[1], test.types[1], test.comments[1])
             .addRow().setDiagnos(test.diseases[2], test.types[2], test.comments[2])
             .clickSave();
+
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/groups\/)([\d]+)/);
     });
 
     it('Notification about update Diagnosis', () => {
@@ -741,6 +953,9 @@ describe('Edit Diagnosis', () => {
     it('Open Diagnosis tab', () => {
         sheetsPage.clickDiagnosTab();
         rslt = sheetsPage.diagnosInfo;
+
+        expect(browser.getUrl(), 'diagnosis tab url')
+        .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/diagnoses)$/);
     });
 
     for (let i = 0, length = test.diseases.length - 1; i <= length; i++) {
@@ -832,10 +1047,16 @@ describe('Edit full checkup', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
         invBefore = +sheetsPage.inventoryCell(date[0]);
         tdata.toStringVal(test);
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
     });
 
     it('Make changes to checkup', () => {
         sheetsPage.choose(date[1]).createCheckup(test);
+
+        expect(browser.getUrl(), 'barnsheet url')
+            .to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     });
 
     it('Moves changes', () => {
@@ -938,8 +1159,16 @@ describe('Edit few checkups', () => {
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates(3);
         invBefore = +sheetsPage.inventoryCell(date[0]);
-        sheetsPage.choose(date[1]);
         tdata.toStringVal(test);
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
+    });
+
+    it('Choose checkup', () => {
+        sheetsPage.choose(date[1]);
+
+        expect(sheetsPage.section('Move').isExisting(), 'isSection(Move)').to.equal(true);
     });
 
     for (let i = 0, length = test.length - 1; i <= length; i++) {
@@ -947,6 +1176,9 @@ describe('Edit few checkups', () => {
             sheetsPage.closeBtn.isExisting() && sheetsPage.close();
             (i === 0) || sheetsPage.rightButton.isExisting() && sheetsPage.clickRight();
             sheetsPage.createCheckup(test[i]);
+
+            expect(browser.getUrl(), 'barnsheet url')
+                .to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
         });
     }
 

@@ -109,6 +109,11 @@ module.exports = class Page {
         return this;
     }
 
+    reload() {
+        browser.refresh();
+        return this.waitLoader();
+    }
+
     getArray(selector, regex) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
     getString(selector, regex) { return (selector.getText().match(regex) || [])[0]; }
     getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
