@@ -1,6 +1,9 @@
 node_modules
-Results
-mochawesome-report
+screenshots
+media
+allure-report
+allure-results
 ChromeDriver.txt
 credentials.js
-test.js
+test.spec.js
+.DS_Store

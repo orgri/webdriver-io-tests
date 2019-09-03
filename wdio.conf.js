@@ -33,7 +33,7 @@ exports.config = {
     ],
     // Patterns to exclude.
     exclude: [
-        //'./everypigtests/specs/**/test.js'
+        './everypigtests/specs/**/test.spec.js'
     ],
     //
     // ============
@@ -150,14 +150,11 @@ exports.config = {
     // see also: https://webdriver.io/docs/dot-reporter.html
     reporters: [
         'spec',
-        ['mochawesome',{
-            quiet: true,
-            outputDir: './Results',
-            outputFileFormat: function(opts) {
-              return `results-${opts.cid}.${opts.capabilities.browserName}.json`
-            }
-        }]
-    ],
+        ['allure', {
+        outputDir: 'allure-results',
+        disableWebdriverStepsReporting: true,
+        disableWebdriverScreenshotsReporting: false,
+    }]],
     //
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -259,8 +256,9 @@ exports.config = {
      * @param {Object} test test details
      */
     afterTest: function (test) {
-    //onAfterCommand() must be modified in wdio-mochawesome-reporter/src/index.js
+        const { addAttachment } = require('@wdio/allure-reporter').default;
         browser.takeScreenshot();
+        addAttachment('Browser logs', browser.getLogs('browser'), 'application/json');
     },
     /**
      * Hook that gets executed after the suite has ended
@@ -312,17 +310,3 @@ exports.config = {
     //onReload: function(oldSessionId, newSessionId) {
     //}
 }
-/*
-    onAfterCommand (cmd) {
-        const isScreenshotEndpoint = /\/session\/[^/]*\/screenshot/
-        if (isScreenshotEndpoint.test(cmd.endpoint) && cmd.result.value) {
-            if (typeof this.currTest.context == 'string') {
-                this.currTest.context = JSON.parse(this.currTest.context)
-                this.currTest.addScreenshotContext(cmd.result.value)
-                this.currTest.context = JSON.stringify(this.currTest.context)
-            } else {
-                this.currTest.addScreenshotContext(cmd.result.value)
-            }
-        }
-    }
-*/

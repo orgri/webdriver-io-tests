@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generateMochawesome": "marge ./Results/results-*.json --reportTitle 'Everypig Results' --autoOpen"
+    "report": "allure generate ./allure-results --clean && allure open"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/orgri/webdriver-io-tests#readme",
   "devDependencies": {
+    "@wdio/allure-reporter": "^5.12.1",
     "@wdio/cli": "^5.11.13",
     "@wdio/local-runner": "^5.11.13",
     "@wdio/mocha-framework": "^5.11.0",
@@ -28,9 +29,6 @@
     "chai": "^4.2.0",
     "chromedriver": "^76.0.0",
     "faker": "^4.1.0",
-    "mochawesome": "^4.1.0",
-    "mochawesome-report-generator": "^3.1.5",
-    "wdio-chromedriver-service": "^5.0.2",
-    "wdio-mochawesome-reporter": "^3.2.0"
+    "wdio-chromedriver-service": "^5.0.2"
   }
 }
