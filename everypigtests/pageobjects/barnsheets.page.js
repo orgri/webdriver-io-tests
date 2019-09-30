@@ -36,41 +36,15 @@ class BarnSheetsPage extends ReportPage {
 
     /********************************************* Barnsheets Tables ****************************************************/
 
-    get tableRow() { return '.table-row'; }
     get tableRows() { return $$(this.tableRow); }
-    get tableItem() { return '.FlexTableItem'; }
-    get tableColumns() { return $(this.tableRow).$$(this.tableItem); }
-    get tableHeader() { return $('div[class^=panel-heading]'); }
-    get sortWrapper() { return '.allow-sort-column'; }
-    get filterWrapper() { return $('div[class^="table-filter"]'); }
     get sectionWrapper() { return '.Section'; }
     get sectionHeader() { return '.Header'; }
     get checkupRows() { return $$('span[class="name-icon"] a[href*="/barnsheets/daily-checkup/"]'); }
     get isCheckupsTable() { return $(this.tableRow + '=Date').isExisting(); }
-    get dropdownMenu() { return $('.dropdown-layout.isOpen'); }
 
-    tableItemsWith(str) {
-        str = str ? ('*=' + str) : '';
-        return $$(this.tableItem + str);
-    }
-
-    tableRowsWith(str) {
-        if (str) {
-            return $$(this.tableRow + '*=' + str)
-                .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
-        } else {
-            return $$(this.tableRow);
-        }
-    }
-
-    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this.waitLoader(); }
-    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this.waitLoader(); }
     groupHeader(str) { return $('.group-name=' + str); }
-
     choose(str) { return $('*=' + str).waitClick() && this.waitLoader(); }
-
     isCellExist(date, str) { return $(this.tableRow + '*=' + date).$(this.tableItem + '*=' + str).isExisting(); }
-    cell(date, column = 0, row = 0) { return this.tableRowsWith(date)[row].$$(this.tableItem)[column]; }
     dateCell(date) { return this.cell(date).getText(); }
     mediaLabel(date) { return this.cell(date).$('.media-label').getText(); }
     deathsCell(date) { return this.cell(date, 1).getText(); }
@@ -82,9 +56,6 @@ class BarnSheetsPage extends ReportPage {
     inventoryCell(date) { return this.cell(date, 7).getText(); }
     mrCell(date) { return this.cell(date, 8).getText(); }
     weightCell(date) { return this.cell(date, 9).getText(); }
-
-    clickMenuCell(str, column = 10) { return this.cell(str, column).$('.fa.fa-dots-three-horizontal').waitClick() && this.waitLoader(); }
-    clickOption(str) { return this.dropdownMenu.$('.list-item-li' + '=' + str).waitClick() && this.waitLoader(); }
 
     chooseRandGroup(farmPrefix = 'TA_Farm', groupPrefix = 'TA_PigGroup') {
         this.open().clickFarmsTab().setElemsOnPage(100);
@@ -119,7 +90,7 @@ class BarnSheetsPage extends ReportPage {
     get reasonWrapper() { return 'div[class*="reason-collapse"]'; }
     get isReasonExist() { return this.section('Dead').$(this.reasonWrapper).isExisting(); }
     get deathReasons() { return this.section('Dead').$$(this.reasonWrapper); }
-    get mainComment() { return (this.section('Notes Notes').getText().match(/(?<=Edit\n)(.|\n)+?(?=\nSee)/g) || [])[0]; }
+    get mainComment() { return (this.section('NotesNotes').getText().match(/(?<=Edit\n)(.|\n)+?(?=\nSee)/g) || [])[0]; }
     get nOfMedia() { return this.section('Media').getText().match(/[0-9]+/)[0]; }
     get nOfAudio() { return this.section('Audio').getText().match(/[0-9]+/)[0]; }
     get reComment() { return /(?<=Notes\n)(.|\n)+?(?=\nSee)/g; }
