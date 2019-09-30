@@ -3,6 +3,7 @@ const checkupPage = require('../pageobjects/checkup.page');
 
 describe('Daily Checkup Navigation', () => {
     const farmName = 'TA_Farm_0000';
+    let dcStatus;
 
     it('Open', () => {
         checkupPage.open();
@@ -44,7 +45,7 @@ describe('Daily Checkup Navigation', () => {
     });
 
     it('Choose group', () => {
-        let i = 0, dcStatus, rows = $$(checkupPage.groupRow);
+        let i = 0, rows = $$(checkupPage.groupRow);
         do {
             dcStatus = rows[i].$('.button').getText();
             i++;
@@ -61,7 +62,7 @@ describe('Daily Checkup Navigation', () => {
     it('Group info Tab', () => {
         checkupPage.clickGroupInfoTab();
 
-        expect($(checkupPage.collapseWrapper).getText(), 'checkup section existing').to.equal(groupName);
+        expect($(checkupPage.collapseWrapper).getText(), 'checkup section existing').to.equal(checkupPage.group);
     });
 
     it('Checkup Tab', () => {
@@ -90,7 +91,7 @@ describe('Daily Checkup Navigation', () => {
     });
 
     it('Yes to confirmation', function () {
-        if (dcStatus === 'Up-to-date') {
+        if (dcStatus === 'Update') {
             this.skip();
         } else {
             checkupPage.clickFarmfeed().clickToModal('Yes');
