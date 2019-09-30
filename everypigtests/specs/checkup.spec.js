@@ -18,6 +18,15 @@ describe('Daily Checkup Navigation', () => {
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
+    it('Search special chars', () => {
+        //just check whether page crashes or not, need to clarify expected behaviour
+        checkupPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
+            .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
+            .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
+
+        expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+    });
+
     it('Search farm', () => {
         checkupPage.setSearch(farmName);
 
