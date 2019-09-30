@@ -5,8 +5,23 @@ describe('Barnsheets Navigation', () => {
     const farmName = 'TA_Farm_0000';
     const groupName = 'TA_PigGroup_0000_0001';
 
-    it('Open and Search farm', () => {
-        sheetsPage.open().setSearch(farmName);
+    it('Open', () => {
+        sheetsPage.open();
+
+        expect($(sheetsPage.tableRow).isExisting(), 'table-row').to.equal(true);
+    });
+
+    it('Search special chars', () => {
+        //just check whether page crashes or not, need to clarify expected behaviour
+        sheetsPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
+            .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
+            .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
+
+        expect(sheetsPage.inputSearch.isExisting(), 'search').to .equal(true);
+    });
+
+    it('Search farm', () => {
+        sheetsPage.setSearch(farmName);
 
         expect(sheetsPage.tableItemsWith(farmName), 'tableItemsWith(farmName) length')
             .to.have.lengthOf(sheetsPage.tableRows.length - 1);
@@ -26,6 +41,15 @@ describe('Barnsheets Navigation', () => {
         sheetsPage.setElemsOnPage(100);
 
         expect(sheetsPage.tableRows, 'table rows').to.have.lengthOf.above(10);
+    });
+
+    it('Search special chars', () => {
+        //just check whether page crashes or not, need to clarify expected behaviour
+        sheetsPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
+            .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
+            .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
+
+        expect(sheetsPage.inputSearch.isExisting(), 'search').to .equal(true);
     });
 
     it('Search group', () => {
@@ -350,6 +374,62 @@ These fuctionality must be checked by Unit tests.
 
         expect(sheetsPage.companyName.getText(), 'tenant name').to.equal('TA_Tenant');
     });
+});
+
+describe('Download', () => {
+    let groupName;
+    it('Choose random group', () => {
+        sheetsPage.chooseRandGroup();
+        groupName = sheetsPage.groupName.getText();
+
+        expect(sheetsPage.tableHeader.getText(), 'table header')
+            .to.equal('Daily Checkups');
+    });
+
+    it('Daily Checkup Data', () => {
+        const href = sheetsPage.cell('', 0, 1).$('.color-primary a')
+            .getAttribute('href').match(/[0-9]+/u)[0],
+            file = 'daily-checkup-' + href + '.csv';
+
+        sheetsPage.clickMenuCell('', 1).clickOption('Download Data')
+            .checkFileExists(file, 30000);
+    });
+
+    it('Barn Sheet Data', () => {
+        const file = 'barnsheets-' + groupName + '.csv';
+        sheetsPage.clickFarmsTab().clickMenuCell(groupName)
+            .clickOption('Download Barn Sheet')
+            .checkFileExists(file, 30000);
+    });
+
+    it('Mortality Data', () => {
+        const file = 'mortality-report-' + groupName + '.csv';
+        sheetsPage.clickMenuCell(groupName)
+            .clickOption('Download Mortality Data')
+            .checkFileExists(file, 30000);
+    });
+
+    it('Treatment Data', () => {
+        const file = 'treatments-' + groupName + '.csv';
+        sheetsPage.clickMenuCell(groupName)
+            .clickOption('Download Treatment Data')
+            .checkFileExists(file, 30000);
+    });
+
+    it('Symptom Data', () => {
+        const file = 'symptoms-' + groupName + '.csv';
+        sheetsPage.clickMenuCell(groupName)
+            .clickOption('Download Symptom Data')
+            .checkFileExists(file, 30000);
+    });
+
+    it('Movement Data', () => {
+        const file = 'pig-migrations-' + groupName + '.csv';
+        sheetsPage.clickMenuCell(groupName)
+            .clickOption('Download Movement Data')
+            .checkFileExists(file, 30000);
+    });
+
 });
 
 describe('Edit Moves', () => {
