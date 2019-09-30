@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 module.exports = class Page {
     constructor() {
         this.baseUrl = browser.config.baseUrl;
@@ -12,6 +14,7 @@ module.exports = class Page {
     get isOffNet() { return this.offNet.isExisting(); }
     get notification() { return $('.rrt-text'); }
     get mediaUploader() { return $('.MediaUploader'); }
+    get uploadProgress() { return $('div[class^=upload-progress]'); }
     get removeMediaButton() { return this.mediaUploader.$('.asset-wrapper').$('.fa.fa-trash-o'); }
     get image() { return this.mediaUploader.$('.asset-wrapper').$('.image'); }
     get audio() { return this.mediaUploader.$('.asset-wrapper').$('.soundwave'); }
@@ -19,6 +22,9 @@ module.exports = class Page {
     get nextPageBtn() { return $('.paginate_button.next'); }
     get prevPageBtn() { return $('.paginate_button.previous'); }
     get barnsheets() { return $('.sidebar').$('.item-name*=Barn'); }
+    get resources() { return $('.sidebar').$('.item-name*=Resources'); }
+    get modalWrapper() { return $('.ModalsContainer.isOpen'); }
+    get inputSearch() { return $('input[placeholder="Search..."]'); }
 
     get checkup() {
         return isMobile
@@ -38,8 +44,13 @@ module.exports = class Page {
     clickCheckup() { return this.checkup.waitClick() && this.waitLoader(); }
     clickBarnSheets() { return this.barnsheets.waitClick() && this.waitLoader(); }
     clickFarmfeed() { return this.farmfeed.waitClick() && this.waitLoader(); }
+    clickResources() { return this.resources.waitClick() && this.waitLoader(); }
     clickNextPage() { return this.nextPageBtn.waitClick() && this.waitLoader(); }
     clickPrevPage() { return this.prevPageBtn.waitClick() && this.waitLoader(); }
+    clickBtn(str) { return $('button=' + str).waitClick() && this.waitLoader(); }
+    clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
+    setSearch(str) { return this.inputSearch.waitSetValue(str) && this.waitLoader(); }
+    clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
 
     setElemsOnPage(number) {
         return this.pagination.waitClick()
@@ -79,25 +90,25 @@ module.exports = class Page {
 
     waitUploader() {
         browser.waitUntil(() => {
-            return (this.notification.isExisting() || this.removeMediaButton.isExisting())
+            return (this.notification.isExisting() 
+                || !this.uploadProgress.isExisting())
         }, 90000, 'Time to upload is exceeded 90000ms');
         return this;
     }
 
     uploadMedia(file) {
-        const path = require('path')
         const pathToMedia = path.resolve(browser.config.mediaPath, file);
-        const idx = isMobile ? "2" : "1";
-        const script = "document.getElementsByTagName('input')[IDX].style.display = 'block'".replace(/IDX/, idx);
+        const idx = isMobile ? '1' : '0';
+        const script = "document.querySelectorAll('input[type=file]')[IDX].style.display = 'block'".replace(/IDX/, idx);
         browser.execute(script);
         this.inputFile.waitForDisplayed();
         this.inputFile.waitSetValue(pathToMedia);
         this.waitUploader();
-        this.notification.isExisting() && browser.pause(5000);
         return this;
     }
 
     netOff() {
+        browser.pause(2 * browser.config.syncTimeout);
         browser.setNetworkConditions({ latency: 0, throughput: 0, offline: true });
         this.waitForOff();
         return this;
@@ -119,4 +130,86 @@ module.exports = class Page {
     getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
     getFloat(selector) { return (selector.getText().match(/[\d\.]+/u) || ['0'])[0]; }
 
+/********************************* Tables *************************************/
+
+    get tableRow() { return '.table-row'; }
+    get tableItem() { return '.FlexTableItem'; }
+    get tableColumns() { return $(this.tableRow).$$(this.tableItem); }
+    get tableHeader() { return $('div[class^=panel-heading]'); }
+    get sortWrapper() { return '.allow-sort-column'; }
+    get filterWrapper() { return $('div[class^="table-filter"]'); }
+    get dots() { return '.fa.fa-dots-three-horizontal'; }
+    get dropdownMenu() { return $('.dropdown-layout.isOpen'); }
+    get list() { return '.list-item-li'; }
+
+    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this.waitLoader(); }
+    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this.waitLoader(); }
+    clickDots(wrapper) { return wrapper.$(this.dots).waitClick() && this.waitLoader(); }
+
+    tableItemsWith(str) {
+        str = str ? ('*=' + str) : '';
+        return $$(this.tableItem + str);
+    }
+
+    tableRowsWith(str) {
+        if (str) {
+            return $$(this.tableRow + '*=' + str)
+                .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
+        } else {
+            return $$(this.tableRow);
+        }
+    }
+
+    cell(str, column = 0, row = 0) { return this.tableRowsWith(str)[row].$$(this.tableItem)[column]; }
+
+    clickMenuCell(str, row) {
+        let col = this.tableColumns.length - 1;
+        return this.clickDots(this.cell(str, col, row));
+    }
+
+    clickOption(str) { return this.dropdownMenu.$(this.list + '=' + str).waitClick() && this.waitLoader(); }
+
+/********************************* Media *************************************/
+
+    get scale() { return $('.current-scale.visible'); }
+    get mediaViewer() { return $('.mediaViewer.is-open'); }
+
+    clickOnImg() { return $('.bg-image').waitClick() && this.waitLoader(); }
+    clickScalePlus() { return $('.fa.fa-search-plus').waitClick() && this; }
+    clickScaleMinus() { return $('.fa.fa-search-minus').waitClick() && this; }
+    clickScaleOrig() { return $('.fa.fa-maximize').waitClick() && this; }
+    clickNextImg() { return $('div[class*="nav-next"]').waitClick() && this; }
+    clickPrevImg() { return $('div[class*="nav-prev"]').waitClick() && this; }
+    clickCloseView() { return $('.header-btn__close').waitClick() && this; }
+
+    checkFileExists(file, timeout) {
+        const filePath = path.join(browser.config.downloadPath, file);
+        browser.call(() => {
+            return new Promise((resolve, reject) => {
+
+                const timer = setTimeout(() => {
+                    watcher.close();
+                    reject(new Error(`${file} 'does not exist and was not created during the timeout'`));
+                }, timeout);
+
+                fs.access(filePath, fs.constants.R_OK, (err) => {
+                    if (!err) {
+                        clearTimeout(timer);
+                        watcher.close();
+                        resolve();
+                    }
+                });
+
+                const dir = path.dirname(filePath);
+                const watcher = fs.watch(dir, (eventType, filename) => {
+                    if (eventType === 'rename' && filename === file) {
+                        clearTimeout(timer);
+                        watcher.close();
+                        resolve();
+                    }
+                });
+            });
+        });
+        fs.unlinkSync(filePath);
+    }
 }

@@ -36,7 +36,6 @@ class BarnSheetsPage extends ReportPage {
 
     /********************************************* Barnsheets Tables ****************************************************/
 
-    get inputSearch() { return $('input[placeholder="Search..."]'); }
     get tableRow() { return '.table-row'; }
     get tableRows() { return $$(this.tableRow); }
     get tableItem() { return '.FlexTableItem'; }
@@ -66,9 +65,9 @@ class BarnSheetsPage extends ReportPage {
 
     clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this.waitLoader(); }
     clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this.waitLoader(); }
-    groupHeader(name) { return $('.group-name=' + name); }
+    groupHeader(str) { return $('.group-name=' + str); }
 
-    choose(name) { return $('*=' + name).waitClick() && this.waitLoader(); }
+    choose(str) { return $('*=' + str).waitClick() && this.waitLoader(); }
 
     isCellExist(date, str) { return $(this.tableRow + '*=' + date).$(this.tableItem + '*=' + str).isExisting(); }
     cell(date, column = 0, row = 0) { return this.tableRowsWith(date)[row].$$(this.tableItem)[column]; }
@@ -84,8 +83,8 @@ class BarnSheetsPage extends ReportPage {
     mrCell(date) { return this.cell(date, 8).getText(); }
     weightCell(date) { return this.cell(date, 9).getText(); }
 
-    clickMenuCell(date) { return this.cell(date, 10).$('.fa.fa-dots-three-horizontal').waitClick() && this.waitLoader(); }
-    clickOption(option) { return this.dropdownMenu.$('.list-item-li' + '=' + option).waitClick() && this.waitLoader(); }
+    clickMenuCell(str, column = 10) { return this.cell(str, column).$('.fa.fa-dots-three-horizontal').waitClick() && this.waitLoader(); }
+    clickOption(str) { return this.dropdownMenu.$('.list-item-li' + '=' + str).waitClick() && this.waitLoader(); }
 
     chooseRandGroup(farmPrefix = 'TA_Farm', groupPrefix = 'TA_PigGroup') {
         this.open().clickFarmsTab().setElemsOnPage(100);
@@ -281,6 +280,7 @@ class BarnSheetsPage extends ReportPage {
             deathPage.setMortalities(data.deaths.chronic[0], data.deaths.acute[0], data.deaths.euthanas[0]);
         }
         deathPage.setComment(data.deaths.comment).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection('Medic');
         for (let i = 0, n = +data.treats.amount; i < n; i++) {
@@ -362,7 +362,7 @@ class BarnSheetsPage extends ReportPage {
     clickScaleOrig() { return $('.fa.fa-maximize').waitClick() && this; }
     clickNextImg() { return $('div[class*="nav-next"]').waitClick() && this; }
     clickPrevImg() { return $('div[class*="nav-prev"]').waitClick() && this; }
-    clickCloseImg() { return $('.header-btn__close').waitClick() && this; }
+    clickCloseView() { return $('.header-btn__close').waitClick() && this; }
 
 }
 

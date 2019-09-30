@@ -232,6 +232,18 @@ class TestData {
         );
     }
 
+    get randDoc() {
+        return faker.random.arrayElement(
+            ["DOC_1MB.doc", "DOCX_1MB.docx", "XLS_5000.xls", "XLSX_5000.xlsx", 
+            "CSV_5000.csv"]
+        );
+    }
+    get randPdf() {
+        return faker.random.arrayElement(
+            ["PDF_1MB.pdf"]
+        );
+    }
+
     get randAudio() {
         return faker.random.arrayElement(
             ["audio_0.2MB.mp3", "audio_0.5MB.mp3", "audio_0.7MB.mp3", "audio_1MB.mp3",

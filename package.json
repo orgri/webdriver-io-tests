@@ -27,7 +27,7 @@
     "@wdio/spec-reporter": "^5.11.7",
     "@wdio/sync": "^5.11.13",
     "chai": "^4.2.0",
-    "chromedriver": "^76.0.0",
+    "chromedriver": "^76.0.1",
     "faker": "^4.1.0",
     "wdio-chromedriver-service": "^5.0.2"
   }

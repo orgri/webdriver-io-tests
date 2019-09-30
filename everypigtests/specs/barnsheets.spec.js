@@ -917,7 +917,7 @@ describe('Edit Media', () => {
     });
 
     it('Close image', () => {
-        sheetsPage.clickCloseImg();
+        sheetsPage.clickCloseView();
 
         expect(sheetsPage.mediaViewer.isDisplayed(), 'mediaViewer').to.equal(false);
     });

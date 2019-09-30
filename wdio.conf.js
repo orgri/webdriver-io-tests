@@ -1,5 +1,6 @@
 global.expect = require('chai').expect;
 global.tdata = require('./everypigtests/pageobjects/testdata');
+global.path = require('path');
 
 exports.config = {
     //
@@ -23,9 +24,10 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './everypigtests/specs/**/barnsheets.spec.js',
         './everypigtests/specs/**/checkup.spec.js',
         './everypigtests/specs/**/offline.checkup.spec.js',
+        './everypigtests/specs/**/barnsheets.spec.js',
+        './everypigtests/specs/**/resources.spec.js',
         './everypigtests/specs/**/move.spec.js',
         './everypigtests/specs/**/symptom.spec.js',
         './everypigtests/specs/**/treat.spec.js',
@@ -51,7 +53,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 2,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -62,17 +64,20 @@ exports.config = {
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
         maxInstances: 5,
-        //
         browserName: 'chrome',
         'goog:chromeOptions': {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
             //mobileEmulation: { 'deviceName': 'Pixel 2' },
-            'args': ['--window-size=1440,900',
-                    '--headless', '--disable-gpu',
-                    '--use-fake-device-for-media-stream',
-                    '--use-fake-ui-for-media-stream',
-                    '--use-gpu-in-tests',
-                    '--disable-notifications']
+            'args': [
+                '--headless', '--disable-gpu',
+                '--use-fake-device-for-media-stream',
+                '--use-fake-ui-for-media-stream',
+                '--use-gpu-in-tests',
+                '--disable-notifications'
+            ],
+            'prefs': {
+                'download.default_directory': this.downloadPath
+            }
         }
         // If outputDir is provided WebdriverIO can capture driver session logs
         // it is possible to configure which logTypes to include/exclude.
@@ -111,8 +116,9 @@ exports.config = {
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: 'https://dev.everypig.com',
-    screenshotPath: 'screenshots/',
-    mediaPath: 'media/',
+    screenshotPath: path.resolve('screenshots'),
+    mediaPath: path.resolve('media'),
+    downloadPath: path.resolve('download'),
     // Custom timeouts for pause and sync indexdb
     pauseTimeout: 300,
     syncTimeout: 1500,
@@ -151,10 +157,10 @@ exports.config = {
     reporters: [
         'spec',
         ['allure', {
-        outputDir: 'allure-results',
-        disableWebdriverStepsReporting: true,
-        disableWebdriverScreenshotsReporting: false,
-    }]],
+            outputDir: 'allure-results',
+            disableWebdriverStepsReporting: true,
+            disableWebdriverScreenshotsReporting: false,
+        }]],
     //
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -192,7 +198,7 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
-     before: function (capabilities, specs) {
+    before: function (capabilities, specs) {
         global.login = require('./everypigtests/pageobjects/login.page');
         global.isSafari = browser.capabilities['browserName'] == 'Safari';
         global.isChrome = browser.capabilities['browserName'] == 'chrome';
@@ -200,12 +206,15 @@ exports.config = {
         global.isIOS = isMobile && capabilities['goog:chromeOptions'].mobileEmulation.deviceName.includes('iPhone');
 
         let timeout = this.pauseTimeout;
-        browser.setTimeout({ 'implicit': 100, 'pageLoad': 15000, });
+        browser.setTimeout({ 'implicit': 150, 'pageLoad': 15000 });
+        browser.setWindowRect(0, 0, 1400, 900);
+        browser.fullscreenWindow();
+        browser.sendCommand('Page.setDownloadBehavior', { 'behavior': 'allow', 'downloadPath': this.downloadPath });
 
         browser.addCommand("waitClick", function () {
             // `this` is return value of $(selector)
             browser.pause(timeout);
-            this.scrollIntoView({block: "center", inline: "center"});
+            this.scrollIntoView({ block: "center", inline: "center" });
             this.click();
             browser.pause(timeout);
             return this;
@@ -213,7 +222,7 @@ exports.config = {
 
         browser.addCommand("waitSetValue", function (value) {
             browser.pause(timeout);
-            this.scrollIntoView({block: "center"});
+            this.scrollIntoView({ block: "center" });
             this.setValue(value);
             browser.pause(timeout);
             return this;

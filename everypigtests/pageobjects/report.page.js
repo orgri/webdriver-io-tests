@@ -19,7 +19,6 @@ module.exports = class ReportPage extends Page {
     get mNextBtnDisabled() { return $('.button.primary.disabled'); }
     get mSubmitBtn() { return $('.StickyFooter').$('.button*=Continue'); }
     get mSubmitBtnDisabled() { return $('.button.primary.disabled.sticky-footer'); }
-    get inputSearch() { return $('input[placeholder="Search..."]'); }
     get mClose() { return $('.back-link.hide-for-large'); }
     get mBackLink() { return $('div[class^="mobile-header"]').$('a[class^="back-link"]'); }
     get isNextDisabled() { return this.mNextBtnDisabled.isExisting(); }
@@ -171,6 +170,4 @@ module.exports = class ReportPage extends Page {
     }
 
     resetIndex() { this.index = 0; }
-    setSearch(text) { return this.inputSearch.waitSetValue(text) && this.waitLoader(); }
-    clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
 }
