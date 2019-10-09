@@ -20,9 +20,9 @@ module.exports = class ReportPage extends Page {
     get mSubmitBtn() { return $('.StickyFooter').$('.button*=Continue'); }
     get mSubmitBtnDisabled() { return $('.button.primary.disabled.sticky-footer'); }
     get mClose() { return $('.back-link.hide-for-large'); }
-    get mBackLink() { return $('div[class^="mobile-header"]').$('a[class^="back-link"]'); }
+    get backLink() { return $('div[class^="mobile-header"]').$('a[class^="back-link"]'); }
     get isNextDisabled() { return this.mNextBtnDisabled.isExisting(); }
-    
+
     get isSubmitDisabled() {
         return (this.isMobile) ? this.mSubmitBtnDisabled.isExisting()
             : this.submitBtnDisabled.isExisting();
@@ -59,7 +59,7 @@ module.exports = class ReportPage extends Page {
         return this.waitLoader();
     }
 
-    mBack() { return this.mBackLink.waitClick() && this.waitLoader(); }
+    mBack() { return this.backLink.waitClick() && this.waitLoader(); }
 
     mClickNext() {
         this.mNextBtn.isExisting() && this.mNextBtn.isDisplayed()

@@ -83,7 +83,7 @@ module.exports = class Page {
         if ($('.preloader.is-active').isExisting()) {
             browser.waitUntil(() => {
                 return !($('.preloader.is-active').isExisting())
-            }, 15000, 'Wait loader time is exceeded 10000ms');
+            }, 60000, 'Wait loader time is exceeded 60000ms');
         }
         return this;
     }

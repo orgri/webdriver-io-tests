@@ -26,6 +26,7 @@ class CheckupPage extends ReportPage {
     rowWith(str) { return $(this.rowDC + '*=' + str); }
     clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this.waitLoader(); }
     clickCheckupTab() { return $('.item=Checkup').waitClick() && this.waitLoader(); }
+    clickDCTab() { return $('a[href="/daily-checkup/"]').waitClick() && this.waitLoader(); }
     clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     isPageOf(regex) { return browser.getUrl().includes(regex); }
 
@@ -38,7 +39,13 @@ class CheckupPage extends ReportPage {
         return $(this.groupRow + '*=' + name)
             .$$('.button').slice(-1)[0].waitClick() && this.waitLoader();
     }
- 
+
+    currentDC() {
+        this.clickCheckup();
+        this.modalWrapper.isExisting() && this.clickToModal('Yes');
+        return this.setSearch(this.farm).chooseFarm(this.farm).chooseGroup(this.group);
+    }
+
     open(path = this.checkupUrl) {
         browser.url(path);
         this.waitLoader();
@@ -57,10 +64,15 @@ class CheckupPage extends ReportPage {
         if (openGroups === 0) {
             this.chooseRandCheckup();
         } else {
-            const id = tdata.rand(openGroups - 1);
-            if (rows[id].getText() === 'Start') {
-                this.setGroup($$(this.rowDC)[id]);
-                rows[id].waitClick();
+            let id = 0, status;
+            do {
+                status = rows[id].getText();
+                id++;
+                console.log(status, id-1, openGroups);
+            } while (status !== 'Start' && id < openGroups)
+            if (rows[id - 1].getText() === 'Start') {
+                this.setGroup($$(this.rowDC)[id - 1]);
+                rows[id - 1].waitClick();
             } else {
                 this.chooseRandCheckup();
             }
@@ -262,7 +274,7 @@ class CheckupPage extends ReportPage {
     }
 
     clearSection(input) {
-        this.openCurrent().waitLoader().chooseSection(0).waitLoader();
+        this.openCurrent().waitLoader().chooseSection(input).waitLoader();
         super.clear().waitLoader();
         return this;
     }
@@ -281,7 +293,8 @@ class CheckupPage extends ReportPage {
             movePage.setMovement(data.moves.type[i],
                 data.moves.heads[i], data.moves.weight[i], data.moves.condition[i]);
         }
-        movePage.setComment(data.moves.comment).submit().waitLoader();
+        movePage.setComment(data.moves.comment).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection(1);
         if ($(this.rowIndex).isExisting()) {
@@ -294,7 +307,8 @@ class CheckupPage extends ReportPage {
             deathPage.setMortalities(
                 data.deaths.chronic[0], data.deaths.acute[0], data.deaths.euthanas[0]);
         }
-        deathPage.setComment(data.deaths.comment).submit().waitLoader();
+        deathPage.setComment(data.deaths.comment).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection(2);
         for (let i = 0, n = +data.treats.amount; i < n; i++) {
@@ -302,30 +316,31 @@ class CheckupPage extends ReportPage {
             treatPage.setTreat(data.treats.name[i], data.treats.heads[i],
                 data.treats.dosage[i], data.treats.gals[i]);
         }
-        treatPage.setComment(data.treats.comment).submit().waitLoader();
+        treatPage.setComment(data.treats.comment).submit();
 
         this.chooseSection(3);
         for (let i = 0; i < +data.sympts.amount; i++) {
             (i === 0) || symptomPage.addRow();
             symptomPage.setSymptom(data.sympts.name[i]);
         }
-        symptomPage.setComment(data.sympts.comment).submit().waitLoader();
+        symptomPage.setComment(data.sympts.comment).submit();
 
         this.chooseSection(4);
-        tempsPage.setTemps(data.temps.high, data.temps.low).submit().waitLoader();
+        tempsPage.setTemps(data.temps.high, data.temps.low)
+            .setComment(data.temps.comment).submit();
 
         this.chooseSection(5);
-        waterPage.setGals(data.water.consumed).submit().waitLoader();
+        waterPage.setGals(data.water.consumed)
+            .setComment(data.water.comment).submit();
 
-        this.section('Media').isExisting() && this.chooseSection('Media').waitLoader();
+        this.section('Media').isExisting() && this.chooseSection('Media');
         this.clearMedia().uploadMedia(data.files.pic)
             .uploadMedia(data.files.video)
             .uploadMedia(data.files.audio);
 
-        this.isPageOf('/barnsheets/') && this.submit().waitLoader()
-            .chooseSection(6, 'Notes').waitLoader();
+        this.isPageOf('/barnsheets/') && this.submit().chooseSection(6, 'Notes');
         this.setComment(data.comment);
-        this.isPageOf('/barnsheets/') && this.submit().waitLoader(); 
+        this.isPageOf('/barnsheets/') && this.submit();
 
         return this;
     }

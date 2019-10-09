@@ -28,10 +28,18 @@ exports.config = {
         './everypigtests/specs/**/offline.checkup.spec.js',
         './everypigtests/specs/**/barnsheets.spec.js',
         './everypigtests/specs/**/resources.spec.js',
+
+        './everypigtests/specs/**/editcheckup.spec.js',
+
         './everypigtests/specs/**/move.spec.js',
+        './everypigtests/specs/**/death.spec.js',
         './everypigtests/specs/**/symptom.spec.js',
         './everypigtests/specs/**/treat.spec.js',
-        './everypigtests/specs/**/death.spec.js',
+
+        './everypigtests/specs/**/offline.move.spec.js',
+        './everypigtests/specs/**/offline.death.spec.js',
+        './everypigtests/specs/**/offline.sympt.spec.js',
+        './everypigtests/specs/**/offline.treat.spec.js',
     ],
     // Patterns to exclude.
     exclude: [
@@ -63,17 +71,16 @@ exports.config = {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
-        maxInstances: 5,
+        maxInstances: 2,
         browserName: 'chrome',
         'goog:chromeOptions': {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
             //mobileEmulation: { 'deviceName': 'Pixel 2' },
             'args': [
-                '--headless', '--disable-gpu',
+                '--headless',
                 '--use-fake-device-for-media-stream',
                 '--use-fake-ui-for-media-stream',
-                '--use-gpu-in-tests',
-                '--disable-notifications'
+                '--disable-notifications',
             ],
             'prefs': {
                 'download.default_directory': this.downloadPath
@@ -91,7 +98,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'warn',
+    logLevel: 'error',
     //
     // Set specific log levels per logger
     // loggers:

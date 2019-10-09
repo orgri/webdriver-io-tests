@@ -1,17 +1,18 @@
 const checkupPage = require('../pageobjects/checkup.page');
 const movePage = require('../pageobjects/movements.page');
 
-describe('Moves page, navigation', () => {
-
-    beforeEach(function () {
-        this.currentTest.title == 'Choose group'
-            || checkupPage.openCurrent().chooseSection(0, 'Move');
-    });
+describe('Moves page, navigation (offline)', () => {
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+    }, 1);
+
+    it('Choose movements', () => {
+        checkupPage.chooseSection(0, 'Moves');
+
+        expect(browser.getUrl(), 'movements url').to.match(/(\/pig-movements)$/);
     });
 
     if (isMobile) {
@@ -54,81 +55,21 @@ describe('Moves page, navigation', () => {
     }
 });
 
-describe('Moves page, input)', () => {
+describe('Report single move (offline)', () => {
 
     beforeEach(function () {
         this.currentTest.title == 'Choose group'
-            || checkupPage.openCurrent().chooseSection(0, 'Move');
+            || checkupPage.currentDC().chooseSection(0, 'Move');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
-
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
-    });
-
-    it('Not able to set Heads bigger than 99999', () => {
-        movePage.setTransfer('1234567890');
-        expect(movePage.input('Head').getValue(), 'heads').to.equal('12345');
-    });
-
-    it('Not able to set Weight bigger than ?', () => {
-        movePage.setShipment('0', '1234567890');
-        expect(movePage.input('Weight').getValue(), 'avgWeight').to.equal('12345');
-    });
-
-    it('Not able to set negative value in Heads', () => {
-        movePage.setSale('-123');
-        expect(movePage.input('Head').getValue(), 'heads').to.equal('23');
-    });
-
-    it('Not able to set negative value in Weight', () => {
-        movePage.setShipment('0', '-123');
-        expect(movePage.input('Weight').getValue(), 'avgWeight').to.equal('23');
-    });
-
-    it('Not able to set letters in Heads', () => {
-        movePage.setFixRemoving('qwer1ty2345 ~!@#$%^&*()');
-        expect(movePage.input('Head').getValue(), 'heads').to.equal('');
-    });
-
-    it('Not able to set letters in Weight', () => {
-        movePage.setShipment('0', 'qwer1ty2345 ~!@#$%^&*()');
-        expect(movePage.input('Weight').getValue(), 'avgWeight').to.equal('');
-    });
-
-    it('Not able to report with empty mandatory Heads field', () => {
-        movePage.setShipment('0', '10', 'good');
-        expect(movePage.isSubmitDisabled, 'isSubmitDisabled').to.equal(true);
-    });
-
-    it('Not able to report with empty mandatory Heads field in case of several ones', () => {
-        movePage.setShipment('10', '10', 'good')
-            .addRow().clickSelectParam()
-            .setTransfer()
-            .addRow().clickSelectParam() //this step because of bug
-            .setSale('20').resetIndex();
-
-        expect(movePage.isSubmitDisabled, 'isSubmitDisabled').to.equal(true);
-    });
-
-});
-
-describe('Report single move', () => {
-
-    beforeEach(function () {
-        this.currentTest.title == 'Choose group'
-            || checkupPage.openCurrent().chooseSection(0, 'Move');
-    });
-
-    it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
 
     if (!isMobile) {
-        it('Cancel report with changes', function () {
+        it('Cancel report with changes', () => {
             movePage.setMovement(tdata.randMoveType, tdata.randHeads,
                 tdata.randWeight, tdata.randCondition)
                 .setComment(tdata.randComment)
@@ -144,6 +85,9 @@ describe('Report single move', () => {
             tdata.randWeight, tdata.randCondition)
             .setComment(tdata.randComment)
             .close();
+        
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+
         checkupPage.section(0).scrollIntoView({ block: "center" });
 
         expect(checkupPage.isEmpty(0), 'isEmpty').to.equal(true);
@@ -153,7 +97,7 @@ describe('Report single move', () => {
         const heads = tdata.randHeads + '',
             weight = tdata.randWeight + '',
             condition = tdata.randCondition;
-
+        
         movePage.setShipment(heads, weight, condition).submit();
         checkupPage.section(0).scrollIntoView({ block: "center" });
 
@@ -181,7 +125,7 @@ describe('Report single move', () => {
 
     it('Report Transfer', () => {
         const heads = tdata.randHeads + '';
-
+        
         movePage.setTransfer(heads).submit();
         checkupPage.section(0).scrollIntoView({ block: "center" });
 
@@ -233,13 +177,26 @@ describe('Report single move', () => {
 
 });
 
-describe('Report few moves', () => {
+describe('Report few moves (offline)', () => {
     const test = tdata.randMovesData();
     let rslt;
 
+    beforeEach(function () {
+        switch (this.currentTest.title) {
+            case 'Choose random group':
+            case 'Fill report':
+                this.currentTest.retries(1);
+        }
+
+        this.currentTest._currentRetry > 0
+            && this.currentTest.title == 'Fill report'
+            && checkupPage.netOn(false).open().netOff()
+                .chooseRandCheckup().chooseSection(0);
+    });
+
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
         tdata.toStringVal(test);
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -258,7 +215,7 @@ describe('Report few moves', () => {
             .addRow().clickSelectParam().setFixAdding(test.heads[4])
             .setComment(test.comment).submit();
 
-        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)(fake).+$/);
     });
 
     it('Amount', () => {
@@ -296,6 +253,51 @@ describe('Report few moves', () => {
     });
 
     it('Comment', () => {
+        expect(rslt.comment, 'commment').to.equal(test.comment);
+    });
+
+    it('Net on(sync)', () => {
+        checkupPage.netOn().setId();
+
+        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+    });
+
+    it('Amount after sync', () => {
+        checkupPage.openCurrent();
+        rslt = checkupPage.moveInfo;
+
+        expect(rslt.amount, 'amount of moves').to.equal(test.amount);
+    });
+
+    it('Pigs added heads(0) after sync', () => {
+        expect(rslt.added[0], 'added heads').to.equal(test.heads[0]);
+    });
+
+    it('Pigs avg. weight after sync', () => {
+        expect(rslt.weight[0], 'weight').to.equal(test.weight + ' lbs');
+    });
+
+    it('Pigs condition after sync', () => {
+        expect(rslt.condition[0].toLowerCase(), 'condition').to.equal(test.condition);
+    });
+
+    it('Pigs removed heads(0) after sync', () => {
+        expect(rslt.removed[0], 'removed heads').to.equal(test.heads[1]);
+    });
+
+    it('Pigs added heads(1) after sync', () => {
+        expect(rslt.added[1], 'added heads').to.equal(test.heads[2]);
+    });
+
+    it('Pigs removed heads(1) after sync', () => {
+        expect(rslt.removed[1], 'removed heads').to.equal(test.heads[3]);
+    });
+
+    it('Pigs added heads(2) after sync', () => {
+        expect(rslt.added[2], 'added heads').to.equal(test.heads[4]);
+    });
+
+    it('Comment after sync', () => {
         expect(rslt.comment, 'commment').to.equal(test.comment);
     });
 

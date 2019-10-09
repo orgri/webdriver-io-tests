@@ -1,16 +1,17 @@
 const checkupPage = require('../pageobjects/checkup.page');
 const symptomPage = require('../pageobjects/symptoms.page');
 
-describe('Symptoms page, navigation', () => {
-    beforeEach(function () {
-        this.currentTest.title == 'Choose group'
-            || checkupPage.openCurrent().chooseSection(3, 'Symptoms');
-    });
-
-    it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+describe('Symptoms page, navigation (offline)', () => {
+    it('Choose random group', () => {
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+    });
+
+    it('Choose symptoms', () => {
+        checkupPage.chooseSection(3);
+
+        expect(browser.getUrl(), 'symptoms url').to.match(/(\/report-symptoms)$/);
     });
 
     if (isMobile) {
@@ -53,8 +54,11 @@ describe('Symptoms page, navigation', () => {
 
             expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
-    } else {
-        it('Cancel report', function () {
+    }
+
+    if (!isMobile) {
+        it('Cancel report', () => {
+            checkupPage.chooseSection(3);
             symptomPage.setSymptom(tdata.randSymptom).cancel();
             checkupPage.section(3).scrollIntoView({ block: "center" });
 
@@ -63,21 +67,25 @@ describe('Symptoms page, navigation', () => {
     }
 
     it('Close report', () => {
+        checkupPage.chooseSection(3);
         symptomPage.setSymptom(tdata.randSymptom).close();
+
+        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+
         checkupPage.section(3).scrollIntoView({block: "center"});
 
         expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);
     });
 });
 
-describe('Report single symptom', () => {
+describe('Report single symptom (offline)', () => {
     beforeEach(function () {
         this.currentTest.title == 'Choose group'
-            || checkupPage.openCurrent().chooseSection(3, 'Symptoms');
+            || checkupPage.currentDC().chooseSection(3, 'Sympt');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -133,12 +141,25 @@ describe('Report single symptom', () => {
     });
 });
 
-describe('Report symptoms', () => {
+describe('Report Symptoms (offline)', () => {
     let rslt;
     const test = tdata.randSymptData();
 
+    beforeEach(function () {
+        switch (this.currentTest.title) {
+            case 'Choose random group':
+            case 'Fill report':
+                this.currentTest.retries(1);
+        }
+
+        this.currentTest._currentRetry > 0
+            && this.currentTest.title == 'Fill report'
+            && checkupPage.netOn(false).open().netOff()
+                .chooseRandCheckup().chooseSection(3);
+    });
+
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -149,67 +170,14 @@ describe('Report symptoms', () => {
         expect(browser.getUrl(), 'symptoms url').to.match(/(\/report-symptoms)$/);
     });
 
-    if (isMobile) {
-        it('Opens picker', () => {
-            expect(symptomPage.mobileRow(tdata.randSymptom).isExisting(), 'mobileRow().isExisting').to.equal(true);
-        });
-
-        it('Check and uncheck symptom', () => {
-            let sympt = tdata.randSymptom;
-
-            symptomPage.mSetReportParam(sympt).mSetReportParam(sympt);
-
-            expect(symptomPage.isSelected(sympt)).to.equal(false);
-        });
-
-        it('Search when choosing symptoms', () => {
-            let sympt = tdata.randSymptom;
-            symptomPage.setSearch(sympt);
-
-            expect(symptomPage.mobileRow(sympt).isExisting()).to.equal(true) &&
-            expect(symptomPage.mRows).to.have.lengthOf(1) &&
-            expect(symptomPage.mRows[0].getText()).to.have.string(sympt);
-        });
-
-        it('Not able to tap Next without choosed symptom', () => {
-            expect(symptomPage.isNextDisabled, 'isNextDisabled').to.equal(true);
-        });
-
-        it('Back to checkup', () => {
-            symptomPage.mBack();
-
-            expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
-        });
-    }
-
-    it('Cancel report', function() { 
-        if (isMobile) {
-            this.skip();
-        } else {
-            symptomPage.setSymptom(tdata.randSymptom).cancel();
-            checkupPage.section(3).scrollIntoView({block: "center"});
-
-            expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);
-        }
-    });
-
-    it('Close report', () => {
-        checkupPage.chooseSection(3);
-        symptomPage.setSymptom(tdata.randSymptom).close();
-        checkupPage.section(3).scrollIntoView({block: "center"});
-
-        expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);
-    });
-
     it('Fill report', () => {
-        checkupPage.chooseSection(3);
         symptomPage.setSymptom(test.sympt[0])
             .addRow().setSymptom(test.sympt[1])
             .addRow().setSymptom(test.sympt[2])
             .addRow().setSymptom(test.sympt[3])
             .setComment(test.comment).submit();
 
-        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)(fake).+$/);
     });
 
     it('Amount', () => {
@@ -227,6 +195,30 @@ describe('Report symptoms', () => {
     }
 
     it('Comment', () => {
+        expect(rslt.comment, 'comment').to.equal(test.comment);
+    });
+
+    it('Net on(sync)', () => {
+        checkupPage.netOn().setId();
+
+        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+    });
+
+    it('Amount after sync', () => {
+        checkupPage.openCurrent().section(3).scrollIntoView({ block: 'center' });
+
+        rslt = checkupPage.symptInfo;
+
+        expect(rslt.amount, 'amount of symptoms').to.equal(test.amount + '');
+    });
+
+    for (let i = 0; i < test.amount; i++) {
+        it('Symptom(' + i + ') after sync', () => {
+            expect(rslt.name[i], 'name of symptoms i').to.equal(test.sympt[i]);
+        });
+    }
+
+    it('Comment after sync', () => {
         expect(rslt.comment, 'comment').to.equal(test.comment);
     });
 });
