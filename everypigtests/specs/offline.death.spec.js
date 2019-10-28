@@ -4,8 +4,11 @@ const admin = require('../pageobjects/admin.page');
 
 describe('Report death (offline)', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
-            || checkupPage.currentDC().chooseSection(1, 'Deaths');
+        if ($(checkupPage.sectionWrapper).isExisting()) {
+            checkupPage.chooseSection(1, 'Deaths');
+        } else if (this.currentTest.title !== 'Choose group') {
+            checkupPage.currentDC().chooseSection(1, 'Deaths');
+        }
     });
 
     it('Choose group', () => {
@@ -17,7 +20,7 @@ describe('Report death (offline)', () => {
 
     if (!isMobile) {
         it('Cancel report', () => {
-            deathPage.setMortWithReason(tdata.randReason, '1', '1', '1').cancel();
+            deathPage.setMortalities('1', '2', '3').cancel();
     
             expect(checkupPage.isEmpty(1), 'isEmpty(1)').to.equal(true);
         });
@@ -133,13 +136,16 @@ describe('Death reason page, navigation (offline)', () => {
         expect(deathPage.isSelected(reason), 'isSelected()').to.equal(false);
     });
 
-    it('Search special chars', () => {
-        //just check whether page crashes or not, need to clarify expected behaviour
-        checkupPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
-            .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
-            .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
+    tdata.specialChars.forEach((el) => {
+        it('Search special chars: ' + el, () => {
+            //just check whether page crashes or not, need to clarify expected behaviour
+            checkupPage.inputSearch.isExisting() 
+                || checkupPage.netOn(false).open().netOff()
+                    .currentDC().chooseSection(1, 'Deaths');
+            checkupPage.setSearch(el);
 
-        expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+        });
     });
 
     it('Search when choosing death reasons', () => {

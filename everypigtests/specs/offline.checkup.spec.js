@@ -3,7 +3,7 @@ const checkupPage = require('../pageobjects/checkup.page');
 
 describe('Daily Checkup Navigation (offline)', () => {
     const farmName = 'TA_Farm_0000';
-
+/*
     beforeEach(function () {
         this.currentTest.retries(1);
         if (this.currentTest._currentRetry > 0) {
@@ -13,7 +13,7 @@ describe('Daily Checkup Navigation (offline)', () => {
                 && checkupPage.chooseFarm(farmName);
         }
     });
-
+*/
     it('Open', () => {
         checkupPage.open().netOff().clickCheckup();
 
@@ -27,16 +27,18 @@ describe('Daily Checkup Navigation (offline)', () => {
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
-    it('Search special chars', () => {
-        //just check whether page crashes or not, need to clarify expected behaviour
-        checkupPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
-            .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
-            .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
+    tdata.specialChars.forEach((el) => {
+        it('Search special chars: ' + el, () => {
+            //just check whether page crashes or not, need to clarify expected behaviour
+            checkupPage.netOn(false).open().netOff().clickCheckup();
+            checkupPage.setSearch(el);
 
-        expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+        });
     });
 
     it('Search farm', () => {
+        checkupPage.netOn(false).open().netOff().clickCheckup();
         checkupPage.setSearch(farmName);
 
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(1);
@@ -93,7 +95,7 @@ describe('Daily Checkup Navigation (offline)', () => {
 
     it('Back to Farms', () => {
         if (isMobile) {
-            checkupPage.mBack();
+            checkupPage.close();
         } else {
             checkupPage.clickDCTab();
         }

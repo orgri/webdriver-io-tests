@@ -26,13 +26,16 @@ describe('Treats page, navigation (offline)', () => {
             expect(treatPage.isSelected(treat), 'isSelected()').to.equal(false);
         });
 
-        it('Search special chars', () => {
-            //just check whether page crashes or not, need to clarify expected behaviour
-            checkupPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
-                .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
-                .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
-    
-            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+        tdata.specialChars.forEach((el) => {
+            it('Search special chars: ' + el, () => {
+                //just check whether page crashes or not, need to clarify expected behaviour
+                checkupPage.inputSearch.isExisting() 
+                    || checkupPage.netOn(false).open().netOff()
+                        .currentDC().chooseSection(2, 'Treats');
+                checkupPage.setSearch(el);
+
+                expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            });
         });
 
         it('Search when choosing treats', () => {

@@ -27,13 +27,16 @@ describe('Symptoms page, navigation (offline)', () => {
             expect(symptomPage.isSelected(sympt)).to.equal(false);
         });
 
-        it('Search special chars', () => {
-            //just check whether page crashes or not, need to clarify expected behaviour
-            checkupPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
-                .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
-                .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
-    
-            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+        tdata.specialChars.forEach((el) => {
+            it('Search special chars: ' + el, () => {
+                //just check whether page crashes or not, need to clarify expected behaviour
+                checkupPage.inputSearch.isExisting()
+                    || checkupPage.netOn(false).open().netOff()
+                        .currentDC().chooseSection(3, 'Sympt');
+                checkupPage.setSearch(el);
+
+                expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            });
         });
 
         it('Search when choosing symptoms', () => {
@@ -58,7 +61,6 @@ describe('Symptoms page, navigation (offline)', () => {
 
     if (!isMobile) {
         it('Cancel report', () => {
-            checkupPage.chooseSection(3);
             symptomPage.setSymptom(tdata.randSymptom).cancel();
             checkupPage.section(3).scrollIntoView({ block: "center" });
 
@@ -67,7 +69,7 @@ describe('Symptoms page, navigation (offline)', () => {
     }
 
     it('Close report', () => {
-        checkupPage.chooseSection(3);
+        checkupPage.chooseSection(3, 'Sympt');
         symptomPage.setSymptom(tdata.randSymptom).close();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
