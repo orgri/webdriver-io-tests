@@ -105,15 +105,13 @@ describe('Report death', () => {
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
 
-    it('Cancel report', function () {
-        if (deathPage.isMobile) {
-            this.skip();
-        } else {
+    if (!isMobile) {
+        it('Cancel report', function () {
             deathPage.setMortalities('1', '1', '1').cancel();
 
             expect(checkupPage.isEmpty(1), 'isEmpty(1)').to.equal(true);
-        }
-    });
+        });
+    }
 
     it('Close report', () => {
         deathPage.setMortalities('1', '1', '1').close();

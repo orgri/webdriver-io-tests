@@ -48,7 +48,7 @@ module.exports = class Page {
     clickNextPage() { return this.nextPageBtn.waitClick() && this.waitLoader(); }
     clickPrevPage() { return this.prevPageBtn.waitClick() && this.waitLoader(); }
     clickBtn(str) { return $('button=' + str).waitClick() && this.waitLoader(); }
-    clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
+    clickToModal(str) { return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     setSearch(str) { return this.inputSearch.waitSetValue(str) && this.waitLoader(); }
     clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
 
@@ -90,21 +90,51 @@ module.exports = class Page {
 
     waitUploader() {
         browser.waitUntil(() => {
-            return (this.notification.isExisting() 
+            return (this.notification.isExisting()
                 || !this.uploadProgress.isExisting())
         }, 90000, 'Time to upload is exceeded 90000ms');
         return this;
     }
 
     uploadMedia(file) {
+        isSafari && this.reload().waitLoader();
         const pathToMedia = path.resolve(browser.config.mediaPath, file);
         const idx = isMobile ? '1' : '0';
-        const script = "document.querySelectorAll('input[type=file]')[IDX].style.display = 'block'".replace(/IDX/, idx);
+        const script = `document.querySelectorAll
+            ('input[type=file]')[IDX].style.display = 'block'; `.replace(/IDX/, idx);
         browser.execute(script);
         this.inputFile.waitForDisplayed();
-        this.inputFile.waitSetValue(pathToMedia);
-        this.waitUploader();
-        return this;
+        try {
+            this.inputFile.setValue(pathToMedia);
+        } catch (err) {
+            //console.error(err); //not throw, because of Safari issue
+        } finally {
+            return this.waitUploader();
+        }
+    }
+
+    convertFile(file) {
+        const fs = require('fs');
+        const path = require('path');
+        const archiver = require('archiver');
+        const localFilePath = path.resolve(browser.config.mediaPath, file);
+
+        const zipData = [];
+        const source = fs.createReadStream(localFilePath);
+
+        return new Promise((resolve, reject) => {
+            archiver('zip')
+                .on('error', err => reject(err))
+                .on('data', data => zipData.push(data))
+                .on('end', () => browser.uploadFile(Buffer.concat(zipData)
+                    .toString('base64')).then(resolve, reject))
+                .append(source, { name: path.basename(localFilePath) })
+                .finalize((err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                });
+        });
     }
 
     netOff() {
@@ -125,13 +155,14 @@ module.exports = class Page {
         return this.waitLoader();
     }
 
-    getArray(selector, regex) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
+    getArray(selector, regex = /.+/u) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
     getString(selector, regex) { return (selector.getText().match(regex) || [])[0]; }
     getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
     getFloat(selector) { return (selector.getText().match(/[\d\.]+/u) || ['0'])[0]; }
 
-/********************************* Tables *************************************/
+    /********************************* Tables *************************************/
 
+    get tableWrapper() { return $('.FlexTable'); }
     get tableRow() { return '.table-row'; }
     get tableItem() { return '.FlexTableItem'; }
     get tableColumns() { return $(this.tableRow).$$(this.tableItem); }
@@ -142,9 +173,20 @@ module.exports = class Page {
     get dropdownMenu() { return $('.dropdown-layout.isOpen'); }
     get list() { return '.list-item-li'; }
 
-    clickSortBy(item) { return $(this.sortWrapper + '*=' + item).waitClick() && this.waitLoader(); }
-    clickFilterBy(item) { return this.filterWrapper.$('span*=' + item).waitClick() && this.waitLoader(); }
-    clickDots(wrapper) { return wrapper.$(this.dots).waitClick() && this.waitLoader(); }
+    clickSortBy(str) {
+        return this.tableItemsWith(str)[0].$(this.sortWrapper)
+            .$('span').waitClick() && this.waitLoader();
+    }
+
+    clickFilterBy(item) {
+        return this.filterWrapper.$('.filter_*=' + item).waitClick()
+            && this.waitLoader();
+    }
+
+    clickDots(wrapper) {
+        return wrapper.$(this.dots).waitClick()
+            && this.waitLoader();
+    }
 
     tableItemsWith(str) {
         str = str ? ('*=' + str) : '';
@@ -169,7 +211,7 @@ module.exports = class Page {
 
     clickOption(str) { return this.dropdownMenu.$(this.list + '=' + str).waitClick() && this.waitLoader(); }
 
-/********************************* Media *************************************/
+    /********************************* Media *************************************/
 
     get scale() { return $('.current-scale.visible'); }
     get mediaViewer() { return $('.mediaViewer.is-open'); }
@@ -189,7 +231,8 @@ module.exports = class Page {
 
                 const timer = setTimeout(() => {
                     watcher.close();
-                    reject(new Error(`${file} 'does not exist and was not created during the timeout'`));
+                    reject(new Error(`${file} 
+                        'does not exist and was not created during the timeout'`));
                 }, timeout);
 
                 fs.access(filePath, fs.constants.R_OK, (err) => {

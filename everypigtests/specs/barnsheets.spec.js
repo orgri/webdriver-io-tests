@@ -28,7 +28,7 @@ describe('Barnsheets Navigation', () => {
     });
 
     it('Choose farm', () => {
-        sheetsPage.choose(farmName);
+        sheetsPage.clickCell(farmName, 'a span');
 
         expect(sheetsPage.farmName.getText(), 'farmName').to.equal(farmName);
     });
@@ -370,7 +370,7 @@ These fuctionality must be checked by Unit tests.
     });
 
     it('Choose company', () => {
-        sheetsPage.choose('TA_Tenant');
+        sheetsPage.clickCell('TA_Tenant', '<a>');
 
         expect(sheetsPage.companyName.getText(), 'tenant name').to.equal('TA_Tenant');
     });

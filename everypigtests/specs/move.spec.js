@@ -72,7 +72,7 @@ describe('Moves page, input)', () => {
         expect(movePage.input('Head').getValue(), 'heads').to.equal('12345');
     });
 
-    it('Not able to set Weight bigger than ?', () => {
+    it.skip('Not able to set Weight bigger than ?', () => {
         movePage.setShipment('0', '1234567890');
         expect(movePage.input('Weight').getValue(), 'avgWeight').to.equal('12345');
     });
@@ -82,7 +82,7 @@ describe('Moves page, input)', () => {
         expect(movePage.input('Head').getValue(), 'heads').to.equal('23');
     });
 
-    it('Not able to set negative value in Weight', () => {
+    it.skip('Not able to set negative value in Weight', () => {
         movePage.setShipment('0', '-123');
         expect(movePage.input('Weight').getValue(), 'avgWeight').to.equal('23');
     });

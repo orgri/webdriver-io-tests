@@ -16,7 +16,6 @@ class CheckupPage extends ReportPage {
     get rowDC() { return '.row-content'; }
     get farmName() { return isMobile ? $('.main-header h1') : $('.farm-information h1'); }
     get groupName() { return isMobile ? $('.main-header h1') : $('.Breadcrumbs .nowActive'); }
-    get backLink() { return $('.main-header').$('.back-link'); }
     get modalWrapper() { return $('.ModalsContainer.isOpen'); }
     get offlineWarning() { return $('.offline-no-checkup-warning'); }
 
@@ -68,7 +67,6 @@ class CheckupPage extends ReportPage {
             do {
                 status = rows[id].getText();
                 id++;
-                console.log(status, id-1, openGroups);
             } while (status !== 'Start' && id < openGroups)
             if (rows[id - 1].getText() === 'Start') {
                 this.setGroup($$(this.rowDC)[id - 1]);
@@ -89,7 +87,7 @@ class CheckupPage extends ReportPage {
     get contentWrapper() { return 'div[class^="line"]'; }
     get checkinState() { return $('.checked-in-state'); }
     get dcStatus() { return '.group-status'; }
-    get reComment() { return /(?<=Notes\n)(.|\n)+?(?=\nSee)/g; }
+    get reComment() { return /(?<=Notes(\n|))(.)+?(?=(\n|)See)/g; }
     get noBtn() { return '.button=No'; }
     get submitBtn() { return $('.button.big-button'); }
 
@@ -181,7 +179,7 @@ class CheckupPage extends ReportPage {
 
     get deathInfo() {
         let obj = new Object();
-        const reReason = /(.+)(?=\s\u2022)/u;
+        const reReason = /(.+?)(?=\s\u2022)/u;
 
         obj.amount = this.getNumber(this.section(1));
         obj.reason = this.isReasonExist ? this.getArray(this.reasons, reReason) : undefined;
@@ -196,7 +194,7 @@ class CheckupPage extends ReportPage {
     get treatInfo() {
         let obj = new Object();
         const selector = this.section(2).$$(this.treatWrapper);
-        const reName = /(.+?)(?=(\s\u2022)|(\n\d+))/u;
+        const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
         const reDosage = /(?<=\u2022\s)(\d+\.\d+)/u;
         const reHeads = /(\d+)$/u;
         const reGals = /(\d+)(?=\sgal)/u;
@@ -214,7 +212,7 @@ class CheckupPage extends ReportPage {
     get symptInfo() {
         let obj = new Object();
         const selector = this.section(3).$$(this.symptWrapper);
-        const reName = /(.+)(?=\n)/u;
+        const reName = /[^\n\d%]+/u;
         const rePercent = /(\d+)%/u;
 
         obj.amount = this.getNumber(this.section(3));
@@ -239,6 +237,7 @@ class CheckupPage extends ReportPage {
     get waterInfo() {
         let obj = new Object();
         const selector = this.section(5);
+
         obj.consumed = this.getFloat(selector.$(this.contentWrapper));
         obj.comment = this.getString(selector, this.reComment);
 

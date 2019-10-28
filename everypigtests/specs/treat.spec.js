@@ -204,7 +204,7 @@ describe('Treats page, input)', () => {
         expect(treatPage.total.getValue(), 'total').to.equal('100');
     });
 
-    it('Not able to set Total less than maxValue from filled Heads', () => {
+    it.skip('Not able to set Total less than maxValue from filled Heads', () => {
         treatPage.setWithGalsDosage(tdata.randUnits, '10')
             .addRow().setWithCcsDosage(tdata.randCcs, '20')
             .addRow().setWithoutDosage(tdata.randNoDosage, '30')
@@ -213,7 +213,7 @@ describe('Treats page, input)', () => {
         expect(treatPage.total.getValue(), 'total').to.equal('30');
     });
 
-    it('Not able to set Total bigger than summ of filled Heads', () => {
+    it.skip('Not able to set Total bigger than summ of filled Heads', () => {
         treatPage.setWithGalsDosage(tdata.randUnits, '10')
             .addRow().setWithCcsDosage(tdata.randCcs, '20')
             .addRow().setWithoutDosage(tdata.randNoDosage, '30')

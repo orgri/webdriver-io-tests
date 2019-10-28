@@ -18,13 +18,14 @@ describe('Daily Checkup Navigation', () => {
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
-    it('Search special chars', () => {
-        //just check whether page crashes or not, need to clarify expected behaviour
-        checkupPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
-            .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
-            .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
+    tdata.specialChars().forEach((el) => {
+        it('Search special chars: ' + el, () => {
+            //just check whether page crashes or not, need to clarify expected behaviour
+            checkupPage.open();
+            checkupPage.setSearch(el);
 
-        expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            expect(checkupPage.inputSearch.isExisting(), 'search').to.equal(true);
+        });
     });
 
     it('Search farm', () => {
@@ -142,7 +143,7 @@ describe('Media in DC', () => {
         expect(rslt.amount, 'nOfMedia').to.equal('3');
     });
 
-    if (!isIOS || !isSafari) {
+    if (isChrome && !isIOS) {
 
         it('Choose audio', () => {
             checkupPage.clickAudio();
@@ -304,7 +305,7 @@ describe('Create full checkup', () => {
         rslt = checkupPage.waterInfo;
 
         expect(rslt.consumed, 'water consumed').to.equal(test.water.consumed);
-        expect(rslt.comment, 'water consumed').to.equal(test.water.comment);
+        expect(rslt.comment, 'comment').to.equal(test.water.comment);
     });
 
     it('Main comment report', () => {
@@ -317,5 +318,4 @@ describe('Create full checkup', () => {
 
         expect(rslt.amount, 'nOfMedia').to.equal('3');
     });
-
 });

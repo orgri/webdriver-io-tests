@@ -42,15 +42,15 @@ class DiagnosisBar extends ReportPage {
 
     get info() {
         let data = new Object();
-        const dRows = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row]');
+        const name = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row] .semibold');
+        const type = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row] span span');
         const dNote = this.diagnosInfoColl.$$('div[class^=diagnosis-note-row]');
-        const reName = /.+/u;
-        const reType = /(?<=\n)(.+)(?=\sDiagnosis)/g;
-        const reComment = /(?<=Notes:\s)(.|\n)+?(?=\nSee)/g;
+        const reType = /(.+)(?=\sDiagnosis)/g;
+        const reComment = /(?<=Notes:\s)(.|(\n|))+?(?=(\n|)See)/g;
 
         data.amount = this.getNumber(this.diagnosInfoColl);
-        data.name = this.getArray(dRows, reName);
-        data.type = this.getArray(dRows, reType);
+        data.name = this.getArray(name);
+        data.type = this.getArray(type, reType);
         data.comment = this.getArray(dNote, reComment);
 
         return data;

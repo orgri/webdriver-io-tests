@@ -9,12 +9,12 @@ class LoginPage extends Page {
     get header() { return $('.main-header'); }
 
     open() { return browser.url('https://dev.everypig.com/login') || this; }
-    signin() { return this.signinButton.click() || this; }
+    signin() { return this.signinButton.waitClick() && this; }
 
     login(email, pass) {
         this.open();
-        this.inputEmail.setValue(email);
-        this.inputPassword.setValue(pass);
+        this.inputEmail.waitSetValue(email);
+        this.inputPassword.waitSetValue(pass);
         this.signin().waitForLogin();
         browser.pause(10000);
         return this;
@@ -27,7 +27,6 @@ class LoginPage extends Page {
     }
 
     asAdmin() { return this.login(user.admin, user.password); }
-
 }
 
 module.exports = new LoginPage();

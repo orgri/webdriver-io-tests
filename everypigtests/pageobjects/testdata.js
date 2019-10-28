@@ -209,6 +209,8 @@ class TestData {
         }.bind(this));
     }
 
+    get specialChars() { return ['&','%','#','\\','/','\"','$','?','^','|',':','*']; }
+
     //video - mov mp4 avi
     //audio - mp3 m4a aac webm wav
     //image - jpg jpeg gif png

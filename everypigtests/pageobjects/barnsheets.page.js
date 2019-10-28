@@ -5,7 +5,7 @@ class BarnSheetsPage extends ReportPage {
 
     /********************************************** Navigation *****************************************************/
     get barnsheetsUrl() { return this.baseUrl + '/barnsheets'; }
-    get groupsTab() { return $('a[href*="/barnsheets/groups"]'); }
+    get groupsTab() { return $('a[href*="/barnsheets/groups"]').$('span'); }
     get farmsTab() { return $('a[href*="/barnsheets/farms"]'); }
     get companiesTab() { return $('a[href*="/barnsheets/companies"]'); }
     get treatsTab() { return $('a[href*="/treatments"]'); }
@@ -44,18 +44,19 @@ class BarnSheetsPage extends ReportPage {
 
     groupHeader(str) { return $('.group-name=' + str); }
     choose(str) { return $('*=' + str).waitClick() && this.waitLoader(); }
+    clickCell(str, selector) { return this.tableItemsWith(str)[0].$(selector).waitClick() && this.waitLoader(); }
     isCellExist(date, str) { return $(this.tableRow + '*=' + date).$(this.tableItem + '*=' + str).isExisting(); }
     dateCell(date) { return this.cell(date).getText(); }
     mediaLabel(date) { return this.cell(date).$('.media-label').getText(); }
-    deathsCell(date) { return this.cell(date, 1).getText(); }
-    treatsCell(date) { return this.cell(date, 2).getText(); }
-    symptsCell(date) { return this.cell(date, 3).getText(); }
-    pigsinCell(date) { return this.cell(date, 4).getText(); }
-    pigsoutCell(date) { return this.cell(date, 5).getText(); }
-    correctCell(date) { return this.cell(date, 6).getText(); }
-    inventoryCell(date) { return this.cell(date, 7).getText(); }
-    mrCell(date) { return this.cell(date, 8).getText(); }
-    weightCell(date) { return this.cell(date, 9).getText(); }
+    deathsCell(date) { return this.getNumber(this.cell(date, 1)); }
+    treatsCell(date) { return this.getNumber(this.cell(date, 2)); }
+    symptsCell(date) { return this.getNumber(this.cell(date, 3)); }
+    pigsinCell(date) { return this.getNumber(this.cell(date, 4)); }
+    pigsoutCell(date) { return this.getNumber(this.cell(date, 5)); }
+    correctCell(date) { return this.getNumber(this.cell(date, 6)); }
+    inventoryCell(date) { return this.getNumber(this.cell(date, 7)); }
+    mrCell(date) { return this.getNumber(this.cell(date, 8)); }
+    weightCell(date) { return this.getNumber(this.cell(date, 9)); }
 
     chooseRandGroup(farmPrefix = 'TA_Farm', groupPrefix = 'TA_PigGroup') {
         this.open().clickFarmsTab().setElemsOnPage(100);
@@ -90,10 +91,10 @@ class BarnSheetsPage extends ReportPage {
     get reasonWrapper() { return 'div[class*="reason-collapse"]'; }
     get isReasonExist() { return this.section('Dead').$(this.reasonWrapper).isExisting(); }
     get deathReasons() { return this.section('Dead').$$(this.reasonWrapper); }
-    get mainComment() { return (this.section('NotesNotes').getText().match(/(?<=Edit\n)(.|\n)+?(?=\nSee)/g) || [])[0]; }
+    get mainComment() { return (this.section('NotesNotes').getText().match(/(?<=Edit(\n|))(.)+?(?=(\n|)See)/g) || [])[0]; }
     get nOfMedia() { return this.section('Media').getText().match(/[0-9]+/)[0]; }
     get nOfAudio() { return this.section('Audio').getText().match(/[0-9]+/)[0]; }
-    get reComment() { return /(?<=Notes\n)(.|\n)+?(?=\nSee)/g; }
+    get reComment() { return /(?<=Notes(\n|))(.)+?(?=(\n|)See)/g; }
 
     clickRight() { return this.rightButton.waitClick() && this.waitLoader(); }
     clickLeft() { return this.leftButton.waitClick() && this.waitLoader(); }
@@ -142,7 +143,7 @@ class BarnSheetsPage extends ReportPage {
 
     get deathInfo() {
         let obj = new Object();
-        const reReason = /(.+)(?=\s\u2022)/u;
+        const reReason = /(.+?)(?=\s\u2022)/u;
 
         obj.amount = this.getNumber(this.section('Dead'));
         obj.reason = this.isReasonExist ? this.getArray(this.deathReasons, reReason) : undefined;
@@ -157,7 +158,7 @@ class BarnSheetsPage extends ReportPage {
     get treatInfo() {
         let obj = new Object();
         const selector = this.section('Medic').$$('.content-row');
-        const reName = /(.+?)(?=(\s\u2022)|(\n\d+))/u;
+        const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
         const reDosage = /(?<=\u2022\s)(\d+\.\d+)/u;
         const reHeads = /(\d+)$/u;
         const reGals = /(\d+)(?=\sgal)/u;
@@ -175,7 +176,7 @@ class BarnSheetsPage extends ReportPage {
     get symptInfo() {
         let obj = new Object();
         const selector = this.section('Sympt').$$('.content-row');
-        const reName = /(.+)(?=\n)/u;
+        const reName = /[^\n\d%]+/u;
         const rePercent = /(\d+)%/u;
 
         obj.amount = this.getNumber(this.section('Sympt'));
@@ -239,6 +240,7 @@ class BarnSheetsPage extends ReportPage {
                 data.moves.heads[i], data.moves.weight[i], data.moves.condition[i]);
         }
         movePage.setComment(data.moves.comment).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection('Dead');
         if ($(this.rowIndex).isExisting()) {
@@ -261,6 +263,7 @@ class BarnSheetsPage extends ReportPage {
         }
         //treatPage.setTotal(total + '');
         treatPage.setComment(data.treats.comment).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection('Sympt');
         for (let i = 0; i < +data.sympts.amount; i++) {
@@ -268,12 +271,15 @@ class BarnSheetsPage extends ReportPage {
             symptomPage.setSymptom(data.sympts.name[i]);
         }
         symptomPage.setComment(data.sympts.comment).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection('Temps');
         tempsPage.setTemps(data.temps.high, data.temps.low).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection('Water');
         waterPage.setGals(data.water.consumed).submit();
+        this.isSubmitDisabled && this.close();
 
         this.chooseSection('Notes').setComment(data.comment).submit();
 
@@ -294,12 +300,10 @@ class BarnSheetsPage extends ReportPage {
 
     get diagnosInfo() {
         let obj = new Object();
-        const reName = /.+/u;
-        const reType = /(?<=\n)(.+)/g;
         const reComment = /(?<=Notes:\s+)(?=\w)(.|\n)+[^\nSee translation]/g;
 
-        obj.name = this.getArray($$('.diagnose-name'), reName);
-        obj.type = this.getArray($$('.diagnose-name'), reType);
+        obj.name = this.getArray($$('.diagnose-name .name'));
+        obj.type = this.getArray($$('.diagnose-name span span'));
         obj.comment = this.getArray($$('.diagnose-note'), reComment);
 
         return obj;
@@ -310,9 +314,9 @@ class BarnSheetsPage extends ReportPage {
     moveTabInfo(date) {
         let data = new Object();
         const selector = $$(this.block + '*=' + date);
-        const reHeads = /(?<=(Head Transferred|Head Placed)\n)(\d+)/u;
-        const reWeight = /(?<=(Est. Avg. Weight)\n)([\d\.]+)/u;
-        const reCondition = /(?<=(Condition at Arrival)\n)(.+)/u;
+        const reHeads = /(?<=(Head Transferred|Head Placed)(\n|))(\d+)/u;
+        const reWeight = /(?<=(Est. Avg. Weight)(\n|))([\d\.]+)/u;
+        const reCondition = /(?<=(Condition at Arrival)(\n|))(.+)/u;
 
         data.amount = selector.length + '';
         data.heads = this.getArray(selector, reHeads);

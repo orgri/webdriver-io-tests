@@ -10,13 +10,14 @@ describe('Edit Moves', () => {
         corrected = test.heads[2] - test.heads[3] + test.heads[4];
 
     it('Choose random group', () => {
+        tdata.toStringVal(test);
         date = sheetsPage.chooseRandGroup().getRandDates();
         localDate = new Date(date[1]).toLocaleDateString("en-US", options);
         invBefore = +sheetsPage.inventoryCell(date[0]);
         weightBefore = sheetsPage.weightCell(date[1]);
-        deaths = (sheetsPage.deathsCell(date[1]) === '-') ? 0 : (+sheetsPage.deathsCell(date));
+        //deaths = (sheetsPage.deathsCell(date[1]) === '-') ? 0 : (+sheetsPage.deathsCell(date));
+        deaths = sheetsPage.deathsCell(date[1]) ? 0 : (+sheetsPage.deathsCell(date));
         totalMoved = (invBefore + headMoves + corrected - deaths) + '';
-        tdata.toStringVal(test);
 
         expect(sheetsPage.tableHeader.getText(), 'table header')
             .to.equal('Daily Checkups');
@@ -43,7 +44,7 @@ describe('Edit Moves', () => {
         expect(rslt.weight[0], 'weight').to.equal(test.weight + ' lbs');
     });
 
-    it('vondition', () => {
+    it('condition', () => {
         expect(rslt.condition[0].toLowerCase(), 'condition').to.equal(test.condition);
     });
 
@@ -144,12 +145,12 @@ describe('Edit Deaths', () => {
     const test = tdata.randDeathsData();
 
     it('Choose random group', () => {
+        tdata.toStringVal(test);
         admin.openPrefs().setOnMortReason();
         date = sheetsPage.chooseRandGroup().getRandDates();
         invBefore = +sheetsPage.inventoryCell(date[0]);
         weightBefore = sheetsPage.weightCell(date[1]);
         mrBefore = sheetsPage.mrCell(date[1]);
-        tdata.toStringVal(test);
 
         expect(sheetsPage.tableHeader.getText(), 'table header')
             .to.equal('Daily Checkups');
@@ -241,8 +242,8 @@ describe('Edit Treats', () => {
     const test = tdata.randTreatsData();
 
     it('Choose random group', () => {
-        date = sheetsPage.chooseRandGroup().getRandDates();
         tdata.toStringVal(test);
+        date = sheetsPage.chooseRandGroup().getRandDates();
 
         expect(sheetsPage.tableHeader.getText(), 'table header')
             .to.equal('Daily Checkups');
@@ -318,11 +319,11 @@ describe('Edit Treats', () => {
 
     for (let i = 0; i < +test.amount; i++) {
         it('Treatments Tab Table(name ' + i + ')', () => {
-            expect(sheetsPage.cell(date[1], 0, i).getText(), 'name of treat').to.be.oneOf(test.treats);
+            expect(sheetsPage.cell(date[1], 0, i).$('<a>').getText(), 'name of treat').to.be.oneOf(test.treats);
         });
 
         it('Treatments Tab Table(heads ' + i + ')', () => {
-            expect(sheetsPage.cell(date[1], 3, i).getText(), 'heads').to.be.oneOf(test.heads);
+            expect(sheetsPage.cell(date[1], 3, i).$$('span')[2].getText(), 'heads').to.be.oneOf(test.heads);
         });
 
         it('Treatments Tab Table(dosage ' + i + ')', () => {
@@ -489,17 +490,17 @@ describe('Edit Media', () => {
             .uploadMedia(tdata.randVideo)
             .uploadMedia(tdata.randAudio)
             .submit();
-        
-        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
-    },1);
 
-    it('Number of audio)', () => {
+        expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
+    }, 1);
+
+    it('Number of audio', () => {
         sheetsPage.section('Audio').scrollIntoView({ block: 'center' });
 
         expect(sheetsPage.nOfAudio, 'nOfAudio').to.equal('1');
     });
 
-    it('Number of media)', () => {
+    it('Number of media', () => {
         sheetsPage.section('Media').scrollIntoView({ block: 'center' });
 
         expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('3');

@@ -36,8 +36,8 @@ module.exports = class ReportPage extends Page {
     }
 
     close() {
-        if (this.isMobile) {
-            this.box.scrollIntoView(true);
+        if (isMobile) {
+            this.box.isDisplayed() && this.box.scrollIntoView(true);
             this.mClose.waitClick();
         } else {
             this.closeBtn.waitClick();

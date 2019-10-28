@@ -215,7 +215,7 @@ describe('Resources', () => {
         first = resPage.cell('',0,1).getText();
         last = resPage.cell('',0,idx).getText();
 
-        expect(first >= last, 'fist >= last').to.equal(true);
+        expect(first >= last, 'first >= last').to.equal(true);
     });
 
     it('Sort by type', () => {
@@ -225,14 +225,14 @@ describe('Resources', () => {
             first = resPage.cell('',1,1).getText(),
             last = resPage.cell('',1,idx).getText();
 
-        expect(first <= last, 'fist <= last').to.equal(true);
+        expect(first <= last, 'first <= last').to.equal(true);
 
         resPage.clickSortBy('Type');
 
         first = resPage.cell('',1,1).getText();
         last = resPage.cell('',1,idx).getText();
 
-        expect(first >= last, 'fist >= last').to.equal(true);
+        expect(first >= last, 'first >= last').to.equal(true);
     });
 
     it('Sort by date', () => {
@@ -242,14 +242,14 @@ describe('Resources', () => {
             first = resPage.cell('',2,1).getText(),
             last = resPage.cell('',2,idx).getText();
 
-        expect(first <= last, 'fist <= last').to.equal(true);
+        expect(first <= last, 'first <= last').to.equal(true);
 
         resPage.clickSortBy('Date');
 
         first = resPage.cell('',2,1).getText();
         last = resPage.cell('',2,idx).getText();
 
-        expect(first >= last, 'fist >= last').to.equal(true);
+        expect(first >= last, 'first >= last').to.equal(true);
     });
 
     it('Search', () => {

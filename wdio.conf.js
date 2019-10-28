@@ -11,9 +11,10 @@ exports.config = {
     // WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
     // on a remote machine).
     runner: 'local',
-    //
-    path: '/',      // '/wd/hub' for SeleniumStandalone
-    port: 9515,     // 4444 default for SeleniumStandalone and 9515 for ChromeDriver
+    // '/wd/hub' for SeleniumStandalone and '/' for ChromeDriver service
+    // 4444 default for SeleniumStandalone and 9515 for ChromeDriver service
+    path: '/wd/hub',
+    port: 4444,
     //
     // ==================
     // Specify Test Files
@@ -67,17 +68,24 @@ exports.config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: [{
+    capabilities: [
+        {
+            browserName: 'safari',
+            platformName: 'macOS',
+        },
+        {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
-        maxInstances: 2,
         browserName: 'chrome',
         'goog:chromeOptions': {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
+            //mobileEmulation: { 'deviceName': 'iPad' },
+            //mobileEmulation: { 'deviceName': 'iPad Pro' },
             //mobileEmulation: { 'deviceName': 'Pixel 2' },
             'args': [
-                '--headless',
+                '--headless', '--window-size=1920,1080',
+                //'--start-fullscreen',
                 '--use-fake-device-for-media-stream',
                 '--use-fake-ui-for-media-stream',
                 '--disable-notifications',
@@ -90,7 +98,8 @@ exports.config = {
         // it is possible to configure which logTypes to include/exclude.
         // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
         // excludeDriverLogs: ['bugreport', 'server'],
-    }],
+    },/**/
+    ],
     //
     // ===================
     // Test Configurations
@@ -98,7 +107,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'error',
+    logLevel: 'silent',
     //
     // Set specific log levels per logger
     // loggers:
@@ -125,7 +134,7 @@ exports.config = {
     baseUrl: 'https://dev.everypig.com',
     screenshotPath: path.resolve('screenshots'),
     mediaPath: path.resolve('media'),
-    downloadPath: path.resolve('download'),
+    downloadPath: path.resolve('../Downloads'),
     // Custom timeouts for pause and sync indexdb
     pauseTimeout: 300,
     syncTimeout: 1500,
@@ -143,7 +152,17 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['chromedriver', 'selenium-standalone'],
+    services: [/*'chromedriver',*/ 'selenium-standalone'],
+    seleniumInstallArgs: {
+        drivers: {
+            chrome: { version: '78.0.3904.11' }
+        }
+    },
+    seleniumArgs: {
+        drivers: {
+            chrome: { version: "78.0.3904.11" }
+        }
+    },
     // options
     //chromeDriverArgs: ['--port=9515', '--url-base=\'/\''], // default for ChromeDriver
     //chromeDriverLogs: './',
@@ -209,14 +228,14 @@ exports.config = {
         global.login = require('./everypigtests/pageobjects/login.page');
         global.isSafari = browser.capabilities['browserName'] == 'Safari';
         global.isChrome = browser.capabilities['browserName'] == 'chrome';
-        global.isMobile = capabilities['goog:chromeOptions'].propertyIsEnumerable('mobileEmulation');
-        global.isIOS = isMobile && capabilities['goog:chromeOptions'].mobileEmulation.deviceName.includes('iPhone');
+        global.isMobile = isChrome && capabilities['goog:chromeOptions'].propertyIsEnumerable('mobileEmulation');
+        global.isIOS = isMobile && !capabilities['goog:chromeOptions'].mobileEmulation.deviceName.includes('Pixel');
 
         let timeout = this.pauseTimeout;
         browser.setTimeout({ 'implicit': 150, 'pageLoad': 15000 });
-        browser.setWindowRect(0, 0, 1400, 900);
-        browser.fullscreenWindow();
-        browser.sendCommand('Page.setDownloadBehavior', { 'behavior': 'allow', 'downloadPath': this.downloadPath });
+        //browser.setWindowRect(0, 0, 1400, 900);
+        isSafari && browser.fullscreenWindow();
+        isChrome && browser.sendCommand('Page.setDownloadBehavior', { 'behavior': 'allow', 'downloadPath': this.downloadPath });
 
         browser.addCommand("waitClick", function () {
             // `this` is return value of $(selector)
@@ -272,9 +291,14 @@ exports.config = {
      * @param {Object} test test details
      */
     afterTest: function (test) {
-        const { addAttachment } = require('@wdio/allure-reporter').default;
+        const reporter = require('@wdio/allure-reporter').default;
+        reporter.addEnvironment('Browser:',
+            browser.capabilities.browserName + ' '
+            + browser.capabilities.browserVersion);
+
         browser.takeScreenshot();
-        addAttachment('Browser logs', browser.getLogs('browser'), 'application/json');
+        isChrome && reporter.addAttachment(
+            'Browser logs', browser.getLogs('browser'), 'application/json');
     },
     /**
      * Hook that gets executed after the suite has ended
