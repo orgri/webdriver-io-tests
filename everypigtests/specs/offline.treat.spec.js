@@ -61,9 +61,14 @@ describe('Treats page, navigation (offline)', () => {
 
 describe('Report single treat (offline)', () => {
     beforeEach(function () {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup()
-            .chooseSection(2, 'Treats');
+        this.currentTest.title == 'Choose group' ||
+            checkupPage.currentDC().chooseSection(2, 'Treats');
     });
+    it('Choose group', () => {
+        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+
+        //expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+    }, 1);
 
     if(!isMobile) {
         it('Cancel report', () => {
@@ -94,7 +99,6 @@ describe('Report single treat (offline)', () => {
         checkupPage.section(2).scrollIntoView({block: "center"});
         const rslt = checkupPage.treatInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.name[0], 'name of treat').to.equal(treat);
         expect(rslt.heads[0], 'heads').to.equal(heads);
         expect(rslt.dosage[0], 'dosage of treat').to.equal(dosage);
@@ -110,7 +114,6 @@ describe('Report single treat (offline)', () => {
         checkupPage.section(2).scrollIntoView({block: "center"});
         const rslt = checkupPage.treatInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.name[0], 'name of treat').to.equal(treat);
         expect(rslt.heads[0], 'heads').to.equal(heads);
         expect(rslt.dosage[0], 'dosage of treat').to.equal(dosage);
@@ -125,7 +128,6 @@ describe('Report single treat (offline)', () => {
         checkupPage.section(2).scrollIntoView({block: "center"});
         const rslt = checkupPage.treatInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.name[0], 'name of treat').to.equal(treat);
         expect(rslt.heads[0], 'heads').to.equal(heads);
         expect(rslt.dosage[0], 'dosage of treat').to.equal(dosage);
@@ -139,7 +141,6 @@ describe('Report single treat (offline)', () => {
         checkupPage.section(2).scrollIntoView({block: "center"});
         const rslt = checkupPage.treatInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.name[0], 'name of treat').to.equal(treat);
         expect(rslt.heads[0], 'heads').to.equal(heads);
     });
@@ -232,13 +233,11 @@ describe('Report treats (offline)', () => {
     });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn().setId();
-
-        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+        checkupPage.netOn();
     });
 
     it('Amount after sync', () => {
-        checkupPage.openCurrent().section(2).scrollIntoView({ block: 'center' });
+        checkupPage.currentDC().section(2).scrollIntoView({ block: 'center' });
         rslt = checkupPage.treatInfo;
 
         expect(rslt.amount, 'amount of treats').to.equal(test.amount);

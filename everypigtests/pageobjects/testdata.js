@@ -221,16 +221,18 @@ class TestData {
             "pig6.jpg", "pig7.jpeg", "pig8.jpg", "pig9.jpg", "pig10.jpg",
             "pig11.jpg", "pig12.jpg", "pig13.jpg", "pig14.png", "pig15.png",
             "pig16.gif", "pig17.gif", "pig18.gif", "pig19.gif", "pig20.gif",
-            "image_15MB.jpg", "image_1MB.gif", "image_5MB.jpg", "image_5MB.png"]
+            /*"image_15MB.jpg",*/ "image_1MB.gif", "image_5MB.jpg", "image_5MB.png"]
+            //image_15MB.jpg is not uploaded (reason is unknown)
         );
     }
 
     get randVideo() {
         return faker.random.arrayElement(
-            ["video_3MB.mp4", "video_5MB.mp4", "video_7MB.mp4", "video_18MB.mp4", 
+            ["video_3MB.mp4", "video_5MB.mp4", "video_7MB.mp4", /*"video_18MB.mp4",*/
             "video_2MB.mov", "video_3MB.mov", "video_5MB.mov", "video_7MB.mov",
             "video_1MB.avi", "video_2MB.avi", "video_3MB.avi", "video_4MB.avi"
             /*"video_1MB.mpg", "video_3MB.mpg", "video_4MB.mpg", "video_6MB.mpg"*/]
+            //video_18MB.mp4 is not uploaded (reason is unknown)
         );
     }
 

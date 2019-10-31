@@ -18,7 +18,7 @@ describe('Daily Checkup Navigation', () => {
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
-    tdata.specialChars().forEach((el) => {
+    tdata.specialChars.forEach((el) => {
         it('Search special chars: ' + el, () => {
             //just check whether page crashes or not, need to clarify expected behaviour
             checkupPage.open();
@@ -59,7 +59,7 @@ describe('Daily Checkup Navigation', () => {
         do {
             dcStatus = rows[i].$('.button').getText();
             i++;
-        } while (dcStatus !== 'Start')
+        } while (dcStatus !== 'Start');
         checkupPage.setGroup(rows[--i]).chooseGroup(checkupPage.group);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -113,9 +113,8 @@ describe('Daily Checkup Navigation', () => {
     it('Clear Search farm', () => {
         checkupPage.clickCheckup().clearSearch();
 
-        expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
+        expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(25);
     });
-
 });
 
 describe('Media in DC', () => {
@@ -170,7 +169,6 @@ describe('Media in DC', () => {
             expect(rslt.audioNote, 'audioComment').to.equal(comment);
         });
     }
-
 });
 
 describe('Create empty checkup', () => {

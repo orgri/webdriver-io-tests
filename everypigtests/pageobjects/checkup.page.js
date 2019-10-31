@@ -5,8 +5,8 @@ class CheckupPage extends ReportPage {
     constructor() {
         super();
         this.id = '0';
-        this.farm,
-        this.group
+        this.farm;
+        this.group;
     }
 
 /********************************************** Navigation *****************************************************/
@@ -39,10 +39,10 @@ class CheckupPage extends ReportPage {
             .$$('.button').slice(-1)[0].waitClick() && this.waitLoader();
     }
 
-    currentDC() {
+    currentDC(farm = this.farm, group = this.group) {
         this.clickCheckup();
         this.modalWrapper.isExisting() && this.clickToModal('Yes');
-        return this.setSearch(this.farm).chooseFarm(this.farm).chooseGroup(this.group);
+        return this.setSearch(farm).chooseFarm(farm).chooseGroup(group);
     }
 
     open(path = this.checkupUrl) {
@@ -195,7 +195,7 @@ class CheckupPage extends ReportPage {
         let obj = new Object();
         const selector = this.section(2).$$(this.treatWrapper);
         const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
-        const reDosage = /(?<=\u2022\s)(\d+\.\d+)/u;
+        const reDosage = /(?<=\u2022\s)([\d.]+)/u;
         const reHeads = /(\d+)$/u;
         const reGals = /(\d+)(?=\sgal)/u;
 

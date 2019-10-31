@@ -25,22 +25,22 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './everypigtests/specs/**/checkup.spec.js',
-        './everypigtests/specs/**/offline.checkup.spec.js',
-        './everypigtests/specs/**/barnsheets.spec.js',
-        './everypigtests/specs/**/resources.spec.js',
+        './everypigtests/specs/checkup.spec.js',
+        './everypigtests/specs/offline.checkup.spec.js',
+        './everypigtests/specs/barnsheets.spec.js',
+        './everypigtests/specs/resources.spec.js',
 
-        './everypigtests/specs/**/editcheckup.spec.js',
+        './everypigtests/specs/editcheckup.spec.js',
 
-        './everypigtests/specs/**/move.spec.js',
-        './everypigtests/specs/**/death.spec.js',
-        './everypigtests/specs/**/symptom.spec.js',
-        './everypigtests/specs/**/treat.spec.js',
+        './everypigtests/specs/move.spec.js',
+        './everypigtests/specs/death.spec.js',
+        './everypigtests/specs/symptom.spec.js',
+        './everypigtests/specs/treat.spec.js',
 
-        './everypigtests/specs/**/offline.move.spec.js',
-        './everypigtests/specs/**/offline.death.spec.js',
-        './everypigtests/specs/**/offline.sympt.spec.js',
-        './everypigtests/specs/**/offline.treat.spec.js',
+        './everypigtests/specs/offline.move.spec.js',
+        './everypigtests/specs/offline.death.spec.js',
+        './everypigtests/specs/offline.sympt.spec.js',
+        './everypigtests/specs/offline.treat.spec.js',
     ],
     // Patterns to exclude.
     exclude: [
@@ -62,7 +62,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 2,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -349,4 +349,4 @@ exports.config = {
     */
     //onReload: function(oldSessionId, newSessionId) {
     //}
-}
+};

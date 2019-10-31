@@ -2,7 +2,6 @@ const checkupPage = require('../pageobjects/checkup.page');
 const movePage = require('../pageobjects/movements.page');
 
 describe('Moves page, navigation (offline)', () => {
-
     it('Choose group', () => {
         checkupPage.netOn(false).open().netOff().chooseRandCheckup();
 
@@ -59,7 +58,6 @@ describe('Moves page, navigation (offline)', () => {
 });
 
 describe('Report single move (offline)', () => {
-
     beforeEach(function () {
         this.currentTest.title == 'Choose group'
             || checkupPage.currentDC().chooseSection(0, 'Move');
@@ -106,7 +104,6 @@ describe('Report single move (offline)', () => {
 
         const rslt = checkupPage.moveInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.added[0], 'pigs added').to.equal(heads);
         expect(rslt.weight[0], 'avgWeight').to.equal(weight + ' lbs');
         expect(rslt.condition[0], 'condition').to.equal(condition);
@@ -122,7 +119,6 @@ describe('Report single move (offline)', () => {
         
         const rslt = checkupPage.moveInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.added[0], 'pigs added').to.equal(heads);
     });
 
@@ -134,31 +130,23 @@ describe('Report single move (offline)', () => {
 
         const rslt = checkupPage.moveInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.removed[0], 'pigs removed').to.equal(heads);
     });
 
     it('Report Sale', () => {
         const heads = tdata.randHeads + '';
-
         movePage.setSale(heads).submit();
-        checkupPage.clickToModal('No').section(0).scrollIntoView({ block: "center" });
-
         const rslt = checkupPage.moveInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.removed[0], 'pigs removed').to.equal(heads);
     });
 
     it('Fix removing', () => {
         const heads = tdata.randHeads + '';
-
         movePage.setFixRemoving(heads).submit();
         checkupPage.section(0).scrollIntoView({ block: "center" });
-
         const rslt = checkupPage.moveInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.removed[0], 'pigs removed').to.equal(heads);
     });
 
@@ -170,14 +158,11 @@ describe('Report single move (offline)', () => {
         movePage.setFixRemoving(heads[0]).clickSelectParam()
             .setShipment(heads[1], weight).submit();
         checkupPage.section(0).scrollIntoView({ block: "center" });
-
         const rslt = checkupPage.moveInfo;
 
-        expect(rslt.amount, 'amount').to.equal('1');
         expect(rslt.added[0], 'pigs added').to.equal(heads[1]);
         expect(rslt.weight[0], 'avgWeight').to.equal(weight + ' lbs');
     });
-
 });
 
 describe('Report few moves (offline)', () => {
@@ -260,13 +245,11 @@ describe('Report few moves (offline)', () => {
     });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn().setId();
-
-        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+        checkupPage.netOn();
     });
 
     it('Amount after sync', () => {
-        checkupPage.openCurrent();
+        checkupPage.currentDC();
         rslt = checkupPage.moveInfo;
 
         expect(rslt.amount, 'amount of moves').to.equal(test.amount);
@@ -303,5 +286,4 @@ describe('Report few moves (offline)', () => {
     it('Comment after sync', () => {
         expect(rslt.comment, 'commment').to.equal(test.comment);
     });
-
 });

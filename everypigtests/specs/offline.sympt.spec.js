@@ -139,6 +139,7 @@ describe('Report single symptom (offline)', () => {
         checkupPage.section(3).scrollIntoView({block: "center"});
         const rslt = checkupPage.symptInfo;
 
+        expect(rslt.amount, 'amount of symptoms').to.equal('1');
         expect(rslt.name[0], 'name of symptom').to.equal(sympt);
     });
 });
@@ -201,13 +202,11 @@ describe('Report Symptoms (offline)', () => {
     });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn().setId();
-
-        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+        checkupPage.netOn();
     });
 
     it('Amount after sync', () => {
-        checkupPage.openCurrent().section(3).scrollIntoView({ block: 'center' });
+        checkupPage.currentDC().section(3).scrollIntoView({ block: 'center' });
 
         rslt = checkupPage.symptInfo;
 

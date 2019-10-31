@@ -207,7 +207,6 @@ describe('Report death reason (offline)', () => {
         checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
-        expect(rslt.amount, 'amount of deaths').to.equal(deaths);
         expect(rslt.reason[0], 'reason').to.equal(reason);
         expect(rslt.chronic[0], 'chronic').to.equal(deaths);
     });
@@ -220,7 +219,6 @@ describe('Report death reason (offline)', () => {
         checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
-        expect(rslt.amount, 'amount of deaths').to.equal(deaths);
         expect(rslt.reason[0], 'reason').to.equal(reason);
         expect(rslt.acute[0], 'acute').to.equal(deaths);
     });
@@ -233,7 +231,6 @@ describe('Report death reason (offline)', () => {
         checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
-        expect(rslt.amount, 'amount of deaths').to.equal(deaths);
         expect(rslt.reason[0], 'reason').to.equal(reason);
         expect(rslt.ethanas[0], 'ethanas').to.equal(deaths);
     });
@@ -327,13 +324,11 @@ describe('Report few death reasons (offline)', () => {
     });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn().setId();
-
-        expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+        checkupPage.netOn();
     });
 
     it('Collapse reasons', () => {
-        checkupPage.openCurrent().reasonCollapse(0)
+        checkupPage.currentDC().reasonCollapse(0)
             .reasonCollapse(1).reasonCollapse(2);
     });
 
