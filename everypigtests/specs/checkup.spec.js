@@ -6,6 +6,7 @@ describe('Daily Checkup Navigation', () => {
     let dcStatus;
 
     it('Open', () => {
+        admin.openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
         checkupPage.open();
 
         expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(25);
@@ -123,7 +124,7 @@ describe('Media in DC', () => {
     let rslt;
 
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -174,13 +175,13 @@ describe('Media in DC', () => {
 describe('Create empty checkup', () => {
 
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Create checkup', () => {
-        const length = $$(checkupPage.sectionWrapper).length
+        const length = $$(checkupPage.sectionWrapper).length;
         for (let i = 0; i < length; i++) {
             checkupPage.clickNoToReport(i);
         }
@@ -244,8 +245,8 @@ describe('Create full checkup', () => {
         nOfDeaths = test.deaths.chronic[0] + test.deaths.acute[0] + test.deaths.euthanas[0];
 
     it('Choose random group', () => {
-        admin.openPrefs().setOffMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOff('Track Mortality Reasons');
+        checkupPage.randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);

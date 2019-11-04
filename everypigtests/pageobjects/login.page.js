@@ -1,6 +1,6 @@
 // login.page.js
-var Page = require('./page');
-var user = require('./credentials');
+const Page = require('./page');
+const user = require('./credentials');
 
 class LoginPage extends Page {
     get inputEmail() { return $('input[name="email"]'); }

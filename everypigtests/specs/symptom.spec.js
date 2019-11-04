@@ -3,12 +3,12 @@ const symptomPage = require('../pageobjects/symptoms.page');
 
 describe('Symptoms page, navigation', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(3, 'Symptoms');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -72,12 +72,12 @@ describe('Symptoms page, navigation', () => {
 
 describe('Report single symptom', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(3, 'Symptoms');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -138,7 +138,7 @@ describe('Report symptoms', () => {
     const test = tdata.randSymptData();
 
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });

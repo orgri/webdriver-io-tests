@@ -1,16 +1,16 @@
 // deaths.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class DeathsPage extends ReportPage {
     constructor() {
         super();
         this.pagename = 'mortality-reason';
         this.row = '.mortality-reason-row';
+        this.inputWrapper = '.NumberStepInput';
+        this.selectWrapper = '.select-mort-reason-wrapper';
     }
 
     get message() { return $('.MessageBox'); }
-    get inputWrapper() { return '.NumberStepInput'; }
-    get selectWrapper() { return '.select-mort-reason-wrapper'; }
     get isMortReason() { return $('.add-mortality-reason').isExisting(); }
 
     clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
@@ -42,7 +42,6 @@ class DeathsPage extends ReportPage {
         this.submit();
         return this;
     }
-
 }
 
 module.exports = new DeathsPage();

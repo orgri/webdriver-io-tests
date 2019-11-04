@@ -1,15 +1,16 @@
 // medications.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class MedicationsPage extends ReportPage {
     constructor() {
         super();
         this.pagename = 'treatment';
         this.row = '.treatment-row';
+        this.inputWrapper = '.treatment-details-row';
+        this.labelWrapper = '.label-wrapper';
+        this.selectWrapper = '.select-treatment-wrapper';
     }
 
-    get inputWrapper() { return '.treatment-details-row'; }
-    get labelWrapper() { return '.label-wrapper'; }
     get total() { return $('#head-total-count'); }
  
     setHead(number, index) {
@@ -102,14 +103,13 @@ class MedicationsPage extends ReportPage {
         } else { 
             this.setReportParam(product, index);
         }
-        (heads == undefined) || this.setHead(heads);
-        (dosage == undefined) || this.inputLabel('Units', index).isExisting() && this.setUnits(dosage);
-        (gals == undefined) || this.inputLabel('Gals', index).isExisting() && this.setGals(gals);
-        (dosage == undefined) || this.inputLabel('ccs', index).isExisting() && this.setCcs(dosage);
-        (dosage == undefined) || this.inputLabel('Milliliters', index).isExisting() && this.setMls(dosage);
+        (heads === undefined) || this.setHead(heads);
+        (dosage === undefined) || this.inputLabel('Units', index).isExisting() && this.setUnits(dosage);
+        (gals === undefined) || this.inputLabel('Gals', index).isExisting() && this.setGals(gals);
+        (dosage === undefined) || this.inputLabel('ccs', index).isExisting() && this.setCcs(dosage);
+        (dosage === undefined) || this.inputLabel('Milliliters', index).isExisting() && this.setMls(dosage);
         return this;
     }
-
 }
 
 module.exports = new MedicationsPage();

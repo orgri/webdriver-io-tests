@@ -4,13 +4,13 @@ const admin = require('../pageobjects/admin.page');
 
 describe('Death page, input', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(1, 'Death');
     });
 
     it('Choose group', () => {
-        admin.openPrefs().setOffMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOff('Track Mortality Reasons');
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -94,13 +94,13 @@ describe('Death page, input', () => {
 
 describe('Report death', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(1, 'Death');
     });
 
     it('Choose group', () => {
-        admin.openPrefs().setOffMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOff('Track Mortality Reasons');
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -195,13 +195,13 @@ describe('Death reason page, navigation', () => {
     });
 
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(1, 'Death');
     });
 
     it('Choose group', () => {
-        admin.openPrefs().setOnMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -249,13 +249,13 @@ describe('Death reason page, navigation', () => {
 
 describe('Death reason page, input', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(1, 'Death');
     });
 
     it('Choose group', () => {
-        admin.openPrefs().setOnMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -343,13 +343,13 @@ describe('Death reason page, input', () => {
 
 describe('Report death reason', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(1, 'Death');
     });
 
     it('Choose group', () => {
-        admin.openPrefs().setOnMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -430,8 +430,8 @@ describe('Report few death reasons', () => {
     const test = tdata.randDeathsData();
 
     it('Choose random group', () => {
-        admin.openPrefs().setOnMortReason();
-        checkupPage.chooseRandCheckup();
+        admin.openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);

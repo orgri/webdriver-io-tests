@@ -3,7 +3,7 @@ const treatPage = require('../pageobjects/medications.page');
 
 describe('Treats page, navigation (offline)', () => {
     it('Choose group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -61,11 +61,11 @@ describe('Treats page, navigation (offline)', () => {
 
 describe('Report single treat (offline)', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group' ||
+        this.currentTest.title === 'Choose group' ||
             checkupPage.currentDC().chooseSection(2, 'Treats');
     });
     it('Choose group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         //expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -173,13 +173,13 @@ describe('Report treats (offline)', () => {
         }
 
         this.currentTest._currentRetry > 0
-            && this.currentTest.title == 'Fill report'
+            && this.currentTest.title === 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(2);
+                .randCheckup().chooseSection(2);
     });
 
     it('Choose random group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);

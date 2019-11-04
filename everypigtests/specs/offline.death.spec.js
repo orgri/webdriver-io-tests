@@ -12,8 +12,8 @@ describe('Report death (offline)', () => {
     });
 
     it('Choose group', () => {
-        admin.netOn(false).openPrefs().setOffMortReason();
-        checkupPage.open().netOff().chooseRandCheckup();
+        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
+        checkupPage.open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -112,8 +112,8 @@ describe('Death reason page, navigation (offline)', () => {
     });
 
     it('Choose group', () => {
-        admin.netOn(false).openPrefs().setOnMortReason();
-        checkupPage.open().netOff().chooseRandCheckup();
+        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -170,13 +170,13 @@ describe('Death reason page, navigation (offline)', () => {
 
 describe('Report death reason (offline)', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.currentDC().chooseSection(1, 'Deaths');
     });
 
     it('Choose group', () => {
-        admin.netOn(false).openPrefs().setOnMortReason();
-        checkupPage.open().netOff().chooseRandCheckup();
+        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -263,14 +263,14 @@ describe('Report few death reasons (offline)', () => {
         }
 
         this.currentTest._currentRetry > 0
-            && this.currentTest.title == 'Fill report'
+            && this.currentTest.title === 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(1);
+                .randCheckup().chooseSection(1);
     });
 
     it('Choose random group', () => {
-        admin.netOn(false).openPrefs().setOnMortReason();
-        checkupPage.open().netOff().chooseRandCheckup();
+        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
+        checkupPage.open().netOff().randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);

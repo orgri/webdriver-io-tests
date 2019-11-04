@@ -6,10 +6,10 @@ module.exports = class Page {
     }
 
     get myUrl() { return browser.getUrl(); }
-    get onNet() { return $(".NetworkNotificationBox*=Back Online"); }
-    get offNet() { return $(".NetworkNotificationBox*=No Internet Connection"); }
-    get synced() { return $(".NetworkNotificationBox*=Syncing data"); }
-    get invis() { return $(".NetworkNotificationBox.visible"); }
+    get onNet() { return $('.NetworkNotificationBox*=Back Online'); }
+    get offNet() { return $('.NetworkNotificationBox*=No Internet Connection'); }
+    get synced() { return $('.NetworkNotificationBox*=Syncing data'); }
+    get invis() { return $('.NetworkNotificationBox.visible'); }
     get isMobile() { return $('.AppContainer.isMobile').isExisting(); }
     get isOffNet() { return this.offNet.isExisting(); }
     get notification() { return $('.rrt-text'); }
@@ -47,8 +47,11 @@ module.exports = class Page {
     clickResources() { return this.resources.waitClick() && this.waitLoader(); }
     clickNextPage() { return this.nextPageBtn.waitClick() && this.waitLoader(); }
     clickPrevPage() { return this.prevPageBtn.waitClick() && this.waitLoader(); }
-    clickBtn(str) { return $('button=' + str).waitClick() && this.waitLoader(); }
+
+    clickTab(str, wrapper = $('#root')) { return wrapper.$('.item=' + str).waitClick() && this.waitLoader(); }
+    clickBtn(str, wrapper = $('#root')) { return wrapper.$('button=' + str).waitClick() && this.waitLoader(); }
     clickToModal(str) { return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
+    closeModal() { return this.modalWrapper.$('.close-button').waitClick() && this.waitLoader(); }
     setSearch(str) { return this.inputSearch.waitSetValue(str) && this.waitLoader(); }
     clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
 
@@ -156,9 +159,9 @@ module.exports = class Page {
     }
 
     getArray(selector, regex = /.+/u) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
-    getString(selector, regex) { return (selector.getText().match(regex) || [])[0]; }
+    getString(selector, regex = /.+/u) { return (selector.getText().match(regex) || [])[0]; }
     getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
-    getFloat(selector) { return (selector.getText().match(/[\d\.]+/u) || ['0'])[0]; }
+    getFloat(selector) { return (selector.getText().match(/[\d.]+/u) || ['0'])[0]; }
 
     /********************************* Tables *************************************/
 
@@ -255,4 +258,4 @@ module.exports = class Page {
         });
         fs.unlinkSync(filePath);
     }
-}
+};

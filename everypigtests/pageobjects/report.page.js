@@ -1,12 +1,15 @@
 // report.page.js
-var Page = require('./page');
+const Page = require('./page');
 
 module.exports = class ReportPage extends Page {
     constructor() {
         super();
         this.index = 0;
-        this.pagename = 'pagename';
-        this.row = '.pagename-row';
+        this.pagename = 'root';
+        this.row = '#root';
+        this.inputWrapper = '#root';
+        this.labelWrapper = '#root';
+        this.selectWrapper = '.ReactSelect';
     }
 
 /********************************************** Navigation *****************************************************/
@@ -18,7 +21,7 @@ module.exports = class ReportPage extends Page {
     get mNextBtn() { return $('.button=Next'); }
     get mNextBtnDisabled() { return $('.button.primary.disabled'); }
     get mSubmitBtn() { return $('.StickyFooter').$('.button*=Continue'); }
-    get mSubmitBtnDisabled() { return $('.button.primary.disabled.sticky-footer'); }
+    get mSubmitBtnDisabled() { return $('.button.primary.disabled'); }
     get mClose() { return $('.back-link.hide-for-large'); }
     get backLink() { return $('div[class^="mobile-header"]').$('a[class^="back-link"]'); }
     get isNextDisabled() { return this.mNextBtnDisabled.isExisting(); }
@@ -83,9 +86,6 @@ module.exports = class ReportPage extends Page {
     get mRows() { return $$(this.mRowPicker); }
     get rowIndex() { return '.row-index'; }
     get selectIcon() { return '.icon.selected'; }
-    get selectWrapper() { return ('.select-' + this.pagename + '-wrapper'); }
-    get inputWrapper() { return '.wrapper'; }
-    get labelWrapper() { return '.wrapper'; }
 
     paramRow(index) {
         if ($(this.row).isExisting()) {
@@ -170,4 +170,4 @@ module.exports = class ReportPage extends Page {
     }
 
     resetIndex() { this.index = 0; }
-}
+};

@@ -49,7 +49,7 @@ describe('Daily Checkup Navigation (offline)', () => {
         do {
             dcStatus = rows[i].$('.button').getText();
             i++;
-        } while (dcStatus !== 'Start')
+        } while (dcStatus !== 'Start');
         checkupPage.setGroup(rows[--i]).chooseGroup(checkupPage.group);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -95,15 +95,10 @@ describe('Daily Checkup Navigation (offline)', () => {
 
     it('Choose Up-to-date group', () => {
         //TODO: improve and fix when no such group with Update
-        checkupPage.clickCheckup().chooseFarm(farmName);
-        let i = 0, dcStatus, rows = $$(checkupPage.groupRow);
-        do {
-            dcStatus = rows[i].$('.button').getText();
-            i++;
-        } while (dcStatus !== 'Update');
-        checkupPage.setGroup(rows[--i]).chooseGroup(checkupPage.group);
+        checkupPage.randCheckup('Update');
 
         expect(checkupPage.offlineWarning.isExisting(), 'no checkup warning existing').to.equal(true);
+        expect(checkupPage.isSubmitDisabled, 'disabled submit button').to.equal(true);
     });
 });
 
@@ -120,7 +115,7 @@ describe('Media in DC (offline)', () => {
     });
 
     it('Choose random group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -193,18 +188,18 @@ describe('Create empty checkup (offline)', () => {
         }
 
         this.currentTest._currentRetry > 0
-            && this.currentTest.title == 'Create checkup'
-            && checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+            && this.currentTest.title === 'Create checkup'
+            && checkupPage.netOn(false).open().netOff().randCheckup();
     });
 
     it('Choose random group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Create checkup', () => {
-        const length = $$(checkupPage.sectionWrapper).length
+        const length = $$(checkupPage.sectionWrapper).length;
         for (let i = 0; i < length; i++) {
             checkupPage.clickNoToReport(i);
         }
@@ -326,13 +321,13 @@ describe('Create full checkup (offline)', () => {
             }
     
             this.currentTest._currentRetry > 0
-                && this.currentTest.title == 'Create checkup'
-                && checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+                && this.currentTest.title === 'Create checkup'
+                && checkupPage.netOn(false).open().netOff().randCheckup();
         });
 
     it('Choose random group', () => {
-        admin.netOn(false).openPrefs().setOffMortReason();
-        checkupPage.open().netOff().chooseRandCheckup();
+        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
+        checkupPage.open().netOff().randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -478,13 +473,13 @@ describe('Create 3 checkups (offline)', () => {
     });
 
     before(function () {
-        admin.netOn(false).openPrefs().setOffMortReason();
+        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
         checkupPage.open().netOff();
     });
 
     for(let i = 0; i < 3; i++) {
         it('Choose random group', () => {
-            checkupPage.chooseRandCheckup();
+            checkupPage.randCheckup();
             farm.push(checkupPage.farm);
             group.push(checkupPage.group);
             tdata.toStringVal(test);

@@ -1,8 +1,11 @@
 // temps.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class WaterPage extends ReportPage {
-    get inputWrapper() { return '.water-usage-row'; }
+    constructor() {
+        super();
+        this.inputWrapper = '.water-usage-row';
+    }
 
     setGals(number) { return this.input('Gallons').waitSetValue(number) && this; }
 }

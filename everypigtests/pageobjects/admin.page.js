@@ -1,32 +1,38 @@
-// checkup.page.js
-var Page = require('./page');
+// admin.page.js
+const Page = require('./page');
 
 class AdminPage extends Page {
-    get mortReasonSection() { return $('.setting-section*=Track Mortality Reasons'); }
-    get mortReasonSwitch() { return this.mortReasonSection.$('<label>'); }
+    section(str) { return $('.setting-section*=' + str); }
+    switch(str) { return this.section(str).$('<label>'); }
 
-    openPrefs() {
-        browser.url(this.baseUrl + '/admin/preferences/settings');
+    openPrefs(tab = 'Settings') {
+        if (tab === 'Settings')
+            browser.url(this.baseUrl + '/admin/preferences/settings');
+        else if (tab === 'DC')
+            browser.url(this.baseUrl + '/admin/preferences/daily-checkup');
+        else if (tab === 'Integrations')
+            browser.url(this.baseUrl + '/admin/preferences/integrations');
+
+        return this.waitLoader();
+    }
+
+    setOn(str) {
+        this.section(str).scrollIntoView({ block: "center" });
+        if (this.section(str).$('span*=OFF').isExisting()) {
+            this.switch(str).click();
+            this.section(str).$('span*=ON').waitForExist();
+        }
+        expect(this.section(str).$('span*=ON').isExisting(), 'section.(ON).isExisting').to.equal(true);
         return this;
     }
 
-    setOnMortReason() {
-        this.mortReasonSwitch.scrollIntoView({ block: "center" });
-        if (this.mortReasonSection.$('span*=OFF').isExisting()) {
-            this.mortReasonSwitch.click();
-            this.mortReasonSection.$('span*=ON').waitForExist();
+    setOff(str) {
+        this.section(str).scrollIntoView({ block: "center" });
+        if (this.section(str).$('span*=ON').isExisting()) {
+            this.switch(str).click();
+            this.section(str).$('span*=OFF').waitForExist();
         }
-        expect(this.mortReasonSection.$('span*=ON').isExisting(), 'mortReasonSection.(ON).isExisting').to.equal(true);
-        return this;
-    }
-
-    setOffMortReason() {
-        this.mortReasonSwitch.scrollIntoView({ block: "center" });
-        if (this.mortReasonSection.$('span*=ON').isExisting()) {
-            this.mortReasonSwitch.click();
-            this.mortReasonSection.$('span*=OFF').waitForExist();
-        }
-        expect(this.mortReasonSection.$('span*=OFF').isExisting(), 'mortReasonSection.(OFF).isExisting').to.equal(true);
+        expect(this.section(str).$('span*=OFF').isExisting(), 'section.(OFF).isExisting').to.equal(true);
         return this;
     }
 }

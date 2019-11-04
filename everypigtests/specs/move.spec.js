@@ -4,12 +4,12 @@ const movePage = require('../pageobjects/movements.page');
 describe('Moves page, navigation', () => {
 
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(0, 'Move');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -57,12 +57,12 @@ describe('Moves page, navigation', () => {
 describe('Moves page, input)', () => {
 
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(0, 'Move');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -117,12 +117,12 @@ describe('Moves page, input)', () => {
 describe('Report single move', () => {
 
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(0, 'Move');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -238,7 +238,7 @@ describe('Report few moves', () => {
     let rslt;
 
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);

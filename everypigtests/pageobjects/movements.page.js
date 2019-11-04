@@ -1,17 +1,16 @@
 // movements.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class MovementsPage extends ReportPage {
     constructor() {
         super();
         this.pagename = 'migration-button';
         this.row = '.migration-block';
+        this.inputWrapper = '.input-wrapper';
+        this.labelWrapper = '.input-label';
+        this.selectWrapper = '.movement-type-select';
     }
 
-    get inputWrapper() { return '.input-wrapper'; }
-    get selectWrapper() { return '.movement-type-select'; }
-    get labelWrapper() { return '.input-label'; }
-    
     setHeads(number, index) { return this.input('Head', index).waitSetValue(number) && this; }
     setAvgWeight(number, index) { return this.input('Est. Avg. Weight', index).waitSetValue(number) && this; }
  
@@ -93,15 +92,15 @@ class MovementsPage extends ReportPage {
     }
 
     setMovement(type, nHeads, weight, condition, index) {
-        if (this.isMobile) {
+        if (this.isMobile && type) {
             this.mSetReportParam(type);
             this.mClickNext();
-        } else { 
+        } else if (type) {
             this.setReportParam(type, index);
         }
-        (nHeads == undefined) || this.setHeads(nHeads, index);
-        (weight == undefined) || this.inputLabel('Est. Avg. Weight', index).isExisting() && this.setAvgWeight(weight, index);
-        (condition == undefined) || this.inputLabel('Condition', index).isExisting() && this.setCondition(condition, index);
+        (nHeads === undefined) || this.setHeads(nHeads, index);
+        (weight === undefined) || this.inputLabel('Est. Avg. Weight', index).isExisting() && this.setAvgWeight(weight, index);
+        (condition === undefined) || this.inputLabel('Condition', index).isExisting() && this.setCondition(condition, index);
         return this;
     }
 

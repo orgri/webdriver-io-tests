@@ -3,7 +3,7 @@ const movePage = require('../pageobjects/movements.page');
 
 describe('Moves page, navigation (offline)', () => {
     it('Choose group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -59,12 +59,12 @@ describe('Moves page, navigation (offline)', () => {
 
 describe('Report single move (offline)', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.currentDC().chooseSection(0, 'Move');
     });
 
     it('Choose group', () => {
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     }, 1);
@@ -177,14 +177,14 @@ describe('Report few moves (offline)', () => {
         }
 
         this.currentTest._currentRetry > 0
-            && this.currentTest.title == 'Fill report'
+            && this.currentTest.title === 'Fill report'
             && checkupPage.netOn(false).open().netOff()
-                .chooseRandCheckup().chooseSection(0);
+                .randCheckup().chooseSection(0);
     });
 
     it('Choose random group', () => {
         tdata.toStringVal(test);
-        checkupPage.netOn(false).open().netOff().chooseRandCheckup();
+        checkupPage.netOn(false).open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });

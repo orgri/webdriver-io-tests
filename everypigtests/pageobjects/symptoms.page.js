@@ -1,11 +1,12 @@
 // symptoms.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class SymptomsPage extends ReportPage {
     constructor() {
         super();
         this.pagename = 'symptom';
         this.row = '.symptom-row';
+        this.selectWrapper = '.select-symptom-wrapper';
     }
 
     setPercent(index) {

@@ -3,12 +3,12 @@ const treatPage = require('../pageobjects/medications.page');
 
 describe('Treats page, navigation', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(2, 'Treats');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -57,12 +57,12 @@ describe('Treats page, navigation', () => {
 
 describe('Treats page, input)', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(2, 'Treats');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -255,12 +255,12 @@ describe('Treats page, input)', () => {
 
 describe('Report single treat', () => {
     beforeEach(function () {
-        this.currentTest.title == 'Choose group'
+        this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(2, 'Treats');
     });
 
     it('Choose group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -367,7 +367,7 @@ describe('Report few treats', () => {
     const test = tdata.randTreatsData();
 
     it('Choose random group', () => {
-        checkupPage.chooseRandCheckup();
+        checkupPage.randCheckup();
         tdata.toStringVal(test);
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);

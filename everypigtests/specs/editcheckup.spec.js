@@ -146,7 +146,7 @@ describe('Edit Deaths', () => {
 
     it('Choose random group', () => {
         tdata.toStringVal(test);
-        admin.openPrefs().setOnMortReason();
+        admin.openPrefs().setOn('Track Mortality Reasons');
         date = sheetsPage.chooseRandGroup().getRandDates();
         invBefore = +sheetsPage.inventoryCell(date[0]);
         weightBefore = sheetsPage.weightCell(date[1]);
@@ -327,7 +327,7 @@ describe('Edit Treats', () => {
         });
 
         it('Treatments Tab Table(dosage ' + i + ')', () => {
-            let dosage = sheetsPage.cell(date[1], 2, i).getText().match(/[\d\.-]+/u)[0];
+            let dosage = sheetsPage.cell(date[1], 2, i).getText().match(/[\d.-]+/u)[0];
 
             expect(dosage, 'dosage of treat').to.be.oneOf(test.dosage);
         });

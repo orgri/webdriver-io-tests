@@ -1,8 +1,11 @@
 // temps.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class TempsPage extends ReportPage {
-    get inputWrapper() { return '.NumberStepInput'; } 
+    constructor() {
+        super();
+        this.inputWrapper = '.NumberStepInput';
+    }
 
     setHigh(number) { return this.input('High').waitSetValue(number) && this; }
     setLow(number) { return this.input('Low').waitSetValue(number) && this; }

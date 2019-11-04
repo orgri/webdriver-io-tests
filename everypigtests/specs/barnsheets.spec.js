@@ -439,7 +439,7 @@ describe('Edit full checkup', () => {
         diffInv = tdata.calcDiffMoves(test) - nOfDeaths;
 
     it('Choose random group', () => {
-        admin.openPrefs().setOffMortReason();
+        admin.openPrefs().setOff('Track Mortality Reasons');
         date = sheetsPage.chooseRandGroup().getRandDates();
         invBefore = +sheetsPage.inventoryCell(date[0]);
         tdata.toStringVal(test);

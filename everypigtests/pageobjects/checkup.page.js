@@ -1,5 +1,5 @@
 // checkup.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class CheckupPage extends ReportPage {
     constructor() {
@@ -20,21 +20,21 @@ class CheckupPage extends ReportPage {
     get offlineWarning() { return $('.offline-no-checkup-warning'); }
 
     setId() { this.id = (this.myUrl.match(/[0-9]+$/) || ['0'])[0]; return this; }
-    setFarm() { this.farm = this.farmName.getText(); return this; }
+    setFarm(row) { this.farm = this.getString(row); return this; }
     setGroup(row) { this.group = this.getString(row.$('.group-name'), /(?<=Group\s•\s)(.+)/u); return this;}
     rowWith(str) { return $(this.rowDC + '*=' + str); }
     clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this.waitLoader(); }
     clickCheckupTab() { return $('.item=Checkup').waitClick() && this.waitLoader(); }
-    clickDCTab() { return $('a[href="/daily-checkup/"]').waitClick() && this.waitLoader(); }
+    clickDCTab() { return $('a[href="/daily-checkup"]').waitClick() && this.waitLoader(); }
     clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     isPageOf(regex) { return browser.getUrl().includes(regex); }
 
-    chooseFarm(name) {
+    chooseFarm(name = this.farm) {
         return $(this.farmRow + '*=' + name)
             .$$('.button').slice(-1)[0].waitClick() && this.waitLoader();
     }
 
-    chooseGroup(name) {
+    chooseGroup(name = this.group) {
         return $(this.groupRow + '*=' + name)
             .$$('.button').slice(-1)[0].waitClick() && this.waitLoader();
     }
@@ -53,30 +53,31 @@ class CheckupPage extends ReportPage {
 
     openCurrent() { return this.open(this.checkupUrl + this.id) && this.waitLoader(); }
 
-    chooseRandCheckup() {
+    randFarm() {
         !this.offNet.isExisting() && this.open();
         this.clickCheckup().setElemsOnPage(100);
-        const rows = $$(this.rowDC + ' .button');
-        rows[tdata.rand(rows.length - 1)].waitClick();
-        this.waitLoader().setFarm();
-        const openGroups = $$(this.rowDC + ' .red-marker').length / 2;
-        if (openGroups === 0) {
-            this.chooseRandCheckup();
-        } else {
-            let id = 0, status;
-            do {
-                status = rows[id].getText();
-                id++;
-            } while (status !== 'Start' && id < openGroups)
-            if (rows[id - 1].getText() === 'Start') {
-                this.setGroup($$(this.rowDC)[id - 1]);
-                rows[id - 1].waitClick();
-            } else {
-                this.chooseRandCheckup();
-            }
-        }
-        return this.waitLoader().setId();
+        const rows = $$(this.rowDC + '*=Pending');
+        this.setFarm(rows[tdata.rand(rows.length - 1)]);
+        return this;
     }
+
+    randGroup(status = 'Start') {
+        let rows, btns, id = 0, text;
+        do {
+            this.randFarm().chooseFarm();
+            rows = $$(this.groupRow);
+            btns = $$('.button=' + status);
+        } while (btns.length === 0);
+        do {
+            text = rows[id++].$('.button').getText();
+            //TODO: avoid this scratch
+            text = (status === 'Start' && text === 'All Good') ? 'Start' : text;
+        } while (text !== status);
+        this.setGroup(rows[id - 1]);
+        return this;
+    }
+
+    randCheckup(status) { return this.randGroup(status).chooseGroup().setId(); }
 
 /********************************************** Checkup *****************************************************/
 
@@ -90,6 +91,8 @@ class CheckupPage extends ReportPage {
     get reComment() { return /(?<=Notes(\n|))(.)+?(?=(\n|)See)/g; }
     get noBtn() { return '.button=No'; }
     get submitBtn() { return $('.button.big-button'); }
+
+    get isDCSectionExist() { return $(this.sectionWrapper).isExisting(); }
 
     get pigsUnderCare() {
         return $$('.PigsUnderCareLine').slice(-1)[0].$('<strong>').getText();
@@ -165,7 +168,7 @@ class CheckupPage extends ReportPage {
     }
 
     get moveInfo() {
-        let obj = new Object();
+        let obj = {};
 
         obj.amount = this.getNumber(this.section(0));
         obj.added = this.moveRowInfo('Added');
@@ -178,7 +181,7 @@ class CheckupPage extends ReportPage {
     }
 
     get deathInfo() {
-        let obj = new Object();
+        let obj = {};
         const reReason = /(.+?)(?=\s\u2022)/u;
 
         obj.amount = this.getNumber(this.section(1));
@@ -192,7 +195,7 @@ class CheckupPage extends ReportPage {
     }
 
     get treatInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section(2).$$(this.treatWrapper);
         const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
         const reDosage = /(?<=\u2022\s)([\d.]+)/u;
@@ -201,7 +204,7 @@ class CheckupPage extends ReportPage {
 
         obj.amount = this.getNumber(this.section(2));
         obj.name = this.getArray(selector, reName).filter(el => el !== undefined);
-        obj.dosage = this.getArray(selector, reDosage).filter(el => el !== undefined)
+        obj.dosage = this.getArray(selector, reDosage).filter(el => el !== undefined);
         obj.heads = this.getArray(selector, reHeads).filter(el => el !== undefined);
         obj.gals = this.getArray(selector, reGals).filter(el => el !== undefined);
         obj.comment = this.getString(this.section(2), this.reComment);
@@ -210,7 +213,7 @@ class CheckupPage extends ReportPage {
     }
 
     get symptInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section(3).$$(this.symptWrapper);
         const reName = /[^\n\d%]+/u;
         const rePercent = /(\d+)%/u;
@@ -224,7 +227,7 @@ class CheckupPage extends ReportPage {
     }
 
     get tempsInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section(4).$$(this.contentWrapper);
 
         obj.high = this.getFloat(selector[0]);
@@ -235,7 +238,7 @@ class CheckupPage extends ReportPage {
     }
 
     get waterInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section(5);
 
         obj.consumed = this.getFloat(selector.$(this.contentWrapper));
@@ -245,7 +248,7 @@ class CheckupPage extends ReportPage {
     }
 
     get mediaInfo() {
-        let obj = new Object();
+        let obj = {};
         const reComment = /(?<=Note\n)(.+)/g;
 
         obj.amount = this.getNumber(this.mediaUploader);
@@ -293,7 +296,7 @@ class CheckupPage extends ReportPage {
                 data.moves.heads[i], data.moves.weight[i], data.moves.condition[i]);
         }
         movePage.setComment(data.moves.comment).submit();
-        this.isSubmitDisabled && this.close();
+        this.isDCSectionExist || this.close();
 
         this.chooseSection(1);
         if ($(this.rowIndex).isExisting()) {
@@ -307,7 +310,7 @@ class CheckupPage extends ReportPage {
                 data.deaths.chronic[0], data.deaths.acute[0], data.deaths.euthanas[0]);
         }
         deathPage.setComment(data.deaths.comment).submit();
-        this.isSubmitDisabled && this.close();
+        this.isDCSectionExist || this.close();
 
         this.chooseSection(2);
         for (let i = 0, n = +data.treats.amount; i < n; i++) {
@@ -316,6 +319,7 @@ class CheckupPage extends ReportPage {
                 data.treats.dosage[i], data.treats.gals[i]);
         }
         treatPage.setComment(data.treats.comment).submit();
+        this.isDCSectionExist || this.close();
 
         this.chooseSection(3);
         for (let i = 0; i < +data.sympts.amount; i++) {
@@ -323,14 +327,17 @@ class CheckupPage extends ReportPage {
             symptomPage.setSymptom(data.sympts.name[i]);
         }
         symptomPage.setComment(data.sympts.comment).submit();
+        this.isDCSectionExist || this.close();
 
         this.chooseSection(4);
         tempsPage.setTemps(data.temps.high, data.temps.low)
             .setComment(data.temps.comment).submit();
+        this.isDCSectionExist || this.close();
 
         this.chooseSection(5);
         waterPage.setGals(data.water.consumed)
             .setComment(data.water.comment).submit();
+        this.isDCSectionExist || this.close();
 
         this.section('Media').isExisting() && this.chooseSection('Media');
         this.clearMedia().uploadMedia(data.files.pic)
