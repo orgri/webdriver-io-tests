@@ -24,7 +24,7 @@ exports.config = {
     // NPM script (see https://docs.npmjs.com/cli/run-script) then the current working
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
-    specs: [
+    specs: [/*
         './everypigtests/specs/checkup.spec.js',
         './everypigtests/specs/offline.checkup.spec.js',
         './everypigtests/specs/barnsheets.spec.js',
@@ -35,16 +35,17 @@ exports.config = {
         './everypigtests/specs/move.spec.js',
         './everypigtests/specs/death.spec.js',
         './everypigtests/specs/symptom.spec.js',
-        './everypigtests/specs/treat.spec.js',
+        './everypigtests/specs/treat.spec.js',*/
+        './everypigtests/specs/shipment.spec.js',/*
 
         './everypigtests/specs/offline.move.spec.js',
         './everypigtests/specs/offline.death.spec.js',
         './everypigtests/specs/offline.sympt.spec.js',
-        './everypigtests/specs/offline.treat.spec.js',
+        './everypigtests/specs/offline.treat.spec.js',*/
     ],
     // Patterns to exclude.
     exclude: [
-        './everypigtests/specs/**/test.spec.js'
+        //'./everypigtests/specs/**/test.spec.js'
     ],
     //
     // ============
@@ -62,17 +63,17 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 1,
+    maxInstances: 2,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: [
+    capabilities: [/*
         {
             browserName: 'safari',
             platformName: 'macOS',
-        },
+        },/**/
         {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
@@ -82,7 +83,7 @@ exports.config = {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
             //mobileEmulation: { 'deviceName': 'iPad' },
             //mobileEmulation: { 'deviceName': 'iPad Pro' },
-            //mobileEmulation: { 'deviceName': 'Pixel 2' },
+            mobileEmulation: {'deviceName': 'Pixel 2'},
             'args': [
                 '--headless', '--window-size=1920,1080',
                 //'--start-fullscreen',
@@ -225,9 +226,9 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     before: function (capabilities, specs) {
-        global.login = require('./everypigtests/pageobjects/login.page');
-        global.isSafari = browser.capabilities['browserName'] == 'Safari';
-        global.isChrome = browser.capabilities['browserName'] == 'chrome';
+        //const login = require('./everypigtests/pageobjects/login.page');
+        global.isSafari = browser.capabilities['browserName'] === 'Safari';
+        global.isChrome = browser.capabilities['browserName'] === 'chrome';
         global.isMobile = isChrome && capabilities['goog:chromeOptions'].propertyIsEnumerable('mobileEmulation');
         global.isIOS = isMobile && !capabilities['goog:chromeOptions'].mobileEmulation.deviceName.includes('Pixel');
 
@@ -266,6 +267,8 @@ exports.config = {
      * @param {Object} suite suite details
      */
     beforeSuite: function (suite) {
+        const login = require('./everypigtests/pageobjects/login.page');
+
         login.asAdmin();
     },
     /**
