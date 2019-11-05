@@ -1,307 +1,346 @@
 const admin = require('../pageobjects/admin.page');
-const checkupPage = require('../pageobjects/checkup.page');
+const dcPage = require('../pageobjects/checkup.page');
 
 describe('Daily Checkup Navigation (offline)', () => {
     const farmName = 'TA_Farm_0000';
 
     it('Open', () => {
-        checkupPage.open().netOff().clickCheckup();
+        dcPage.open().netOff().clickCheckup();
 
-        expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(25);
+        expect($$(dcPage.farmRow), 'farms on page').to.have.lengthOf(25);
     });
 
     it('Set pagination', () => {
-        checkupPage.setElemsOnPage(100)
+        dcPage.setElemsOnPage(100)
             .pagination.scrollIntoView({ block: 'center' });
 
-        expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(100);
+        expect($$(dcPage.farmRow), 'farms on page').to.have.lengthOf(100);
     });
 
     tdata.specialChars.forEach((el) => {
         it('Search special chars: ' + el, () => {
             //just check whether page crashes or not, need to clarify expected behaviour
-            checkupPage.netOn(false).open().netOff().clickCheckup();
-            checkupPage.setSearch(el);
+            dcPage.netOn(false).open().netOff().clickCheckup();
+            dcPage.setSearch(el);
 
-            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            expect(dcPage.inputSearch.isExisting(), 'search').to.equal(true);
         });
     });
 
     it('Search farm', () => {
-        checkupPage.netOn(false).open().netOff().clickCheckup();
-        checkupPage.setSearch(farmName);
+        dcPage.netOn(false).open().netOff().clickCheckup();
+        dcPage.setSearch(farmName);
 
-        expect($$(checkupPage.farmRow), 'farms on page').to.have.lengthOf(1);
+        expect($$(dcPage.farmRow), 'farms on page').to.have.lengthOf(1);
     });
 
     it('Choose farm', () => {
-        checkupPage.chooseFarm(farmName);
+        dcPage.chooseFarm(farmName);
 
-        expect(checkupPage.farmName.getText(), 'farm name').to.equal(farmName);
+        expect(dcPage.farmName.getText(), 'farm name').to.equal(farmName);
     });
 
     it('Groups on page', () => {
-        expect($$(checkupPage.groupRow), 'groups on page').to.have.lengthOf(101);
+        expect($$(dcPage.groupRow), 'groups on page').to.have.lengthOf(101);
     });
 
     it('Choose group', () => {
-        let i = 0, dcStatus, rows = $$(checkupPage.groupRow);
+        let i = 0, dcStatus, rows = $$(dcPage.groupRow);
         do {
             dcStatus = rows[i].$('.button').getText();
             i++;
-        } while (dcStatus !== 'Start');
-        checkupPage.setGroup(rows[--i]).chooseGroup(checkupPage.group);
+        } while (dcStatus !== 'Start' && i < rows.length);
+        dcPage.setGroup(rows[--i]).chooseGroup(dcPage.group);
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Submit is not displayed', () => {
-        expect(checkupPage.submitBtn.isDisplayed(), 'submitButton.isDisplayed').to.equal(false);
+        expect(dcPage.submitBtn.isDisplayed(), 'submitButton.isDisplayed').to.equal(false);
     });
 
     it('Group info Tab', () => {
-        checkupPage.clickGroupInfoTab();
+        dcPage.clickGroupInfoTab();
 
-        expect($(checkupPage.collapseWrapper).getText(), 'checkup section existing').to.equal(checkupPage.group);
+        expect($(dcPage.collapseWrapper).getText(), 'checkup section existing').to.equal(dcPage.group);
     });
 
     it('Checkup Tab', () => {
-        checkupPage.clickCheckupTab();
+        dcPage.clickCheckupTab();
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Leave checkup', () => {
-        checkupPage.clickFarmfeed();
+        dcPage.clickFarmfeed();
         
         expect(browser.getUrl(), 'farmfeed url').to.match(/(\/farmfeed)$/);
     });
 
     it('Back to checkup', () => {
-        checkupPage.clickCheckup().chooseFarm(farmName).chooseGroup(checkupPage.group);
+        dcPage.clickCheckup().chooseFarm(farmName).chooseGroup(dcPage.group);
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)(fake).+$/);
     });
 
     it('Back to Farms', () => {
         if (isMobile) {
-            checkupPage.close();
+            dcPage.close();
         } else {
-            checkupPage.clickDCTab();
+            dcPage.clickDCTab();
         }
 
-        expect($(checkupPage.farmRow).isExisting(), 'farmRow.isExisting').to.equal(true);
+        expect($(dcPage.farmRow).isExisting(), 'farmRow.isExisting').to.equal(true);
     });
 
     it('Choose Up-to-date group', () => {
         //TODO: improve and fix when no such group with Update
-        checkupPage.randCheckup('Update');
+        dcPage.randCheckup('Update');
 
-        expect(checkupPage.offlineWarning.isExisting(), 'no checkup warning existing').to.equal(true);
-        expect(checkupPage.isSubmitDisabled, 'disabled submit button').to.equal(true);
+        expect(dcPage.offlineWarning.isExisting(), 'no checkup warning existing').to.equal(true);
+        expect(dcPage.isSubmitDisabled, 'disabled submit button').to.equal(true);
     });
 });
 
-describe('Media in DC (offline)', () => {
-    const audioPage = require('../pageobjects/audio.page');
-    const comment = tdata.randComment;
-    let rslt;
+describe('All Good to Farm (offline)', () => {
+    let farm;
 
-    beforeEach(function () {
-        switch (this.currentTest.title) {
-            case 'Choose random group':
-                this.currentTest.retries(1);
+    before(function () {
+        admin.netOn(false).openPrefs('DC').setOff('Water Usage').setOff('Temp Tracking');
+
+        dcPage.netOff().clickCheckup().setElemsOnPage(100);
+        dcPage.rowWith('All Good').isExisting() || this.skip();
+    });
+
+    it('Choose farm', () => {
+        farm = dcPage.rowWith('All Good');
+        dcPage.setFarm(farm);
+
+        expect($(dcPage.farmRow).isExisting(), 'farm row').to.equal(true);
+    });
+
+    it('Close modal confirmation', () => {
+        dcPage.clickBtn('All Good', farm).closeModal();
+
+        expect(farm.$('.button').getText(), 'button status').to.equal('All Good');
+    });
+
+    it('Confirm', () => {
+        dcPage.clickBtn('All Good', farm).clickToModal('Yes, I Confirm');
+
+        expect(farm.$('.button').getText(), 'button status').to.equal('Update');
+    });
+
+    it('Groups statuses', () => {
+        dcPage.chooseFarm();
+        const rows = $$(dcPage.groupRow);
+        for (let i = 0; i < rows.length; i++) {
+            let status = rows[i].$('.button').getText();
+
+            expect(status, 'button status').to.equal('Update');
         }
     });
 
-    it('Choose random group', () => {
-        checkupPage.netOn(false).open().netOff().randCheckup();
-
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+    it('Net on(sync)', () => {
+        dcPage.netOn();
     });
 
-    it('Upload media', () => {
-        checkupPage.clearMedia()
-            .uploadMedia(tdata.randPhoto)
-            .uploadMedia(tdata.randVideo)
-            .uploadMedia(tdata.randAudio);
+    it('Groups statuses (after sync)', () => {
+        dcPage.clickCheckup().setElemsOnPage(100).chooseFarm();
+        const rows = $$(dcPage.groupRow);
+        for (let i = 0; i < rows.length; i++) {
+            let status = rows[i].$('.button').getText();
+
+            expect(status, 'button status').to.equal('Update');
+        }
+    });
+});
+
+describe('All Good to Group (offline)', () => {
+    let group;
+
+    before(function () {
+        admin.netOn(false).openPrefs('DC').setOff('Water Usage').setOff('Temp Tracking');
     });
 
-    it('Amount', () => {
-        checkupPage.mediaUploader.scrollIntoView({ block: 'center' });
-        rslt = checkupPage.mediaInfo;
+    it('Choose group', () => {
+        group = dcPage.netOff().randGroup('All Good').rowWith(dcPage.group);
 
-        expect(rslt.amount, 'nOfMedia').to.equal('3');
+        expect($(dcPage.groupRow).isExisting(), 'group row').to.equal(true);
     });
 
-    if (!isIOS) {
-        it('Choose audio', () => {
-            checkupPage.clickAudio();
+    it('Close modal confirmation', () => {
+        dcPage.clickBtn('All Good', group).closeModal();
 
-            expect(browser.getUrl(), 'waters url').to.match(/(\/record-audio)$/);
-        });
+        expect(group.$('.button').getText(), 'button status').to.equal('All Good');
+    });
 
-        it('Record audio', () => {
-            audioPage.record();
-            browser.pause(5000);
-            audioPage.record().continue().setComment(comment).save();
+    it('Confirm', () => {
+        dcPage.clickBtn('All Good', group).clickToModal('Yes, I Confirm');
 
-            expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)(fake).+$/);
-        });
+        expect(group.$('.button').getText(), 'button status').to.equal('Update');
+    });
 
-        it('Amount', () => {
-            checkupPage.mediaUploader.scrollIntoView({ block: 'center' });
-            rslt = checkupPage.mediaInfo;
-            
-            expect(rslt.amount, 'nOfMedia').to.equal('4');
-        });
+    it('Empty checkup', () => {
+        dcPage.setGroup(group).chooseGroup();
+        expect(dcPage.isEmpty(0), 'isEmpty move').to.equal(true);
 
-        it('Comment', () => {
-            expect(rslt.audioNote, 'audioComment').to.equal(comment);
-        });
-    }
+        dcPage.section(1).scrollIntoView({block: 'center'});
+        expect(dcPage.isEmpty(1), 'isEmpty deaths').to.equal(true);
+
+        dcPage.section(2).scrollIntoView({block: 'center'});
+        expect(dcPage.isEmpty(2), 'isEmpty treats').to.equal(true);
+
+        dcPage.section(3).scrollIntoView({block: 'center'});
+        expect(dcPage.isEmpty(3), 'isEmpty symptoms').to.equal(true);
+
+        expect($(dcPage.comment).isExisting(), 'main comment exists').to.equal(false);
+
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
+        expect(rslt.amount, 'nOfMedia').to.equal('0');
+    });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn();
+        dcPage.netOn();
     });
 
-    it('Amount after sync', () => {
-        checkupPage.currentDC().mediaUploader.scrollIntoView({ block: 'center' });
-        rslt = checkupPage.mediaInfo;
+    it('Empty checkup (after sync)', () => {
+        dcPage.currentDC();
+        expect(dcPage.isEmpty(0), 'isEmpty move').to.equal(true);
 
-        isIOS || expect(rslt.amount, 'nOfMedia').to.equal('4');
-        isIOS && expect(rslt.amount, 'nOfMedia').to.equal('3');
+        dcPage.section(1).scrollIntoView({block: 'center'});
+        expect(dcPage.isEmpty(1), 'isEmpty deaths').to.equal(true);
+
+        dcPage.section(2).scrollIntoView({block: 'center'});
+        expect(dcPage.isEmpty(2), 'isEmpty treats').to.equal(true);
+
+        dcPage.section(3).scrollIntoView({block: 'center'});
+        expect(dcPage.isEmpty(3), 'isEmpty symptoms').to.equal(true);
+
+        expect($(dcPage.comment).isExisting(), 'main comment exists').to.equal(false);
+
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
+        expect(rslt.amount, 'nOfMedia').to.equal('0');
     });
-
-    it('Comment after sync', () => {
-        isIOS || expect(rslt.audioNote, 'audioComment').to.equal(comment);
-    });
-
 });
 
 describe('Create empty checkup (offline)', () => {
-    beforeEach(function () {
-        switch (this.currentTest.title) {
-            case 'Choose random group':
-            case 'Create checkup':
-                this.currentTest.retries(1);
-        }
-
-        this.currentTest._currentRetry > 0
-            && this.currentTest.title === 'Create checkup'
-            && checkupPage.netOn(false).open().netOff().randCheckup();
+    before(function () {
+        admin.netOn(false).openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
     });
 
     it('Choose random group', () => {
-        checkupPage.netOn(false).open().netOff().randCheckup();
+        dcPage.netOn(false).open().netOff().randCheckup();
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Create checkup', () => {
-        const length = $$(checkupPage.sectionWrapper).length;
+        const length = $$(dcPage.sectionWrapper).length;
         for (let i = 0; i < length; i++) {
-            checkupPage.clickNoToReport(i);
+            dcPage.clickNoToReport(i);
         }
-        checkupPage.submitDC().clickToModal('Got it');
+        dcPage.submitDC().clickToModal('Got it');
 
-        expect($(checkupPage.groupRow).isExisting(), 'groups existing').to.equal(true);
+        expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
 
     it('Moves report', () => {
-        checkupPage.chooseGroup(checkupPage.group);
+        dcPage.chooseGroup(dcPage.group);
 
-        expect(checkupPage.isEmpty(0), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(0), 'isEmpty').to.equal(true);
     });
 
     it('Deaths report', () => {
-        checkupPage.section(1).scrollIntoView({ block: 'center' });
+        dcPage.section(1).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(1), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(1), 'isEmpty').to.equal(true);
     });
 
     it('Treats report', () => {
-        checkupPage.section(2).scrollIntoView({ block: 'center' });
+        dcPage.section(2).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(2), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(2), 'isEmpty').to.equal(true);
     });
 
     it('Sympts report', () => {
-        checkupPage.section(3).scrollIntoView({ block: 'center' });
+        dcPage.section(3).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(3), 'isEmpty').to.equal(true);
     });
 
     it('Temps report', () => {
-        checkupPage.section(4).scrollIntoView({ block: 'center' });
+        dcPage.section(4).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(4), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(4), 'isEmpty').to.equal(true);
     });
 
     it('Water report', () => {
-        checkupPage.section(5).scrollIntoView({ block: 'center' });
+        dcPage.section(5).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(5), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(5), 'isEmpty').to.equal(true);
     });
 
     it('Main comment', () => {
-        expect($(checkupPage.comment).isExisting(), 'main comment').to.equal(false);
+        expect($(dcPage.comment).isExisting(), 'main comment').to.equal(false);
     });
 
     it('Media report', () => {
-        checkupPage.mediaUploader.scrollIntoView({ block: 'center' });
-        let rslt = checkupPage.mediaInfo;
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
 
         expect(rslt.amount, 'nOfMedia').to.equal('0');
     });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn();
+        dcPage.netOn();
     });
 
     it('Moves report after sync', () => {
-        checkupPage.currentDC();
+        dcPage.currentDC();
 
-        expect(checkupPage.isEmpty(0), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(0), 'isEmpty').to.equal(true);
     });
 
     it('Deaths report after sync', () => {
-        checkupPage.section(1).scrollIntoView({ block: 'center' });
+        dcPage.section(1).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(1), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(1), 'isEmpty').to.equal(true);
     });
 
     it('Treats report after sync', () => {
-        checkupPage.section(2).scrollIntoView({ block: 'center' });
+        dcPage.section(2).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(2), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(2), 'isEmpty').to.equal(true);
     });
 
     it('Sympts report after sync', () => {
-        checkupPage.section(3).scrollIntoView({ block: 'center' });
+        dcPage.section(3).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(3), 'isEmpty').to.equal(true);
     });
 
     it('Temps report after sync', () => {
-        checkupPage.section(4).scrollIntoView({ block: 'center' });
+        dcPage.section(4).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(4), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(4), 'isEmpty').to.equal(true);
     });
 
     it('Water report after sync', () => {
-        checkupPage.section(5).scrollIntoView({ block: 'center' });
+        dcPage.section(5).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.isEmpty(5), 'isEmpty').to.equal(true);
+        expect(dcPage.isEmpty(5), 'isEmpty').to.equal(true);
     });
 
     it('Main comment report after sync', () => {
-        expect($(checkupPage.comment).isExisting(), 'main comment').to.equal(false);
+        expect($(dcPage.comment).isExisting(), 'main comment').to.equal(false);
     });
 
     it('Media report after sync', () => {
-        checkupPage.mediaUploader.scrollIntoView({ block: 'center' });
-        let rslt = checkupPage.mediaInfo;
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
 
         expect(rslt.amount, 'nOfMedia').to.equal('0');
     });
@@ -322,26 +361,26 @@ describe('Create full checkup (offline)', () => {
     
             this.currentTest._currentRetry > 0
                 && this.currentTest.title === 'Create checkup'
-                && checkupPage.netOn(false).open().netOff().randCheckup();
+            && dcPage.netOn(false).open().netOff().randCheckup();
         });
 
     it('Choose random group', () => {
         admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
-        checkupPage.open().netOff().randCheckup();
+        dcPage.open().netOff().randCheckup();
         tdata.toStringVal(test);
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
 
     it('Create checkup', () => {
-        checkupPage.createCheckup(test).submitDC().clickToModal('Got it');
+        dcPage.createCheckup(test).submitDC().clickToModal('Got it');
 
-        expect($(checkupPage.groupRow).isExisting(), 'groups existing').to.equal(true);
+        expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
 
     it('Moves report', () => {
-        checkupPage.chooseGroup(checkupPage.group).waitLoader();
-        rslt = checkupPage.moveInfo;
+        dcPage.chooseGroup(dcPage.group).waitLoader();
+        rslt = dcPage.moveInfo;
         const heads = [].concat(rslt.added, rslt.removed);
 
         expect(rslt.amount, 'amount of moves').to.equal(test.moves.amount);
@@ -349,14 +388,14 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Deaths report', () => {
-        checkupPage.section(1).scrollIntoView({ block: 'center' });
+        dcPage.section(1).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths + '');
+        expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths + '');
     });
 
     it('Treats report', () => {
-        checkupPage.section(2).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.treatInfo;
+        dcPage.section(2).scrollIntoView({block: 'center'});
+        rslt = dcPage.treatInfo;
 
         expect(rslt.amount, 'amount of treats').to.equal(test.treats.amount);
         expect(rslt.name, 'name of treat').to.have.members(test.treats.name);
@@ -364,16 +403,16 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Sympts report', () => {
-        checkupPage.section(3).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.symptInfo;
+        dcPage.section(3).scrollIntoView({block: 'center'});
+        rslt = dcPage.symptInfo;
 
         expect(rslt.amount, 'amount of symptoms').to.equal(test.sympts.amount);
         expect(rslt.name, 'name of symptoms').to.have.members(test.sympts.name);
     });
 
     it('Temps report', () => {
-        checkupPage.section(4).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.tempsInfo;
+        dcPage.section(4).scrollIntoView({block: 'center'});
+        rslt = dcPage.tempsInfo;
 
         expect(rslt.high, 'high temp').to.equal(test.temps.high);
         expect(rslt.low, 'low temp').to.equal(test.temps.low);
@@ -381,31 +420,31 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Water report', () => {
-        checkupPage.section(5).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.waterInfo;
+        dcPage.section(5).scrollIntoView({block: 'center'});
+        rslt = dcPage.waterInfo;
 
         expect(rslt.consumed, 'water consumed').to.equal(test.water.consumed);
         expect(rslt.comment, 'water consumed').to.equal(test.water.comment);
     });
 
     it('Main comment', () => {
-        expect($(checkupPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
     });
 
     it('Media report', () => {
-        checkupPage.mediaUploader.scrollIntoView({ block: 'center' });
-        let rslt = checkupPage.mediaInfo;
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
 
         expect(rslt.amount, 'nOfMedia').to.equal('3');
     });
 
     it('Net on(sync)', () => {
-        checkupPage.netOn();
+        dcPage.netOn();
     });
 
     it('Moves report after sync', () => {
-        checkupPage.currentDC();
-        rslt = checkupPage.moveInfo;
+        dcPage.currentDC();
+        rslt = dcPage.moveInfo;
         const heads = [].concat(rslt.added, rslt.removed);
 
         expect(rslt.amount, 'amount of moves').to.equal(test.moves.amount);
@@ -413,14 +452,14 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Deaths report after sync', () => {
-        checkupPage.section(1).scrollIntoView({ block: 'center' });
+        dcPage.section(1).scrollIntoView({block: 'center'});
 
-        expect(checkupPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths + '');
+        expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths + '');
     });
 
     it('Treats report after sync', () => {
-        checkupPage.section(2).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.treatInfo;
+        dcPage.section(2).scrollIntoView({block: 'center'});
+        rslt = dcPage.treatInfo;
 
         expect(rslt.amount, 'amount of treats').to.equal(test.treats.amount);
         expect(rslt.name, 'name of treat').to.have.members(test.treats.name);
@@ -428,16 +467,16 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Sympts report after sync', () => {
-        checkupPage.section(3).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.symptInfo;
+        dcPage.section(3).scrollIntoView({block: 'center'});
+        rslt = dcPage.symptInfo;
 
         expect(rslt.amount, 'amount of symptoms').to.equal(test.sympts.amount);
         expect(rslt.name, 'name of symptoms').to.have.members(test.sympts.name);
     });
 
     it('Temps report after sync', () => {
-        checkupPage.section(4).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.tempsInfo;
+        dcPage.section(4).scrollIntoView({block: 'center'});
+        rslt = dcPage.tempsInfo;
 
         expect(rslt.high, 'high temp').to.equal(test.temps.high);
         expect(rslt.low, 'low temp').to.equal(test.temps.low);
@@ -445,20 +484,20 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Water report after sync', () => {
-        checkupPage.section(5).scrollIntoView({ block: 'center' });
-        rslt = checkupPage.waterInfo;
+        dcPage.section(5).scrollIntoView({block: 'center'});
+        rslt = dcPage.waterInfo;
 
         expect(rslt.consumed, 'water consumed').to.equal(test.water.consumed);
         expect(rslt.comment, 'water consumed').to.equal(test.water.comment);
     });
 
     it('Main comment report after sync', () => {
-        expect($(checkupPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
     });
 
     it('Media report after sync', () => {
-        checkupPage.mediaUploader.scrollIntoView({ block: 'center' });
-        let rslt = checkupPage.mediaInfo;
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
 
         expect(rslt.amount, 'nOfMedia').to.equal('3');
     });
@@ -474,28 +513,28 @@ describe('Create 3 checkups (offline)', () => {
 
     before(function () {
         admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
-        checkupPage.open().netOff();
+        dcPage.open().netOff();
     });
 
     for(let i = 0; i < 3; i++) {
         it('Choose random group', () => {
-            checkupPage.randCheckup();
-            farm.push(checkupPage.farm);
-            group.push(checkupPage.group);
+            dcPage.randCheckup();
+            farm.push(dcPage.farm);
+            group.push(dcPage.group);
             tdata.toStringVal(test);
 
-            expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+            expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
 
         it('Create checkup-' + i, () => {
-            checkupPage.createCheckup(test[i]).submitDC().clickToModal('Got it');
+            dcPage.createCheckup(test[i]).submitDC().clickToModal('Got it');
 
-            expect($(checkupPage.groupRow).isExisting(), 'groups existing').to.equal(true);
+            expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
         });
 
         it('Moves report-' + i, () => {
-            checkupPage.chooseGroup(checkupPage.group).waitLoader();
-            rslt = checkupPage.moveInfo;
+            dcPage.chooseGroup(dcPage.group).waitLoader();
+            rslt = dcPage.moveInfo;
             const heads = [].concat(rslt.added, rslt.removed);
 
             expect(rslt.amount, 'amount of moves').to.equal(test[i].moves.amount);
@@ -503,14 +542,14 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Deaths report-' + i, () => {
-            checkupPage.section(1).scrollIntoView({block: 'center'});
+            dcPage.section(1).scrollIntoView({block: 'center'});
 
-            expect(checkupPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths[i] + '');
+            expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths[i] + '');
         });
 
         it('Treats report-' + i, () => {
-            checkupPage.section(2).scrollIntoView({block: 'center'});
-            rslt = checkupPage.treatInfo;
+            dcPage.section(2).scrollIntoView({block: 'center'});
+            rslt = dcPage.treatInfo;
 
             expect(rslt.amount, 'amount of treats').to.equal(test[i].treats.amount);
             expect(rslt.name, 'name of treat').to.have.members(test[i].treats.name);
@@ -518,16 +557,16 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Sympts report-' + i, () => {
-            checkupPage.section(3).scrollIntoView({block: 'center'});
-            rslt = checkupPage.symptInfo;
+            dcPage.section(3).scrollIntoView({block: 'center'});
+            rslt = dcPage.symptInfo;
 
             expect(rslt.amount, 'amount of symptoms').to.equal(test[i].sympts.amount);
             expect(rslt.name, 'name of symptoms').to.have.members(test[i].sympts.name);
         });
 
         it('Temps report-' + i, () => {
-            checkupPage.section(4).scrollIntoView({block: 'center'});
-            rslt = checkupPage.tempsInfo;
+            dcPage.section(4).scrollIntoView({block: 'center'});
+            rslt = dcPage.tempsInfo;
 
             expect(rslt.high, 'high temp').to.equal(test[i].temps.high);
             expect(rslt.low, 'low temp').to.equal(test[i].temps.low);
@@ -535,33 +574,33 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Water report-' + i, () => {
-            checkupPage.section(5).scrollIntoView({block: 'center'});
-            rslt = checkupPage.waterInfo;
+            dcPage.section(5).scrollIntoView({block: 'center'});
+            rslt = dcPage.waterInfo;
 
             expect(rslt.consumed, 'water consumed').to.equal(test[i].water.consumed);
             expect(rslt.comment, 'water consumed').to.equal(test[i].water.comment);
         });
 
         it('Main comment-' + i, () => {
-            expect($(checkupPage.comment).getText(), 'main comment').to.equal(test[i].comment);
+            expect($(dcPage.comment).getText(), 'main comment').to.equal(test[i].comment);
         });
 
         it('Media report-' + i, () => {
-            checkupPage.mediaUploader.scrollIntoView({block: 'center'});
-            let rslt = checkupPage.mediaInfo;
+            dcPage.mediaUploader.scrollIntoView({block: 'center'});
+            let rslt = dcPage.mediaInfo;
 
             expect(rslt.amount, 'nOfMedia').to.equal('3');
         });
     }
 
     it('Net on(sync)', () => {
-        checkupPage.netOn();
+        dcPage.netOn();
     });
 
     for(let i = 0; i < 3; i++) {
         it('Moves report (after sync)-' + i, () => {
-            checkupPage.currentDC(farm[i], group[i]);//.waitForSync();
-            rslt = checkupPage.moveInfo;
+            dcPage.currentDC(farm[i], group[i]);//.waitForSync();
+            rslt = dcPage.moveInfo;
             const heads = [].concat(rslt.added, rslt.removed);
 
             expect(rslt.amount, 'amount of moves').to.equal(test[i].moves.amount);
@@ -569,14 +608,14 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Deaths report (after sync)-' + i, () => {
-            checkupPage.section(1).scrollIntoView({block: 'center'});
+            dcPage.section(1).scrollIntoView({block: 'center'});
 
-            expect(checkupPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths[i] + '');
+            expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths[i] + '');
         });
 
         it('Treats report (after sync)-' + i, () => {
-            checkupPage.section(2).scrollIntoView({block: 'center'});
-            rslt = checkupPage.treatInfo;
+            dcPage.section(2).scrollIntoView({block: 'center'});
+            rslt = dcPage.treatInfo;
 
             expect(rslt.amount, 'amount of treats').to.equal(test[i].treats.amount);
             expect(rslt.name, 'name of treat').to.have.members(test[i].treats.name);
@@ -584,16 +623,16 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Sympts report (after sync)-' + i, () => {
-            checkupPage.section(3).scrollIntoView({block: 'center'});
-            rslt = checkupPage.symptInfo;
+            dcPage.section(3).scrollIntoView({block: 'center'});
+            rslt = dcPage.symptInfo;
 
             expect(rslt.amount, 'amount of symptoms').to.equal(test[i].sympts.amount);
             expect(rslt.name, 'name of symptoms').to.have.members(test[i].sympts.name);
         });
 
         it('Temps report (after sync)-' + i, () => {
-            checkupPage.section(4).scrollIntoView({block: 'center'});
-            rslt = checkupPage.tempsInfo;
+            dcPage.section(4).scrollIntoView({block: 'center'});
+            rslt = dcPage.tempsInfo;
 
             expect(rslt.high, 'high temp').to.equal(test[i].temps.high);
             expect(rslt.low, 'low temp').to.equal(test[i].temps.low);
@@ -601,22 +640,297 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Water report (after sync)-' + i, () => {
-            checkupPage.section(5).scrollIntoView({block: 'center'});
-            rslt = checkupPage.waterInfo;
+            dcPage.section(5).scrollIntoView({block: 'center'});
+            rslt = dcPage.waterInfo;
 
             expect(rslt.consumed, 'water consumed').to.equal(test[i].water.consumed);
             expect(rslt.comment, 'water consumed').to.equal(test[i].water.comment);
         });
 
         it('Main comment (after sync)-' + i, () => {
-            expect($(checkupPage.comment).getText(), 'main comment').to.equal(test[i].comment);
+            expect($(dcPage.comment).getText(), 'main comment').to.equal(test[i].comment);
         });
 
         it('Media report (after sync)-' + i, () => {
-            checkupPage.mediaUploader.scrollIntoView({block: 'center'});
-            let rslt = checkupPage.mediaInfo;
+            dcPage.mediaUploader.scrollIntoView({block: 'center'});
+            let rslt = dcPage.mediaInfo;
 
             expect(rslt.amount, 'nOfMedia').to.equal('3');
         });
     }
+});
+
+describe('Update checkup (offline)', () => {
+    let rslt;
+    const test = tdata.randArrayCheckups(2),
+        nOfDeaths = test[1].deaths.chronic[0] + test[1].deaths.acute[0] + test[1].deaths.euthanas[0];
+
+    before(function () {
+        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
+    });
+
+    it('Choose random group', () => {
+        dcPage.open().netOff().randCheckup();
+        tdata.toStringVal(test);
+
+        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+    });
+
+    it('Create empty checkup', () => {
+        const length = $$(dcPage.sectionWrapper).length;
+        for (let i = 0; i < length; i++) {
+            dcPage.clickNoToReport(i);
+        }
+        dcPage.submitDC().clickToModal('Got it');
+
+        expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
+    });
+
+    for (let i = 0; i < 2; i++) {
+        it('Make changes ' + i, () => {
+            dcPage.currentDC().createCheckup(test[i]).submitDC().clickToModal('OK');
+
+            expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
+        });
+    }
+
+    it('Moves report', () => {
+        dcPage.currentDC();
+        rslt = dcPage.moveInfo;
+        const heads = [].concat(rslt.added, rslt.removed);
+
+        expect(rslt.amount, 'amount of moves').to.equal(test[1].moves.amount);
+        expect(heads, 'heads of moves').to.have.members(test[1].moves.heads);
+    });
+
+    it('Deaths report', () => {
+        dcPage.section(1).scrollIntoView({block: 'center'});
+
+        expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths + '');
+    });
+
+    it('Treats report', () => {
+        dcPage.section(2).scrollIntoView({block: 'center'});
+        rslt = dcPage.treatInfo;
+
+        expect(rslt.amount, 'amount of treats').to.equal(test[1].treats.amount);
+        expect(rslt.name, 'name of treat').to.have.members(test[1].treats.name);
+        expect(rslt.heads, 'heads of treats').to.have.members(test[1].treats.heads);
+    });
+
+    it('Sympts report', () => {
+        dcPage.section(3).scrollIntoView({block: 'center'});
+        rslt = dcPage.symptInfo;
+
+        expect(rslt.amount, 'amount of symptoms').to.equal(test[1].sympts.amount);
+        expect(rslt.name, 'name of symptoms').to.have.members(test[1].sympts.name);
+    });
+
+    it('Temps report', () => {
+        dcPage.section(4).scrollIntoView({block: 'center'});
+        rslt = dcPage.tempsInfo;
+
+        expect(rslt.high, 'high temp').to.equal(test[1].temps.high);
+        expect(rslt.low, 'low temp').to.equal(test[1].temps.low);
+        expect(rslt.comment, 'comment').to.equal(test[1].temps.comment);
+    });
+
+    it('Water report', () => {
+        dcPage.section(5).scrollIntoView({block: 'center'});
+        rslt = dcPage.waterInfo;
+
+        expect(rslt.consumed, 'water consumed').to.equal(test[1].water.consumed);
+        expect(rslt.comment, 'water consumed').to.equal(test[1].water.comment);
+    });
+
+    it('Main comment', () => {
+        expect($(dcPage.comment).getText(), 'main comment').to.equal(test[1].comment);
+    });
+
+    it('Media report', () => {
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
+
+        expect(rslt.amount, 'nOfMedia').to.equal('3');
+    });
+
+    it('Net on(sync)', () => {
+        dcPage.netOn();
+    });
+
+    it('Moves report after sync', () => {
+        dcPage.currentDC();
+        rslt = dcPage.moveInfo;
+        const heads = [].concat(rslt.added, rslt.removed);
+
+        expect(rslt.amount, 'amount of moves').to.equal(test[1].moves.amount);
+        expect(heads, 'heads of moves').to.have.members(test[1].moves.heads);
+    });
+
+    it('Deaths report after sync', () => {
+        dcPage.section(1).scrollIntoView({block: 'center'});
+
+        expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal(nOfDeaths + '');
+    });
+
+    it('Treats report after sync', () => {
+        dcPage.section(2).scrollIntoView({block: 'center'});
+        rslt = dcPage.treatInfo;
+
+        expect(rslt.amount, 'amount of treats').to.equal(test[1].treats.amount);
+        expect(rslt.name, 'name of treat').to.have.members(test[1].treats.name);
+        expect(rslt.heads, 'heads of treats').to.have.members(test[1].treats.heads);
+    });
+
+    it('Sympts report after sync', () => {
+        dcPage.section(3).scrollIntoView({block: 'center'});
+        rslt = dcPage.symptInfo;
+
+        expect(rslt.amount, 'amount of symptoms').to.equal(test[1].sympts.amount);
+        expect(rslt.name, 'name of symptoms').to.have.members(test[1].sympts.name);
+    });
+
+    it('Temps report after sync', () => {
+        dcPage.section(4).scrollIntoView({block: 'center'});
+        rslt = dcPage.tempsInfo;
+
+        expect(rslt.high, 'high temp').to.equal(test[1].temps.high);
+        expect(rslt.low, 'low temp').to.equal(test[1].temps.low);
+        expect(rslt.comment, 'comment').to.equal(test[1].temps.comment);
+    });
+
+    it('Water report after sync', () => {
+        dcPage.section(5).scrollIntoView({block: 'center'});
+        rslt = dcPage.waterInfo;
+
+        expect(rslt.consumed, 'water consumed').to.equal(test[1].water.consumed);
+        expect(rslt.comment, 'water consumed').to.equal(test[1].water.comment);
+    });
+
+    it('Main comment report after sync', () => {
+        expect($(dcPage.comment).getText(), 'main comment').to.equal(test[1].comment);
+    });
+
+    it('Media report after sync', () => {
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        let rslt = dcPage.mediaInfo;
+
+        expect(rslt.amount, 'nOfMedia').to.equal('3');
+    });
+
+});
+
+describe('Media in DC (offline)', () => {
+    const audioPage = require('../pageobjects/audio.page');
+    const comment = tdata.randComment;
+    let rslt;
+
+    beforeEach(function () {
+        switch (this.currentTest.title) {
+            case 'Choose random group':
+                this.currentTest.retries(1);
+        }
+    });
+
+    it('Choose random group', () => {
+        dcPage.netOn(false).open().netOff().randCheckup();
+
+        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+    });
+
+    it('Upload media', () => {
+        dcPage.clearMedia()
+            .uploadMedia(tdata.randPhoto)
+            .uploadMedia(tdata.randVideo)
+            .uploadMedia(tdata.randAudio);
+    });
+
+    it('Amount', () => {
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        rslt = dcPage.mediaInfo;
+
+        expect(rslt.amount, 'nOfMedia').to.equal('3');
+    });
+
+    if (!isIOS) {
+        it('Choose audio', () => {
+            dcPage.clickAudio();
+
+            expect(browser.getUrl(), 'waters url').to.match(/(\/record-audio)$/);
+        });
+
+        it('Record audio', () => {
+            audioPage.record();
+            browser.pause(5000);
+            audioPage.record().continue().setComment(comment).save();
+
+            expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)(fake).+$/);
+        });
+
+        it('Amount', () => {
+            dcPage.mediaUploader.scrollIntoView({block: 'center'});
+            rslt = dcPage.mediaInfo;
+
+            expect(rslt.amount, 'nOfMedia').to.equal('4');
+        });
+
+        it('Comment', () => {
+            expect(rslt.audioNote, 'audioComment').to.equal(comment);
+        });
+    }
+
+    it('Net on(sync)', () => {
+        dcPage.netOn();
+    });
+
+    it('Amount after sync', () => {
+        dcPage.currentDC().mediaUploader.scrollIntoView({block: 'center'});
+        rslt = dcPage.mediaInfo;
+
+        isIOS || expect(rslt.amount, 'nOfMedia').to.equal('4');
+        isIOS && expect(rslt.amount, 'nOfMedia').to.equal('3');
+    });
+
+    it('Comment after sync', () => {
+        isIOS || expect(rslt.audioNote, 'audioComment').to.equal(comment);
+    });
+
+});
+
+describe('Deaths and Treats conflict (offline)', () => {
+    const treatPage = require('../pageobjects/medications.page');
+    const deathPage = require('../pageobjects/deaths.page');
+
+    it('Choose group', () => {
+        dcPage.netOn(false).open().netOff().randCheckup();
+
+        expect(dcPage.isDCSectionExist, 'checkup section').to.equal(true);
+    });
+
+    it('Create conflict', () => {
+        dcPage.chooseSection(2);
+        treatPage.setTreat(tdata.randTreat, 999999, tdata.randDosage, tdata.randGals)
+            .submit();
+
+        dcPage.chooseSection(1);
+        deathPage.setMortalities('1').submit();
+
+        expect(dcPage.isDCSectionExist, 'checkup section').to.equal(true);
+    });
+
+    it('Net on(sync)', () => {
+        dcPage.netOn();
+    });
+
+    it('Deaths report after sync', () => {
+        dcPage.currentDC().section(1).scrollIntoView({block: 'center'});
+
+        expect(dcPage.deathInfo.amount, 'amount of deaths').to.equal('1');
+    });
+
+    it('Empty treats', () => {
+        dcPage.section(2).scrollIntoView({block: 'center'});
+
+        expect(dcPage.isEmpty(2), 'isEmpty treats').to.equal(true);
+    });
 });

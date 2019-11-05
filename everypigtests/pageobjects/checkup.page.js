@@ -267,7 +267,7 @@ class CheckupPage extends ReportPage {
     }
 
     clearMedia() {
-        const rows = $$('asset-wrapper').length;
+        const rows = $$('.asset-wrapper').length;
         for (let i = 0; i < rows; i++) {
             this.removeMediaButton.waitClick();
             browser.pause(1000);
@@ -345,7 +345,7 @@ class CheckupPage extends ReportPage {
             .uploadMedia(data.files.audio);
 
         this.isPageOf('/barnsheets/') && this.submit().chooseSection(6, 'Notes');
-        this.setComment(data.comment);
+        this.removeComment().setComment(data.comment);
         this.isPageOf('/barnsheets/') && this.submit();
 
         return this;
