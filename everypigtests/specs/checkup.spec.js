@@ -203,74 +203,6 @@ describe('All Good to Group', () => {
     });
 });
 
-describe('Create empty checkup', () => {
-
-    it('Choose random group', () => {
-        admin.openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
-        dcPage.randCheckup();
-
-        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
-    });
-
-    it('Create checkup', () => {
-        const length = $$(dcPage.sectionWrapper).length;
-        for (let i = 0; i < length; i++) {
-            dcPage.clickNoToReport(i);
-        }
-        dcPage.submitDC().clickToModal('OK');
-
-        expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
-    });
-
-    it('Moves report', () => {
-        dcPage.openCurrent();
-
-        expect(dcPage.isEmpty(0), 'isEmpty').to.equal(true);
-    });
-
-    it('Deaths report', () => {
-        dcPage.section(1).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(1), 'isEmpty').to.equal(true);
-    });
-
-    it('Treats report', () => {
-        dcPage.section(2).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(2), 'isEmpty').to.equal(true);
-    });
-
-    it('Sympts report', () => {
-        dcPage.section(3).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(3), 'isEmpty').to.equal(true);
-    });
-
-    it('Temps report', () => {
-        dcPage.section(4).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(4), 'isEmpty').to.equal(true);
-    });
-
-    it('Water report', () => {
-        dcPage.section(5).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(5), 'isEmpty').to.equal(true);
-    });
-
-    it('Main comment report', () => {
-        expect($(dcPage.comment).isExisting(), 'main comment').to.equal(false);
-    });
-
-    it('Media report', () => {
-        dcPage.mediaUploader.scrollIntoView({block: 'center'});
-        let rslt = dcPage.mediaInfo;
-
-        expect(rslt.amount, 'nOfMedia').to.equal('0');
-    });
-
-});
-
 describe('Create full checkup', () => {
     let rslt;
     const test = tdata.randCheckupData,
@@ -374,8 +306,14 @@ describe('Update checkup', () => {
         expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
 
+    it('Empty report', () => {
+        dcPage.currentDC();
+
+        expect(dcPage.isAllEmpty(), 'isAllEmpty').to.equal(true);
+    });
+
     it('Make changes', () => {
-        dcPage.currentDC().createCheckup(test).submitDC().clickToModal('OK');
+        dcPage.createCheckup(test).submitDC().clickToModal('OK');
 
         expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });

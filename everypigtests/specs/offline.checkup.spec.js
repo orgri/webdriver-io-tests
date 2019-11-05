@@ -226,127 +226,6 @@ describe('All Good to Group (offline)', () => {
     });
 });
 
-describe('Create empty checkup (offline)', () => {
-    before(function () {
-        admin.netOn(false).openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
-    });
-
-    it('Choose random group', () => {
-        dcPage.netOn(false).open().netOff().randCheckup();
-
-        expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
-    });
-
-    it('Create checkup', () => {
-        const length = $$(dcPage.sectionWrapper).length;
-        for (let i = 0; i < length; i++) {
-            dcPage.clickNoToReport(i);
-        }
-        dcPage.submitDC().clickToModal('Got it');
-
-        expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
-    });
-
-    it('Moves report', () => {
-        dcPage.chooseGroup(dcPage.group);
-
-        expect(dcPage.isEmpty(0), 'isEmpty').to.equal(true);
-    });
-
-    it('Deaths report', () => {
-        dcPage.section(1).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(1), 'isEmpty').to.equal(true);
-    });
-
-    it('Treats report', () => {
-        dcPage.section(2).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(2), 'isEmpty').to.equal(true);
-    });
-
-    it('Sympts report', () => {
-        dcPage.section(3).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(3), 'isEmpty').to.equal(true);
-    });
-
-    it('Temps report', () => {
-        dcPage.section(4).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(4), 'isEmpty').to.equal(true);
-    });
-
-    it('Water report', () => {
-        dcPage.section(5).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(5), 'isEmpty').to.equal(true);
-    });
-
-    it('Main comment', () => {
-        expect($(dcPage.comment).isExisting(), 'main comment').to.equal(false);
-    });
-
-    it('Media report', () => {
-        dcPage.mediaUploader.scrollIntoView({block: 'center'});
-        let rslt = dcPage.mediaInfo;
-
-        expect(rslt.amount, 'nOfMedia').to.equal('0');
-    });
-
-    it('Net on(sync)', () => {
-        dcPage.netOn();
-    });
-
-    it('Moves report after sync', () => {
-        dcPage.currentDC();
-
-        expect(dcPage.isEmpty(0), 'isEmpty').to.equal(true);
-    });
-
-    it('Deaths report after sync', () => {
-        dcPage.section(1).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(1), 'isEmpty').to.equal(true);
-    });
-
-    it('Treats report after sync', () => {
-        dcPage.section(2).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(2), 'isEmpty').to.equal(true);
-    });
-
-    it('Sympts report after sync', () => {
-        dcPage.section(3).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(3), 'isEmpty').to.equal(true);
-    });
-
-    it('Temps report after sync', () => {
-        dcPage.section(4).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(4), 'isEmpty').to.equal(true);
-    });
-
-    it('Water report after sync', () => {
-        dcPage.section(5).scrollIntoView({block: 'center'});
-
-        expect(dcPage.isEmpty(5), 'isEmpty').to.equal(true);
-    });
-
-    it('Main comment report after sync', () => {
-        expect($(dcPage.comment).isExisting(), 'main comment').to.equal(false);
-    });
-
-    it('Media report after sync', () => {
-        dcPage.mediaUploader.scrollIntoView({block: 'center'});
-        let rslt = dcPage.mediaInfo;
-
-        expect(rslt.amount, 'nOfMedia').to.equal('0');
-    });
-
-});
-
 describe('Create full checkup (offline)', () => {
     let rslt;
     const test = tdata.randCheckupData,
@@ -684,6 +563,12 @@ describe('Update checkup (offline)', () => {
         dcPage.submitDC().clickToModal('Got it');
 
         expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
+    });
+
+    it('Empty report', () => {
+        dcPage.currentDC();
+
+        expect(dcPage.isAllEmpty(), 'isAllEmpty').to.equal(true);
     });
 
     for (let i = 0; i < 2; i++) {

@@ -20,7 +20,11 @@ class CheckupPage extends ReportPage {
     get offlineWarning() { return $('.offline-no-checkup-warning'); }
 
     setId() { this.id = (this.myUrl.match(/[0-9]+$/) || ['0'])[0]; return this; }
-    setFarm(row) { this.farm = this.getString(row); return this; }
+
+    setFarm(row) {
+        this.farm = this.getString(row.$('.farm-name'));
+        return this;
+    }
     setGroup(row) { this.group = this.getString(row.$('.group-name'), /(?<=Group\s•\s)(.+)/u); return this;}
     rowWith(str) { return $(this.rowDC + '*=' + str); }
     clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this.waitLoader(); }
@@ -144,6 +148,12 @@ class CheckupPage extends ReportPage {
         return this.section(input).$(this.noBtn).isExisting()
             || (this.getNumber(this.section(input)) === '0'
                 && !this.getString(this.section(input), this.reComment));
+    }
+
+    isAllEmpty() {
+        return $$(this.sectionWrapper).reduce((is, val, idx) => {
+            return is && this.isEmpty(idx);
+        }, true);
     }
 
     isMoveExist(type) { return this.section(0).$('.info-row*=' + type).isExisting(); }
