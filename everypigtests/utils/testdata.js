@@ -1,5 +1,5 @@
 //testdata.js
-var faker = require('faker');
+const faker = require('faker');
 
 class TestData {
     get randDeaths() { return faker.random.number({ min: 1, max: 4 }); }

@@ -1,5 +1,5 @@
 global.expect = require('chai').expect;
-global.tdata = require('./everypigtests/pageobjects/testdata');
+global.tdata = require('./everypigtests/utils/testdata');
 global.path = require('path');
 
 exports.config = {
