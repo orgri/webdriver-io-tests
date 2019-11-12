@@ -4,6 +4,10 @@ const dcPage = require('../pageobjects/checkup.page');
 describe('Daily Checkup Navigation (offline)', () => {
     const farmName = 'TA_Farm_0000';
 
+    before(function () {
+        admin.openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
+    });
+
     it('Open', () => {
         dcPage.open().netOff().clickCheckup();
 
@@ -231,7 +235,12 @@ describe('Create full checkup (offline)', () => {
     const test = tdata.randCheckupData,
         nOfDeaths = test.deaths.chronic[0] + test.deaths.acute[0] + test.deaths.euthanas[0];
 
-        beforeEach(function () {
+    before(function () {
+        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons')
+            .openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
+    });
+
+    beforeEach(function () {
             switch (this.currentTest.title) {
                 case 'Choose random group':
                 case 'Create checkup':
@@ -244,7 +253,6 @@ describe('Create full checkup (offline)', () => {
         });
 
     it('Choose random group', () => {
-        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
         dcPage.open().netOff().randCheckup();
         tdata.toStringVal(test);
 

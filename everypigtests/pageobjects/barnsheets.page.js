@@ -58,20 +58,17 @@ class BarnSheetsPage extends ReportPage {
     mrCell(date) { return this.getNumber(this.cell(date, 8)); }
     weightCell(date) { return this.getNumber(this.cell(date, 9)); }
 
-    chooseRandGroup(farmPrefix = 'TA_Farm', groupPrefix = 'TA_PigGroup') {
-        this.open().clickFarmsTab().setElemsOnPage(100);
-        let rows = this.tableItemsWith(farmPrefix);
-        rows[tdata.rand(rows.length - 1)].waitClick();
-        this.waitLoader();
-        if (this.tableRows.length < 2) {
-            this.chooseRandGroup();
-        } else {
-            this.setElemsOnPage(100).waitLoader();
-            rows = this.tableItemsWith(groupPrefix);
-            rows[tdata.rand(rows.length - 1)].waitClick();
-            this.waitLoader();
-        }
-        return this;
+    get moveInfo() {
+        let obj = {};
+
+        obj.amount = this.getNumber(this.section('Move'));
+        obj.added = this.moveRowInfo('Added');
+        obj.removed = this.moveRowInfo('Removed');
+        obj.weight = this.moveRowInfo('Weight');
+        obj.condition = this.moveRowInfo('Condition');
+        obj.comment = this.getString(this.section('Move'), this.reComment);
+
+        return obj;
     }
 
     getRandDates(number = 1) {
@@ -101,8 +98,8 @@ class BarnSheetsPage extends ReportPage {
     clickEscape() { return this.escapeButton.waitClick() && this.waitLoader(); }
     clickSave() { return this.saveButton.waitClick() && this.waitLoader(); }
     clickCloseDC() { return this.closeDCButton.waitClick() && this.waitLoader(); }
-
     section(type) { return $(this.sectionWrapper + '*=' + type); }
+
     chooseSection(item) {
         this.section(item).isExisting() &&
             $(this.sectionHeader + '*=' + item).$('.button').waitClick();
@@ -128,21 +125,8 @@ class BarnSheetsPage extends ReportPage {
                 .getText().match(reNumber) || [])[0];
     }
 
-    get moveInfo() {
-        let obj = new Object();
-
-        obj.amount = this.getNumber(this.section('Move'));
-        obj.added = this.moveRowInfo('Added');
-        obj.removed = this.moveRowInfo('Removed');
-        obj.weight = this.moveRowInfo('Weight');
-        obj.condition = this.moveRowInfo('Condition');
-        obj.comment = this.getString(this.section('Move'), this.reComment);
-
-        return obj;
-    }
-
     get deathInfo() {
-        let obj = new Object();
+        let obj = {};
         const reReason = /(.+?)(?=\s\u2022)/u;
 
         obj.amount = this.getNumber(this.section('Dead'));
@@ -156,7 +140,7 @@ class BarnSheetsPage extends ReportPage {
     }
 
     get treatInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section('Medic').$$('.content-row');
         const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
         const reDosage = /(?<=\u2022\s)(\d+\.\d+)/u;
@@ -165,7 +149,7 @@ class BarnSheetsPage extends ReportPage {
 
         obj.amount = this.getNumber(this.section('Medic'));
         obj.name = this.getArray(selector, reName).filter(el => el !== undefined);
-        obj.dosage = this.getArray(selector, reDosage).filter(el => el !== undefined)
+        obj.dosage = this.getArray(selector, reDosage).filter(el => el !== undefined);
         obj.heads = this.getArray(selector, reHeads).filter(el => el !== undefined);
         obj.gals = this.getArray(selector, reGals).filter(el => el !== undefined);
         obj.comment = this.getString(this.section('Medic'), this.reComment);
@@ -174,7 +158,7 @@ class BarnSheetsPage extends ReportPage {
     }
 
     get symptInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section('Sympt').$$('.content-row');
         const reName = /[^\n\d%]+/u;
         const rePercent = /(\d+)%/u;
@@ -188,7 +172,7 @@ class BarnSheetsPage extends ReportPage {
     }
 
     get tempsInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section('Temps').$$('.content-row');
 
         obj.high = this.getFloat(selector[0]);
@@ -199,10 +183,21 @@ class BarnSheetsPage extends ReportPage {
     }
 
     get waterInfo() {
-        let obj = new Object();
+        let obj = {};
         const selector = this.section('Water Usage');
         obj.consumed = this.getFloat(selector.$('.content-row'));
         obj.comment = this.getString(selector, this.reComment);
+
+        return obj;
+    }
+
+    get diagnosInfo() {
+        let obj = {};
+        const reComment = /(?<=Notes:\s+)(?=\w)(.|\n)+(^\nSee translation)/g;
+
+        obj.name = this.getArray($$('.diagnose-name .name'));
+        obj.type = this.getArray($$('.diagnose-name span span'));
+        obj.comment = this.getArray($$('.diagnose-note'), reComment);
 
         return obj;
     }
@@ -298,24 +293,28 @@ class BarnSheetsPage extends ReportPage {
     get block() { return '.UserPanel'; }
     clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitClick() && this.waitLoader(); }
 
-    get diagnosInfo() {
-        let obj = new Object();
-        const reComment = /(?<=Notes:\s+)(?=\w)(.|\n)+[^\nSee translation]/g;
-
-        obj.name = this.getArray($$('.diagnose-name .name'));
-        obj.type = this.getArray($$('.diagnose-name span span'));
-        obj.comment = this.getArray($$('.diagnose-note'), reComment);
-
-        return obj;
+    chooseRandGroup(farmPrefix = 'TA_Farm_0000', groupPrefix = 'TA_PigGroup') {
+        this.open().clickFarmsTab().setElemsOnPage(100);
+        let rows = this.tableItemsWith(farmPrefix);
+        rows[tdata.rand(rows.length - 1)].$('a').waitClick() && this.waitLoader();
+        rows = this.tableItemsWith(groupPrefix);
+        if (rows.length === 0) {
+            this.chooseRandGroup();
+        } else {
+            this.setElemsOnPage(100).waitLoader();
+            rows = this.tableItemsWith(groupPrefix);
+            rows[tdata.rand(rows.length - 1)].$('a').waitClick() && this.waitLoader();
+        }
+        return this;
     }
 
     /********************************************** Movements tab *****************************************************/
 
     moveTabInfo(date) {
-        let data = new Object();
+        let data = {};
         const selector = $$(this.block + '*=' + date);
         const reHeads = /(?<=(Head Transferred|Head Placed)(\n|))(\d+)/u;
-        const reWeight = /(?<=(Est. Avg. Weight)(\n|))([\d\.]+)/u;
+        const reWeight = /(?<=(Est. Avg. Weight)(\n|))([\d.]+)/u;
         const reCondition = /(?<=(Condition at Arrival)(\n|))(.+)/u;
 
         data.amount = selector.length + '';

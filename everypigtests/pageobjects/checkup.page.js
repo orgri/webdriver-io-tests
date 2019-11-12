@@ -25,7 +25,12 @@ class CheckupPage extends ReportPage {
         this.farm = this.getString(row.$('.farm-name'));
         return this;
     }
-    setGroup(row) { this.group = this.getString(row.$('.group-name'), /(?<=Group\s•\s)(.+)/u); return this;}
+
+    setGroup(row) {
+        this.group = this.getString(row.$('.group-name'), /(?<=Group\s•\s)(.+)/u);
+        return this;
+    }
+
     rowWith(str) { return $(this.rowDC + '*=' + str); }
     clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this.waitLoader(); }
     clickCheckupTab() { return $('.item=Checkup').waitClick() && this.waitLoader(); }
@@ -306,6 +311,7 @@ class CheckupPage extends ReportPage {
                 data.moves.heads[i], data.moves.weight[i], data.moves.condition[i]);
         }
         movePage.setComment(data.moves.comment).submit();
+        this.modalWrapper.isExisting() && this.closeModal();
         this.isDCSectionExist || this.close();
 
         this.chooseSection(1);
@@ -320,6 +326,7 @@ class CheckupPage extends ReportPage {
                 data.deaths.chronic[0], data.deaths.acute[0], data.deaths.euthanas[0]);
         }
         deathPage.setComment(data.deaths.comment).submit();
+        this.modalWrapper.isExisting() && this.closeModal();
         this.isDCSectionExist || this.close();
 
         this.chooseSection(2);

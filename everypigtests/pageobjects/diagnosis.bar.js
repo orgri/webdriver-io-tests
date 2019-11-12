@@ -12,7 +12,6 @@ class DiagnosisBar extends ReportPage {
     get closeBtn() { return $('.cancel-button'); }
     get cancelBtn() { return $('.button=Cancel'); }
     get saveBtn() { return $('button*=Save'); }
-    get selectWrapper() { return '.ReactSelect'; }
     get box() { return $('.DiagnosisSidebar'); }
     get diagnosTab() { return this.box.$('.item=Diagnose'); }
     get groupInfoTab() { return this.box.$('.item=Group Info'); }
@@ -26,6 +25,7 @@ class DiagnosisBar extends ReportPage {
     setType(type, index) { return this.paramRow(index).$('span*=' + type).waitClick() && this; }
     setAlert(index) { return this.paramRow(index).$('.unchecked').waitClick() && this; }
     addNote(index) { return this.paramRow(index).$(this.addNoteBtn).waitClick() && this; }
+
     setComment(text, index) {
         this.paramRow(index).$(this.commentClosed).isExisting() && this.addNote(index);
         this.paramRow(index).$(this.comment).waitSetValue(text);
@@ -34,9 +34,9 @@ class DiagnosisBar extends ReportPage {
 
     setDiagnos(name, type, comment) {
         this.setReportParam(name);
-        (type == undefined) || this.setType(type);
-        (comment == undefined) || this.addNote();
-        (comment == undefined) || this.setComment(comment);
+        (type === undefined) || this.setType(type);
+        (comment === undefined) || this.addNote();
+        (comment === undefined) || this.setComment(comment);
         return this;
     }
 

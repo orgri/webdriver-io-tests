@@ -3,6 +3,10 @@ const deathPage = require('../pageobjects/deaths.page');
 const admin = require('../pageobjects/admin.page');
 
 describe('Report death (offline)', () => {
+    before(function () {
+        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
+    });
+
     beforeEach(function () {
         if ($(checkupPage.sectionWrapper).isExisting()) {
             checkupPage.chooseSection(1, 'Deaths');
@@ -12,7 +16,6 @@ describe('Report death (offline)', () => {
     });
 
     it('Choose group', () => {
-        admin.netOn(false).openPrefs().setOff('Track Mortality Reasons');
         checkupPage.open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -109,10 +112,10 @@ describe('Report death (offline)', () => {
 describe('Death reason page, navigation (offline)', () => {
     before(function () {
         isMobile || this.skip();
+        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
     });
 
     it('Choose group', () => {
-        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
         checkupPage.open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -169,13 +172,16 @@ describe('Death reason page, navigation (offline)', () => {
 });
 
 describe('Report death reason (offline)', () => {
+    before(function () {
+        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
+    });
+
     beforeEach(function () {
         this.currentTest.title === 'Choose group'
             || checkupPage.currentDC().chooseSection(1, 'Deaths');
     });
 
     it('Choose group', () => {
-        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
         checkupPage.open().netOff().randCheckup();
 
         expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -255,6 +261,10 @@ describe('Report few death reasons (offline)', () => {
     let rslt;
     const test = tdata.randDeathsData();
 
+    before(function () {
+        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
+    });
+
     beforeEach(function () {
         switch (this.currentTest.title) {
             case 'Choose random group':
@@ -269,7 +279,6 @@ describe('Report few death reasons (offline)', () => {
     });
 
     it('Choose random group', () => {
-        admin.netOn(false).openPrefs().setOn('Track Mortality Reasons');
         checkupPage.open().netOff().randCheckup();
         tdata.toStringVal(test);
 

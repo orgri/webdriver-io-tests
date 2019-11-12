@@ -5,6 +5,10 @@ describe('Daily Checkup Navigation', () => {
     const farmName = 'TA_Farm_0000';
     let dcStatus;
 
+    before(function () {
+        admin.openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
+    });
+
     it('Open', () => {
         dcPage.open();
 
@@ -208,8 +212,12 @@ describe('Create full checkup', () => {
     const test = tdata.randCheckupData,
         nOfDeaths = test.deaths.chronic[0] + test.deaths.acute[0] + test.deaths.euthanas[0];
 
+    before(function () {
+        admin.openPrefs().setOff('Track Mortality Reasons')
+            .openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
+    });
+
     it('Choose random group', () => {
-        admin.openPrefs().setOff('Track Mortality Reasons');
         dcPage.randCheckup();
         tdata.toStringVal(test);
 
@@ -288,8 +296,12 @@ describe('Update checkup', () => {
     const test = tdata.randCheckupData,
         nOfDeaths = test.deaths.chronic[0] + test.deaths.acute[0] + test.deaths.euthanas[0];
 
+    before(function () {
+        admin.openPrefs().setOff('Track Mortality Reasons')
+            .openPrefs('DC').setOn('Water Usage').setOn('Temp Tracking');
+    });
+
     it('Choose random group', () => {
-        admin.openPrefs().setOff('Track Mortality Reasons');
         dcPage.randCheckup();
         tdata.toStringVal(test);
 

@@ -6,6 +6,10 @@ module.exports = class Page {
     }
 
     get myUrl() { return browser.getUrl(); }
+
+    get header() {
+        return $('.main-header');
+    }
     get onNet() { return $('.NetworkNotificationBox*=Back Online'); }
     get offNet() { return $('.NetworkNotificationBox*=No Internet Connection'); }
     get synced() { return $('.NetworkNotificationBox*=Syncing data'); }

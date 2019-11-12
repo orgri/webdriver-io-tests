@@ -24,29 +24,35 @@ exports.config = {
     // NPM script (see https://docs.npmjs.com/cli/run-script) then the current working
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
-    specs: [/*
-        './everypigtests/specs/checkup.spec.js',
-        './everypigtests/specs/offline.checkup.spec.js',
-        './everypigtests/specs/barnsheets.spec.js',
-        './everypigtests/specs/resources.spec.js',
-
-        './everypigtests/specs/editcheckup.spec.js',
-
-        './everypigtests/specs/move.spec.js',
-        './everypigtests/specs/death.spec.js',
-        './everypigtests/specs/symptom.spec.js',
-        './everypigtests/specs/treat.spec.js',*/
-        './everypigtests/specs/shipment.spec.js',/*
-
-        './everypigtests/specs/offline.move.spec.js',
-        './everypigtests/specs/offline.death.spec.js',
-        './everypigtests/specs/offline.sympt.spec.js',
-        './everypigtests/specs/offline.treat.spec.js',*/
-    ],
+    specs: [],
+    suites: {
+        smoke: [
+            './everypigtests/specs/checkup.spec.js',
+            './everypigtests/specs/barnsheets.spec.js',
+            './everypigtests/specs/resources.spec.js',
+        ],
+        smokeoffline: [
+            './everypigtests/specs/offline.checkup.spec.js',
+        ],
+        editmode: [
+            './everypigtests/specs/editcheckup.spec.js',
+        ],
+        checkup: [
+            './everypigtests/specs/move.spec.js',
+            './everypigtests/specs/death.spec.js',
+            './everypigtests/specs/symptom.spec.js',
+            './everypigtests/specs/treat.spec.js',
+            './everypigtests/specs/shipment.spec.js'
+        ],
+        offline: [
+            './everypigtests/specs/offline.move.spec.js',
+            './everypigtests/specs/offline.sympt.spec.js',
+            './everypigtests/specs/offline.treat.spec.js',
+            './everypigtests/specs/offline.death.spec.js',
+        ]
+    },
     // Patterns to exclude.
-    exclude: [
-        //'./everypigtests/specs/**/test.spec.js'
-    ],
+    exclude: [],
     //
     // ============
     // Capabilities
@@ -63,13 +69,13 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 2,
+    maxInstances: 5,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: [/*
+    capabilities: [/**/
         {
             browserName: 'safari',
             platformName: 'macOS',
@@ -83,7 +89,7 @@ exports.config = {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
             //mobileEmulation: { 'deviceName': 'iPad' },
             //mobileEmulation: { 'deviceName': 'iPad Pro' },
-            mobileEmulation: {'deviceName': 'Pixel 2'},
+            //mobileEmulation: {'deviceName': 'Pixel 2'},
             'args': [
                 '--headless', '--window-size=1920,1080',
                 //'--start-fullscreen',
@@ -126,7 +132,7 @@ exports.config = {
     //
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
-    bail: 5,
+    bail: 0,
     //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
@@ -156,12 +162,12 @@ exports.config = {
     services: [/*'chromedriver',*/ 'selenium-standalone'],
     seleniumInstallArgs: {
         drivers: {
-            chrome: { version: '78.0.3904.11' }
+            chrome: {version: '78.0.3904.70'}
         }
     },
     seleniumArgs: {
         drivers: {
-            chrome: { version: "78.0.3904.11" }
+            chrome: {version: "78.0.3904.70"}
         }
     },
     // options
@@ -226,7 +232,6 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     before: function (capabilities, specs) {
-        //const login = require('./everypigtests/pageobjects/login.page');
         global.isSafari = browser.capabilities['browserName'] === 'Safari';
         global.isChrome = browser.capabilities['browserName'] === 'chrome';
         global.isMobile = isChrome && capabilities['goog:chromeOptions'].propertyIsEnumerable('mobileEmulation');
@@ -236,7 +241,8 @@ exports.config = {
         browser.setTimeout({ 'implicit': 150, 'pageLoad': 15000 });
         //browser.setWindowRect(0, 0, 1400, 900);
         isSafari && browser.fullscreenWindow();
-        isChrome && browser.sendCommand('Page.setDownloadBehavior', { 'behavior': 'allow', 'downloadPath': this.downloadPath });
+        isChrome && browser.sendCommand('Page.setDownloadBehavior',
+            {'behavior': 'allow', 'downloadPath': this.downloadPath});
 
         browser.addCommand("waitClick", function () {
             // `this` is return value of $(selector)
@@ -250,7 +256,7 @@ exports.config = {
         browser.addCommand("waitSetValue", function (value) {
             browser.pause(timeout);
             this.scrollIntoView({ block: "center" });
-            this.setValue(value);
+            this.setValue(value); // + '\n'
             browser.pause(timeout);
             return this;
         }, true);
@@ -325,8 +331,9 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result, capabilities, specs) {
+        browser.reloadSession();  //this solves issue when webdriver process doesn't end
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
