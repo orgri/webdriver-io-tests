@@ -50,10 +50,10 @@ class MedicationsPage extends ReportPage {
 
     setWithGalsDosage(product, heads, units, gals, index) {
         if (this.isMobile) {
-            this.mSetReportParam(product);
-            this.mClickNext();    
-        } else { 
-            this.setReportParam(product, index);
+            this.setPicker(product);
+            this.mClickNext();
+        } else {
+            this.setDropdown(product, index);
         }
         if (heads !== undefined) { this.setHead(heads); }
         if (units !== undefined) { this.setUnits(units); }
@@ -63,10 +63,10 @@ class MedicationsPage extends ReportPage {
 
     setWithMlsDosage(product, heads, mls, index) {
         if (this.isMobile) {
-            this.mSetReportParam(product);
-            this.mClickNext();    
-        } else { 
-            this.setReportParam(product, index);
+            this.setPicker(product);
+            this.mClickNext();
+        } else {
+            this.setDropdown(product, index);
         }
         if (heads !== undefined) { this.setHead(heads); }
         if (mls !== undefined) { this.setMls(mls); }
@@ -75,10 +75,10 @@ class MedicationsPage extends ReportPage {
 
     setWithCcsDosage(product, heads, ccs, index) {
         if (this.isMobile) {
-            this.mSetReportParam(product);
-            this.mClickNext();    
-        } else { 
-            this.setReportParam(product, index);
+            this.setPicker(product);
+            this.mClickNext();
+        } else {
+            this.setDropdown(product, index);
         }
         if (heads !== undefined) { this.setHead(heads); }
         if (ccs !== undefined) { this.setCcs(ccs); }
@@ -87,10 +87,10 @@ class MedicationsPage extends ReportPage {
 
     setWithoutDosage(product, heads, index) {
         if (this.isMobile) {
-            this.mSetReportParam(product);
-            this.mClickNext();    
-        } else { 
-            this.setReportParam(product, index);
+            this.setPicker(product);
+            this.mClickNext();
+        } else {
+            this.setDropdown(product, index);
         }
         if (heads !== undefined) { this.setHead(heads); }
         return this;
@@ -98,10 +98,10 @@ class MedicationsPage extends ReportPage {
 
     setTreat(product, heads, dosage, gals, index) {
         if (this.isMobile) {
-            this.mSetReportParam(product);
-            this.mClickNext(); 
-        } else { 
-            this.setReportParam(product, index);
+            this.setPicker(product);
+            this.mClickNext();
+        } else {
+            this.setDropdown(product, index);
         }
         (heads === undefined) || this.setHead(heads);
         (dosage === undefined) || this.inputLabel('Units', index).isExisting() && this.setUnits(dosage);

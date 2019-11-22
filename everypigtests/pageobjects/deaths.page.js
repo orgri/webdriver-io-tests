@@ -13,7 +13,9 @@ class DeathsPage extends ReportPage {
     get message() { return $('.MessageBox'); }
     get isMortReason() { return $('.add-mortality-reason').isExisting(); }
 
-    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
+    clickSelectParam(index) {
+        return this.inputBlock(index).$(this.selectWrapper).waitClick() && this;
+    }
 
     setChronic(number, index) { return this.input('Chronic', index).setValue(number) && this; }
     setAcute(number, index) { return this.input('Acute', index).setValue(number) && this; }
@@ -29,9 +31,11 @@ class DeathsPage extends ReportPage {
 
     setMortWithReason(reason, chronic, acute, euthanas, index) {
         if (this.isMobile) {
-            this.mSetReportParam(reason);
+            this.setPicker(reason);
             this.mClickNext();
-        } else { this.setReportParam(reason, index); }
+        } else {
+            this.setDropdown(reason, index);
+        }
         this.setMortalities(chronic, acute, euthanas, index);
         return this;
     }

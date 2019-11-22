@@ -14,12 +14,13 @@ class LoginPage extends Page {
     }
 
     login(email, pass) {
-        this.open();
-        this.inputEmail.waitSetValue(email);
-        this.inputPassword.waitSetValue(pass);
-        this.signin();
-        browser.pause(30000);
-        this.header.isDisplayed() || this.login(email, pass);
+        do {
+            this.open();
+            this.inputEmail.waitSetValue(email);
+            this.inputPassword.waitSetValue(pass);
+            this.signin();
+            browser.pause(15000);
+        } while (!this.header.isDisplayed());
         this.waitForSync();
         return this;
     }

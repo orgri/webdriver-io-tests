@@ -134,7 +134,7 @@ describe('Death reason page, navigation (offline)', () => {
     it('Check and uncheck death reason', () => {
         let reason = tdata.randReason;
 
-        deathPage.mSetReportParam(reason).mSetReportParam(reason);
+        deathPage.setPicker(reason).setPicker(reason);
 
         expect(deathPage.isSelected(reason), 'isSelected()').to.equal(false);
     });
@@ -246,7 +246,7 @@ describe('Report death reason (offline)', () => {
             deaths = tdata.randDeaths + '';
 
         deathPage.setMortWithReason(tdata.randReason, '0', '1', '0')
-            .clickSelectParam().setMortWithReason(reason, '0', deaths, '0')
+            .clickSelect().setMortWithReason(reason, '0', deaths, '0')
             .submit();
         checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;

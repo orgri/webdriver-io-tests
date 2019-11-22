@@ -67,33 +67,33 @@ describe('Barnsheets Navigation', () => {
     });
 
     it('Treatments tab', () => {
-        sheetsPage.clickTreatsTab();
+        sheetsPage.clickSubTab('Treatments');
 
         expect(sheetsPage.chart.isExisting(), 'isChart').to.equal(true);
     });
 
     it('Diagnosis tab', () => {
-        sheetsPage.clickDiagnosTab();
+        sheetsPage.clickSubTab('Diagnosis History');
 
         expect(browser.getUrl(), 'diagnosis tab url')
             .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/diagnoses)$/);
     });
 
     it('Pig movements tab', () => {
-        sheetsPage.clickMovesTab();
+        sheetsPage.clickSubTab('Pig Movements');
 
         expect($(sheetsPage.block).isExisting(), 'is UserPanel').to.equal(true);
     });
 
     it('Media tab', () => {
-        sheetsPage.clickMediaTab();
+        sheetsPage.clickSubTab('Media');
 
         expect(browser.getUrl(), 'media tab url')
             .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/media)$/);
     });
 
     it('Daily Checkups tab', () => {
-        sheetsPage.clickDcTab();
+        sheetsPage.clickSubTab('Daily Checkups');
 
         expect(sheetsPage.tableHeader.getText(), 'table header')
             .to.equal('Daily Checkups');
@@ -104,13 +104,13 @@ describe('Barnsheets Navigation', () => {
 describe('Barnsheets Tabs and Sorting', () => {
 
     it('Open', () => {
-        sheetsPage.clickBarnSheets();
+        sheetsPage.clickSidebar('Barn Sheets');
 
         expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/groups)$/);
     });
 
     it('Farms tab', () => {
-        sheetsPage.clickFarmsTab();
+        sheetsPage.clickSubTab('Farms');
 
         expect(sheetsPage.tableColumns, 'tableColumns number').to.have.lengthOf(8);
     });
@@ -203,7 +203,7 @@ These fuctionality must be checked by Unit tests.
     });
 
     it('Groups tab', () => {
-        sheetsPage.clickBarnSheets().clickGroupsTab();
+        sheetsPage.clickSidebar('Barn Sheets').clickSubTab('Groups');
 
         expect(sheetsPage.tableColumns, 'tableColumns number').to.have.lengthOf(12);
     });
@@ -300,7 +300,7 @@ These fuctionality must be checked by Unit tests.
     });
 
     it('Companies tab', () => {
-        sheetsPage.clickCompaniesTab();
+        sheetsPage.clickSubTab('Companies');
 
         expect(browser.getUrl(), 'companies tab url')
             .to.match(/(\/barnsheets\/companies)$/);
@@ -397,7 +397,7 @@ describe('Download', () => {
 
     it('Barn Sheet Data', () => {
         const file = 'barnsheets-' + groupName + '.csv';
-        sheetsPage.clickFarmsTab().clickMenuCell(groupName)
+        sheetsPage.clickTopTab('TA_Farm_').clickMenuCell(groupName)
             .clickOption('Download Barn Sheet')
             .checkFileExists(file, 30000);
     });

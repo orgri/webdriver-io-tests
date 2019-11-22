@@ -24,12 +24,13 @@ exports.config = {
     // NPM script (see https://docs.npmjs.com/cli/run-script) then the current working
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
-    specs: [],
+    specs: ['./everypigtests/specs/test.spec.js'],
     suites: {
         smoke: [
             './everypigtests/specs/checkup.spec.js',
             './everypigtests/specs/barnsheets.spec.js',
             './everypigtests/specs/resources.spec.js',
+            './everypigtests/specs/entity.spec.js',
         ],
         smokeoffline: [
             './everypigtests/specs/offline.checkup.spec.js',
@@ -69,13 +70,13 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 5,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: [/**/
+    capabilities: [/*
         {
             browserName: 'safari',
             platformName: 'macOS',
@@ -89,7 +90,7 @@ exports.config = {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
             //mobileEmulation: { 'deviceName': 'iPad' },
             //mobileEmulation: { 'deviceName': 'iPad Pro' },
-            //mobileEmulation: {'deviceName': 'Pixel 2'},
+            mobileEmulation: {'deviceName': 'Pixel 2'},
             'args': [
                 '--headless', '--window-size=1920,1080',
                 //'--start-fullscreen',
@@ -98,7 +99,8 @@ exports.config = {
                 '--disable-notifications',
             ],
             'prefs': {
-                'download.default_directory': this.downloadPath
+                'download.default_directory': this.downloadPath,
+                //'profile.geolocation.default_content_setting': 1,
             }
         }
         // If outputDir is provided WebdriverIO can capture driver session logs

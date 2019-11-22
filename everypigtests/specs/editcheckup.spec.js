@@ -26,10 +26,10 @@ describe('Edit Moves', () => {
     it('Make changes to checkup', () => {
         sheetsPage.choose(date[1]).chooseSection('Move');
         movePage.setShipment(test.heads[0], test.weight, test.condition)
-            .addRow().clickSelectParam().setTransfer(test.heads[1])
-            .addRow().clickSelectParam().setFixAdding(test.heads[2])
-            .addRow().clickSelectParam().setFixRemoving(test.heads[3])
-            .addRow().clickSelectParam().setFixAdding(test.heads[4])
+            .addRow().clickSelect().setTransfer(test.heads[1])
+            .addRow().clickSelect().setFixAdding(test.heads[2])
+            .addRow().clickSelect().setFixRemoving(test.heads[3])
+            .addRow().clickSelect().setFixAdding(test.heads[4])
             .setComment(test.comment).submit();
         rslt = sheetsPage.moveInfo;
 
@@ -117,7 +117,7 @@ describe('Edit Moves', () => {
     });
 
     it('Pig movements Tab', () => {
-        sheetsPage.clickMovesTab();
+        sheetsPage.clickSubTab('Pig Movements');
         rslt = sheetsPage.moveTabInfo(localDate);
 
         expect(rslt.amount, 'amount of moves').to.equal('2');
@@ -302,7 +302,7 @@ describe('Edit Treats', () => {
     });
 
     it('Treatments tab', () => {
-        sheetsPage.clickTreatsTab();
+        sheetsPage.clickSubTab('Treatments');
 
         expect(sheetsPage.chart.isExisting(), 'isChart').to.equal(true);
     });
@@ -523,7 +523,7 @@ describe('Edit Media', () => {
     });
 
     it('Media tab', () => {
-        sheetsPage.clickMediaTab();
+        sheetsPage.clickSubTab('Media');
 
         expect(browser.getUrl(), 'media tab url')
             .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/media)/);
@@ -601,7 +601,7 @@ describe('Edit Diagnosis', () => {
     });
 
     it('Open Diagnosis tab', () => {
-        sheetsPage.clickDiagnosTab();
+        sheetsPage.clickSubTab('Diagnosis History');
         rslt = sheetsPage.diagnosInfo;
 
         expect(browser.getUrl(), 'diagnosis tab url')

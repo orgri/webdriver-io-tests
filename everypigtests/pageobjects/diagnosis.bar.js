@@ -22,38 +22,45 @@ class DiagnosisBar extends ReportPage {
     clickGroupInfoTab() { return this.groupInfoTab.waitClick() && this.waitLoader(); }
     clickDiagnosInfoCol() { return this.diagnosInfoColl.waitClick() && this.waitLoader(); }
 
-    setType(type, index) { return this.paramRow(index).$('span*=' + type).waitClick() && this; }
-    setAlert(index) { return this.paramRow(index).$('.unchecked').waitClick() && this; }
-    addNote(index) { return this.paramRow(index).$(this.addNoteBtn).waitClick() && this; }
-
-    setComment(text, index) {
-        this.paramRow(index).$(this.commentClosed).isExisting() && this.addNote(index);
-        this.paramRow(index).$(this.comment).waitSetValue(text);
-        return this;
-    }
-
-    setDiagnos(name, type, comment) {
-        this.setReportParam(name);
-        (type === undefined) || this.setType(type);
-        (comment === undefined) || this.addNote();
-        (comment === undefined) || this.setComment(comment);
-        return this;
-    }
-
     get info() {
-        let data = new Object();
+        let data = {};
         const name = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row] .semibold');
         const type = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row] span span');
-        const dNote = this.diagnosInfoColl.$$('div[class^=diagnosis-note-row]');
+        const dNote = this.diagnosInfoColl.$$('div[class^=diagnosis-note-row] span[class^=Translation] > span');
         const reType = /(.+)(?=\sDiagnosis)/g;
-        const reComment = /(?<=Notes:\s)(.|(\n|))+?(?=(\n|)See)/g;
 
         data.amount = this.getNumber(this.diagnosInfoColl);
         data.name = this.getArray(name);
         data.type = this.getArray(type, reType);
-        data.comment = this.getArray(dNote, reComment);
+        data.comment = this.getArray(dNote);
 
         return data;
+    }
+
+    setType(type, index) {
+        return this.inputBlock(index).$('span*=' + type).waitClick() && this;
+    }
+
+    setAlert(index) {
+        return this.inputBlock(index).$('.unchecked').waitClick() && this;
+    }
+
+    addNote(index) {
+        return this.inputBlock(index).$(this.addNoteBtn).waitClick() && this;
+    }
+
+    setComment(text, index) {
+        this.inputBlock(index).$(this.commentClosed).isExisting() && this.addNote(index);
+        this.inputBlock(index).$(this.comment).waitSetValue(text);
+        return this;
+    }
+
+    setDiagnos(name, type, comment) {
+        this.setDropdown(name);
+        (type === undefined) || this.setType(type);
+        (comment === undefined) || this.addNote();
+        (comment === undefined) || this.setComment(comment);
+        return this;
     }
 
 }

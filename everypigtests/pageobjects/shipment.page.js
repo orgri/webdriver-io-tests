@@ -16,10 +16,6 @@ class ShipmentPage extends ReportPage {
         return $('.CreateShipmentMobileWizard');
     }
 
-    get dateInput() {
-        return $('input[type=text]');
-    }
-
     setHeads(number) {
         return this.input('Head').waitSetValue(number) && this;
     }
@@ -30,30 +26,6 @@ class ShipmentPage extends ReportPage {
 
     fillValue(number) {
         return $('input[type=number]').waitSetValue(number) && this;
-    }
-
-    calendarDay(str) {
-        return $('div[data-visible=true]').$('.CalendarDay=' + str);
-    }
-
-    isDayAvailable(day) {
-        return !this.calendarDay(day).getAttribute('aria-label').includes('Not available');
-    }
-
-    setDay(day = '15') {
-        return this.calendarDay(day).waitClick() && this;
-    }
-
-    prevMonth() {
-        return $('button[aria-label^="Move backward"]').waitClick() && this;
-    }
-
-    nextMonth() {
-        return $('button[aria-label^="Move forward"]').waitClick() && this;
-    }
-
-    clickDate() {
-        return this.dateInput.waitClick() && this;
     }
 
     clickEdit() {
@@ -87,12 +59,6 @@ class ShipmentPage extends ReportPage {
         return this;
     }
 
-    setDate(day) {
-        this.clickDate();
-        this.isDayAvailable(day) || this.prevMonth().prevMonth().nextMonth();
-        this.setDay(day);
-        return this;
-    }
 }
 
 module.exports = new ShipmentPage();

@@ -45,7 +45,7 @@ describe('Daily Checkup Navigation (offline)', () => {
     });
 
     it('Groups on page', () => {
-        expect($$(dcPage.groupRow), 'groups on page').to.have.lengthOf(101);
+        expect($$(dcPage.groupRow), 'groups on page').to.have.lengthOf.above(100);
     });
 
     it('Choose group', () => {
@@ -64,13 +64,13 @@ describe('Daily Checkup Navigation (offline)', () => {
     });
 
     it('Group info Tab', () => {
-        dcPage.clickGroupInfoTab();
+        dcPage.clickSubTab('Group Info');
 
         expect($(dcPage.collapseWrapper).getText(), 'checkup section existing').to.equal(dcPage.group);
     });
 
     it('Checkup Tab', () => {
-        dcPage.clickCheckupTab();
+        dcPage.clickSubTab('Checkup');
 
         expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -91,7 +91,7 @@ describe('Daily Checkup Navigation (offline)', () => {
         if (isMobile) {
             dcPage.close();
         } else {
-            dcPage.clickDCTab();
+            dcPage.clickTopTab('Daily Checkup');
         }
 
         expect($(dcPage.farmRow).isExisting(), 'farmRow.isExisting').to.equal(true);

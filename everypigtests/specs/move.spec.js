@@ -20,7 +20,7 @@ describe('Moves page, navigation', () => {
         });
 
         it('Check and uncheck movement', () => {
-            movePage.mSetReportParam('Shipment').mSetReportParam('Shipment');
+            movePage.setPicker('Shipment').setPicker('Shipment');
 
             expect(movePage.isSelected('Shipment'), 'isSelected(Shipment)').to.equal(false);
         });
@@ -104,9 +104,9 @@ describe('Moves page, input)', () => {
 
     it('Not able to report with empty mandatory Heads field in case of several ones', () => {
         movePage.setShipment('10', '10', 'good')
-            .addRow().clickSelectParam()
+            .addRow().clickSelect()
             .setTransfer()
-            .addRow().clickSelectParam() //this step because of bug
+            .addRow().clickSelect() //this step because of bug
             .setSale('20').resetIndex();
 
         expect(movePage.isSubmitDisabled, 'isSubmitDisabled').to.equal(true);
@@ -220,7 +220,7 @@ describe('Report single move', () => {
         const weight = tdata.randWeight + '';
         tdata.toStringVal(heads);
 
-        movePage.setFixRemoving(heads[0]).clickSelectParam()
+        movePage.setFixRemoving(heads[0]).clickSelect()
             .setShipment(heads[1], weight).submit();
         checkupPage.section(0).scrollIntoView({ block: "center" });
 
@@ -252,10 +252,10 @@ describe('Report few moves', () => {
 
     it('Fill report', () => {
         movePage.setShipment(test.heads[0], test.weight, test.condition)
-            .addRow().clickSelectParam().setTransfer(test.heads[1])
-            .addRow().clickSelectParam().setFixAdding(test.heads[2])
-            .addRow().clickSelectParam().setFixRemoving(test.heads[3])
-            .addRow().clickSelectParam().setFixAdding(test.heads[4])
+            .addRow().clickSelect().setTransfer(test.heads[1])
+            .addRow().clickSelect().setFixAdding(test.heads[2])
+            .addRow().clickSelect().setFixRemoving(test.heads[3])
+            .addRow().clickSelect().setFixAdding(test.heads[4])
             .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);

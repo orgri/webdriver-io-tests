@@ -20,7 +20,7 @@ describe('Moves page, navigation (offline)', () => {
         });
 
         it('Check and uncheck movement', () => {
-            movePage.mSetReportParam('Shipment').mSetReportParam('Shipment');
+            movePage.setPicker('Shipment').setPicker('Shipment');
 
             expect(movePage.isSelected('Shipment'), 'isSelected(Shipment)').to.equal(false);
         });
@@ -155,7 +155,7 @@ describe('Report single move (offline)', () => {
         const weight = tdata.randWeight + '';
         tdata.toStringVal(heads);
 
-        movePage.setFixRemoving(heads[0]).clickSelectParam()
+        movePage.setFixRemoving(heads[0]).clickSelect()
             .setShipment(heads[1], weight).submit();
         checkupPage.section(0).scrollIntoView({ block: "center" });
         const rslt = checkupPage.moveInfo;
@@ -197,10 +197,10 @@ describe('Report few moves (offline)', () => {
 
     it('Fill report', () => {
         movePage.setShipment(test.heads[0], test.weight, test.condition)
-            .addRow().clickSelectParam().setTransfer(test.heads[1])
-            .addRow().clickSelectParam().setFixAdding(test.heads[2])
-            .addRow().clickSelectParam().setFixRemoving(test.heads[3])
-            .addRow().clickSelectParam().setFixAdding(test.heads[4])
+            .addRow().clickSelect().setTransfer(test.heads[1])
+            .addRow().clickSelect().setFixAdding(test.heads[2])
+            .addRow().clickSelect().setFixRemoving(test.heads[3])
+            .addRow().clickSelect().setFixAdding(test.heads[4])
             .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)(fake).+$/);

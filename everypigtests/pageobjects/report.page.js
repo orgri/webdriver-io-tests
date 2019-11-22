@@ -2,14 +2,14 @@
 const Page = require('./page');
 
 module.exports = class ReportPage extends Page {
-    constructor() {
+    constructor({row = 'div', input = 'div', label = 'div', select = '.ReactSelect'} = {}) {
         super();
         this.index = 0;
         this.pagename = 'root';
-        this.row = '#root';
-        this.inputWrapper = '#root';
-        this.labelWrapper = '#root';
-        this.selectWrapper = '.ReactSelect';
+        this.row = row;
+        this.inputWrapper = input;
+        this.labelWrapper = label;
+        this.selectWrapper = select;
     }
 
 /********************************************** Navigation *****************************************************/
@@ -87,43 +87,67 @@ module.exports = class ReportPage extends Page {
     get rowIndex() { return '.row-index'; }
     get selectIcon() { return '.icon.selected'; }
 
-    paramRow(index) {
+    inputBlock(id) {
+        let selector = this.root;
         if ($(this.row).isExisting()) {
-            if (index === undefined || index >= $$(this.row).length) {
-                return $$(this.row)[this.index];
-            } else {
-                return $$(this.row)[index];
+            if (typeof id === 'string') {
+                selector = $(this.row + '*=' + id);
+            } else if (typeof id === 'number' && id < $$(this.row).length) {
+                selector = $$(this.row)[id];
+            } else if ((typeof id === 'number' && id >= $$(this.row).length)
+                || (id === undefined && this.index > 0)) {
+                selector = $$(this.row)[this.index];
             }
-        } else {
-            return $('#root');
         }
+        return selector;
     }
 
     mobileRow(text) { return $(this.mRowPicker + '*=' + text); }
-    input(name, index) { return this.paramRow(index).$(this.inputWrapper + '*=' + name).$('<input>'); }
-    inputLabel(name, index) { return this.paramRow(index).$(this.labelWrapper + '*=' + name); }
-    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
-    selectInput(index) { return this.paramRow(index).$('<input>'); }
+
+    input(name, id, wrap = this.inputWrapper) {
+        return this.inputBlock(id).$(wrap + '*=' + name).$('input');
+    }
+
+    inputLabel(name, id, wrap = this.labelWrapper) {
+        return this.inputBlock(id).$(wrap + '*=' + name);
+    }
+
+    select(id, wrap = this.selectWrapper) {
+        return this.inputBlock(id).$(wrap);
+    }
+
+    selectInput(...args) {
+        return this.select(...args).$('input');
+    }
+
     isSelected(text) { return this.mobileRow(text).$(this.selectIcon).isExisting(); }
 
-    setReportParam(type, index) {
-        this.waitForOpen().clickSelectParam(index);
-        expect(this.selectInput(index).getAttribute('aria-expanded'), 'isExpanded').to.equal('true');
+    clickSelect(...args) {
+        return this.select(...args).waitClick() && this.waitLoader();
+    }
 
-        this.selectInput(index).waitSetValue(type);
-        expect(this.selectInput(index).getAttribute('value'), 'inputValue of select').to.equal(type);
+    setInput(value, ...args) {
+        return this.input(...args).waitSetValue(value) && this;
+    }
+
+    setDropdown(value, ...args) {
+        this.clickSelect(...args);
+        expect(this.selectInput(...args).getAttribute('aria-expanded'), 'isExpanded').to.equal('true');
+
+        this.selectInput(...args).waitSetValue(value) && this.waitLoader();
+        expect(this.selectInput(...args).getAttribute('value'), 'inputValue of select').to.equal(value);
 
         browser.keys('Tab');
-        expect(this.selectInput(index)
-            .getAttribute('aria-activedescendant'), 'There is no option corresponding to input ' + type)
+        expect(this.selectInput(...args)
+            .getAttribute('aria-activedescendant'), 'There is no option corresponding to input ' + value)
             .to.not.have.string('null');
         return this;
     }
 
-    mSetReportParam(type) {
+    setPicker(value) {
         this.waitLoader();
-        $(this.mRowPicker).isExisting() || this.clickSelectParam();
-        this.mobileRow(type).waitClick();
+        $(this.mRowPicker).isExisting() || this.clickSelect();
+        this.mobileRow(value).waitClick();
         return this;
     }
 
@@ -151,9 +175,9 @@ module.exports = class ReportPage extends Page {
         return this;
     }
 
-    deleteRow(index) {
+    deleteRow(id) {
         if ($(this.trashBtn).isDisplayed()) {
-            this.paramRow(index).$(this.trashBtn).waitClick();
+            this.inputBlock(id).$(this.trashBtn).waitClick();
             this.index > 0 && this.index--;
         }
         return this;

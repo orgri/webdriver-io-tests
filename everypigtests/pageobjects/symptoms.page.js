@@ -10,18 +10,18 @@ class SymptomsPage extends ReportPage {
     }
 
     setPercent(index) {
-        let target = this.paramRow(index).$('.symptomatic'); 
-        this.paramRow(index).$('.toggler-btn').dragAndDrop(target);
+        let target = this.inputBlock(index).$('.symptomatic');
+        this.inputBlock(index).$('.toggler-btn').dragAndDrop(target);
         this.pause();
         return this;
     }
 
     setSymptom(name, index) {
         if (this.isMobile) {
-            this.mSetReportParam(name);
-            this.mClickNext();    
-        } else { 
-            this.setReportParam(name, index);
+            this.setPicker(name);
+            this.mClickNext();
+        } else {
+            this.setDropdown(name, index);
         }
         this.setPercent(index);
         return this;

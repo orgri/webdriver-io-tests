@@ -21,7 +21,7 @@ describe('Symptoms page, navigation', () => {
         it('Check and uncheck symptom', () => {
             let sympt = tdata.randSymptom;
 
-            symptomPage.mSetReportParam(sympt).mSetReportParam(sympt);
+            symptomPage.setPicker(sympt).setPicker(sympt);
 
             expect(symptomPage.isSelected(sympt)).to.equal(false);
         });
@@ -84,9 +84,9 @@ describe('Report single symptom', () => {
 
     it('Not able to report without set %', () => {
         if (isMobile) {
-            symptomPage.mSetReportParam(tdata.randSymptom).mClickNext();
+            symptomPage.setPicker(tdata.randSymptom).mClickNext();
         } else {
-            symptomPage.setReportParam(tdata.randSymptom);
+            symptomPage.setDropdown(tdata.randSymptom);
         }
 
         expect(symptomPage.isSubmitDisabled, 'isSubmitDisabled').to.equal(true);
@@ -96,9 +96,9 @@ describe('Report single symptom', () => {
         let sympt = tdata.randArraySymptom(3);
 
         if (isMobile) {
-            symptomPage.mSetReportParam(sympt[0])
-                .mSetReportParam(sympt[1])
-                .mSetReportParam(sympt[2])
+            symptomPage.setPicker(sympt[0])
+                .setPicker(sympt[1])
+                .setPicker(sympt[2])
                 .mClickNext().setPercent().setPercent(2);    
         } else {
             symptomPage.setSymptom(sympt[0])
@@ -125,7 +125,7 @@ describe('Report single symptom', () => {
         let sympt = tdata.randSymptom;
 
         symptomPage.setSymptom(tdata.randSymptom)
-            .clickSelectParam().setSymptom(sympt).submit();
+            .clickSelect().setSymptom(sympt).submit();
         checkupPage.section(3).scrollIntoView({block: "center"});
         const rslt = checkupPage.symptInfo;
 
@@ -157,7 +157,7 @@ describe('Report symptoms', () => {
         it('Check and uncheck symptom', () => {
             let sympt = tdata.randSymptom;
 
-            symptomPage.mSetReportParam(sympt).mSetReportParam(sympt);
+            symptomPage.setPicker(sympt).setPicker(sympt);
 
             expect(symptomPage.isSelected(sympt)).to.equal(false);
         });

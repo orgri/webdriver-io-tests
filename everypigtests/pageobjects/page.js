@@ -7,6 +7,10 @@ module.exports = class Page {
 
     get myUrl() { return browser.getUrl(); }
 
+    get root() {
+        return $('#root');
+    }
+
     get header() {
         return $('.main-header');
     }
@@ -17,6 +21,10 @@ module.exports = class Page {
     get isMobile() { return $('.AppContainer.isMobile').isExisting(); }
     get isOffNet() { return this.offNet.isExisting(); }
     get notification() { return $('.rrt-text'); }
+
+    get nothingBox() {
+        return $('.nothing-box');
+    }
     get mediaUploader() { return $('.MediaUploader'); }
     get uploadProgress() { return $('div[class^=upload-progress]'); }
     get removeMediaButton() { return this.mediaUploader.$('.asset-wrapper').$('.fa.fa-trash-o'); }
@@ -25,8 +33,22 @@ module.exports = class Page {
     get pagination() { return $('.CustomSelect  '); }
     get nextPageBtn() { return $('.paginate_button.next'); }
     get prevPageBtn() { return $('.paginate_button.previous'); }
-    get barnsheets() { return $('.sidebar').$('.item-name*=Barn'); }
-    get resources() { return $('.sidebar').$('.item-name*=Resources'); }
+
+    get sidebar() {
+        return $('.sidebar');
+    }
+
+    get headerbar() {
+        return $('.header-navigation');
+    }
+
+    get topbar() {
+        return $('.Breadcrumbs');
+    }
+
+    get subbar() {
+        return $('.Subnavigation');
+    }
     get modalWrapper() { return $('.ModalsContainer.isOpen'); }
     get inputSearch() { return $('input[placeholder="Search..."]'); }
 
@@ -46,14 +68,42 @@ module.exports = class Page {
     }
 
     clickCheckup() { return this.checkup.waitClick() && this.waitLoader(); }
-    clickBarnSheets() { return this.barnsheets.waitClick() && this.waitLoader(); }
     clickFarmfeed() { return this.farmfeed.waitClick() && this.waitLoader(); }
-    clickResources() { return this.resources.waitClick() && this.waitLoader(); }
+
+    get arrow() {
+        return '.fa.fa-angle-down';
+    }
+
+    get dropdownMenu() {
+        let selector = $('.dropdown-layout.isOpen');
+        return selector.isExisting() ? selector : $('.dropdown.active');
+    }
+
+    /********************************* Input *************************************/
+
+    get dateInput() {
+        return isMobile ? $('input[type=text]') : $('#date');
+    }
+
+    clickSidebar(item) {
+        return this.sidebar.$('span=' + item).waitClick() && this.waitLoader();
+    }
+
     clickNextPage() { return this.nextPageBtn.waitClick() && this.waitLoader(); }
     clickPrevPage() { return this.prevPageBtn.waitClick() && this.waitLoader(); }
 
-    clickTab(str, wrapper = $('#root')) { return wrapper.$('.item=' + str).waitClick() && this.waitLoader(); }
-    clickBtn(str, wrapper = $('#root')) { return wrapper.$('button=' + str).waitClick() && this.waitLoader(); }
+    clickHeaderTab(item) {
+        return this.headerbar.$('span=' + item).waitClick() && this.waitLoader();
+    }
+
+    clickSubTab(item) {
+        return this.subbar.$('span*=' + item).waitClick() && this.waitLoader();
+    }
+
+    clickTopTab(item) {
+        return this.topbar.$('a*=' + item).waitClick() && this.waitLoader();
+    }
+
     clickToModal(str) { return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     closeModal() { return this.modalWrapper.$('.close-button').waitClick() && this.waitLoader(); }
     setSearch(str) { return this.inputSearch.waitSetValue(str) && this.waitLoader(); }
@@ -103,21 +153,9 @@ module.exports = class Page {
         return this;
     }
 
-    uploadMedia(file) {
-        isSafari && this.reload().waitLoader();
-        const pathToMedia = path.resolve(browser.config.mediaPath, file);
-        const idx = isMobile ? '1' : '0';
-        const script = `document.querySelectorAll
-            ('input[type=file]')[IDX].style.display = 'block'; `.replace(/IDX/, idx);
-        browser.execute(script);
-        this.inputFile.waitForDisplayed();
-        try {
-            this.inputFile.setValue(pathToMedia);
-        } catch (err) {
-            //console.error(err); //not throw, because of Safari issue
-        } finally {
-            return this.waitUploader();
-        }
+    clickBtn(str, wrapper = this.root) {
+        return wrapper.$('.button=' + str).$('span').waitClick()
+            && this.waitLoader();
     }
 
     convertFile(file) {
@@ -164,7 +202,11 @@ module.exports = class Page {
 
     getArray(selector, regex = /.+/u) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
     getString(selector, regex = /.+/u) { return (selector.getText().match(regex) || [])[0]; }
-    getNumber(selector) { return (selector.getText().match(/[0-9]+/u) || ['0'])[0]; }
+
+    clickOn(str, wrapper = this.root) {
+        return wrapper.$('span=' + str).waitClick()
+            && this.waitLoader();
+    }
     getFloat(selector) { return (selector.getText().match(/[\d.]+/u) || ['0'])[0]; }
 
     /********************************* Tables *************************************/
@@ -177,8 +219,32 @@ module.exports = class Page {
     get sortWrapper() { return '.allow-sort-column'; }
     get filterWrapper() { return $('div[class^="table-filter"]'); }
     get dots() { return '.fa.fa-dots-three-horizontal'; }
-    get dropdownMenu() { return $('.dropdown-layout.isOpen'); }
-    get list() { return '.list-item-li'; }
+
+    isExist(input) {
+        let exist = false;
+        if (typeof input === 'string')
+            exist = $('span=' + input).isExisting();
+        if (typeof input === 'object')
+            exist = input.isExisting();
+        return exist;
+    }
+
+    uploadMedia(file) {
+        isSafari && ($('#add-file-modal').isExisting() || this.reload().waitLoader());
+        const pathToMedia = path.resolve(browser.config.mediaPath, file);
+        const idx = isMobile ? '1' : '0';
+        const script = `document.querySelectorAll('input[type=file]')[IDX].style.display = 'block'`
+            .replace(/IDX/, idx);
+        browser.execute(script);
+        this.inputFile.waitForDisplayed();
+        try {
+            this.inputFile.setValue(pathToMedia);
+        } catch (err) {
+            //console.error(err); //not throw, because of Safari issue
+        } finally {
+            return this.waitUploader();
+        }
+    }
 
     clickSortBy(str) {
         return this.tableItemsWith(str)[0].$(this.sortWrapper)
@@ -190,7 +256,11 @@ module.exports = class Page {
             && this.waitLoader();
     }
 
-    clickDots(wrapper) {
+    getNumber(selector) {
+        return (selector.getText().match(/[0-9\-]+/u) || ['0'])[0];
+    }
+
+    clickDots(wrapper = this.root) {
         return wrapper.$(this.dots).waitClick()
             && this.waitLoader();
     }
@@ -216,7 +286,45 @@ module.exports = class Page {
         return this.clickDots(this.cell(str, col, row));
     }
 
-    clickOption(str) { return this.dropdownMenu.$(this.list + '=' + str).waitClick() && this.waitLoader(); }
+    clickArrow(wrapper = this.root) {
+        return wrapper.$(this.arrow).$('..').waitClick()
+            && this.waitLoader();
+    }
+
+    clickOption(str) {
+        return this.dropdownMenu.$('li*=' + str).waitClick() && this.waitLoader();
+    }
+
+    calendarDay(str) {
+        return $('div[data-visible=true]').$('.CalendarDay=' + str);
+    }
+
+    isDayAvailable(day) {
+        return !this.calendarDay(day).getAttribute('aria-label').includes('Not available');
+    }
+
+    prevMonth() {
+        return $('button[aria-label^="Move backward"]').waitClick() && this;
+    }
+
+    nextMonth() {
+        return $('button[aria-label^="Move forward"]').waitClick() && this;
+    }
+
+    clickDate() {
+        return this.dateInput.waitClick() && this;
+    }
+
+    setDay(day = '15') {
+        return this.calendarDay(day).waitClick() && this;
+    }
+
+    setDate(day) {
+        this.clickDate();
+        this.isDayAvailable(day) || this.prevMonth().prevMonth().nextMonth();
+        this.setDay(day);
+        return this;
+    }
 
     /********************************* Media *************************************/
 

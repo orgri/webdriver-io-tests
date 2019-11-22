@@ -32,9 +32,6 @@ class CheckupPage extends ReportPage {
     }
 
     rowWith(str) { return $(this.rowDC + '*=' + str); }
-    clickGroupInfoTab() { return $('.item=Group Info').waitClick() && this.waitLoader(); }
-    clickCheckupTab() { return $('.item=Checkup').waitClick() && this.waitLoader(); }
-    clickDCTab() { return $('a[href="/daily-checkup"]').waitClick() && this.waitLoader(); }
     clickToModal(str) {return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     isPageOf(regex) { return browser.getUrl().includes(regex); }
 
@@ -306,7 +303,7 @@ class CheckupPage extends ReportPage {
 
         this.waitLoader().chooseSection(0);
         for (let i = 0, n = +data.moves.amount; i < n; i++) {
-            (i === 0) || movePage.addRow().clickSelectParam();
+            (i === 0) || movePage.addRow().clickSelect();
             movePage.setMovement(data.moves.type[i],
                 data.moves.heads[i], data.moves.weight[i], data.moves.condition[i]);
         }

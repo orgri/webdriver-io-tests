@@ -5,33 +5,16 @@ class BarnSheetsPage extends ReportPage {
 
     /********************************************** Navigation *****************************************************/
     get barnsheetsUrl() { return this.baseUrl + '/barnsheets'; }
-    get groupsTab() { return $('a[href*="/barnsheets/groups"]').$('span'); }
-    get farmsTab() { return $('a[href*="/barnsheets/farms"]'); }
-    get companiesTab() { return $('a[href*="/barnsheets/companies"]'); }
-    get treatsTab() { return $('a[href*="/treatments"]'); }
-    get diagnosTab() { return $('a[href*="/diagnoses"]'); }
-    get pigMovesTab() { return $('a[href*="/pig-movements"]'); }
-    get mediaTab() { return $('div[class="scrollable-content"] a[href*="/media"]'); }
-    get dcTab() { return $('.item=Daily Checkups'); }
     get farmName() { return $('.farm-information h1'); }
     get groupName() { return $('.group-info-wrapper .group-name'); }
     get companyName() { return $('.CompanyProfileHeader .company-name'); }
-
-    clickTreatsTab() { return this.treatsTab.waitClick() && this.waitLoader(); }
-    clickDiagnosTab() { return this.diagnosTab.waitClick() && this.waitLoader(); }
-    clickMovesTab() { return this.pigMovesTab.waitClick() && this.waitLoader(); }
-    clickMediaTab() { return this.mediaTab.waitClick() && this.waitLoader(); }
-    clickDcTab() { return this.dcTab.waitClick() && this.waitLoader(); }
-    clickFarmsTab() { return this.farmsTab.waitClick() && this.waitLoader(); }
-    clickGroupsTab() { return this.groupsTab.waitClick() && this.waitLoader(); }
-    clickCompaniesTab() { return this.companiesTab.waitClick() && this.waitLoader(); }
 
     open(path = this.barnsheetsUrl) {
         browser.url(path);
         this.waitLoader();
         return this;
     }
-    
+
     waitForOpen() { return $(this.tableItem).waitForExist() && this; }
 
     /********************************************* Barnsheets Tables ****************************************************/
@@ -57,19 +40,6 @@ class BarnSheetsPage extends ReportPage {
     inventoryCell(date) { return this.getNumber(this.cell(date, 7)); }
     mrCell(date) { return this.getNumber(this.cell(date, 8)); }
     weightCell(date) { return this.getNumber(this.cell(date, 9)); }
-
-    get moveInfo() {
-        let obj = {};
-
-        obj.amount = this.getNumber(this.section('Move'));
-        obj.added = this.moveRowInfo('Added');
-        obj.removed = this.moveRowInfo('Removed');
-        obj.weight = this.moveRowInfo('Weight');
-        obj.condition = this.moveRowInfo('Condition');
-        obj.comment = this.getString(this.section('Move'), this.reComment);
-
-        return obj;
-    }
 
     getRandDates(number = 1) {
         let idx = tdata.rand(this.tableRows.length - 2);
@@ -107,13 +77,19 @@ class BarnSheetsPage extends ReportPage {
         return this;
     }
 
-    isMoveExist(type) { return this.section('Move').$('.info-row*=' + type).isExisting(); }
     deathReasonCollapse(idx = 0) { return this.deathReasons[idx].waitClick() && this.waitLoader(); }
 
-    moveRowInfo(type) {
-        return (this.isMoveExist(type)) ?
-            this.section('Move').$$('.info-row*=' + type)
-                .map(el => el.$('.float-right').getText()) : [];
+    get moveInfo() {
+        let obj = {};
+
+        obj.amount = this.getNumber(this.section('Move'));
+        obj.added = this.moveRowInfo('Added');
+        obj.removed = this.moveRowInfo('Removed');
+        obj.weight = this.moveRowInfo('Weight');
+        obj.condition = this.moveRowInfo('Condition');
+        obj.comment = this.getString(this.section('Move'), this.reComment);
+
+        return obj;
     }
 
     deathRowInfo(type) {
@@ -123,6 +99,19 @@ class BarnSheetsPage extends ReportPage {
                 .getText().match(reNumber) || [])[0]) :
             (this.section('Dead').$('.item*=' + type).$('div[class^="value"]')
                 .getText().match(reNumber) || [])[0];
+    }
+
+    get diagnosInfo() {
+        let obj = {};
+        const noteSelector = $(this.sectionWrapper).isExisting()
+            ? $$('.diagnose-note span[class^=Translation_] > span')
+            : $$('.diagnose-note .italic');
+
+        obj.name = this.getArray($$('.diagnose-name .name'));
+        obj.type = this.getArray($$('.diagnose-name span span'));
+        obj.comment = this.getArray(noteSelector);
+
+        return obj;
     }
 
     get deathInfo() {
@@ -191,15 +180,10 @@ class BarnSheetsPage extends ReportPage {
         return obj;
     }
 
-    get diagnosInfo() {
-        let obj = {};
-        const reComment = /(?<=Notes:\s+)(?=\w)(.|\n)+(^\nSee translation)/g;
-
-        obj.name = this.getArray($$('.diagnose-name .name'));
-        obj.type = this.getArray($$('.diagnose-name span span'));
-        obj.comment = this.getArray($$('.diagnose-note'), reComment);
-
-        return obj;
+    moveRowInfo(type) {
+        return (this.isExist(this.section('Move').$('.info-row*=' + type))) ?
+            this.section('Move').$$('.info-row*=' + type)
+                .map(el => el.$('.float-right').getText()) : [];
     }
 
     clear() {
@@ -231,7 +215,7 @@ class BarnSheetsPage extends ReportPage {
         this.chooseSection('Move');
         for (let i = 0, n = +data.moves.amount; i < n; i++) {
             (i === 0) || movePage.addRow();
-            movePage.clickSelectParam().setMovement(data.moves.type[i],
+            movePage.clickSelect().setMovement(data.moves.type[i],
                 data.moves.heads[i], data.moves.weight[i], data.moves.condition[i]);
         }
         movePage.setComment(data.moves.comment).submit();
@@ -294,7 +278,7 @@ class BarnSheetsPage extends ReportPage {
     clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitClick() && this.waitLoader(); }
 
     chooseRandGroup(farmPrefix = 'TA_Farm_0000', groupPrefix = 'TA_PigGroup') {
-        this.open().clickFarmsTab().setElemsOnPage(100);
+        this.open().clickSubTab('Farms').setElemsOnPage(100);
         let rows = this.tableItemsWith(farmPrefix);
         rows[tdata.rand(rows.length - 1)].$('a').waitClick() && this.waitLoader();
         rows = this.tableItemsWith(groupPrefix);

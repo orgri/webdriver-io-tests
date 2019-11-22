@@ -45,7 +45,7 @@ describe('Daily Checkup Navigation', () => {
     });
 
     it('Groups on page', () => {
-        expect($$(dcPage.groupRow), 'groups on page').to.have.lengthOf(101);
+        expect($$(dcPage.groupRow), 'groups on page').to.have.lengthOf.above(100);
     });
 
     it('Check In', function () {
@@ -74,13 +74,13 @@ describe('Daily Checkup Navigation', () => {
     });
 
     it('Group info Tab', () => {
-        dcPage.clickGroupInfoTab();
+        dcPage.clickSubTab('Group Info');
 
         expect($(dcPage.collapseWrapper).getText(), 'checkup section existing').to.equal(dcPage.group);
     });
 
     it('Checkup Tab', () => {
-        dcPage.clickCheckupTab();
+        dcPage.clickSubTab('Checkup');
 
         expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
     });
@@ -100,7 +100,7 @@ describe('Daily Checkup Navigation', () => {
         } else {
             dcPage.clickToModal('Cancel');
 
-            expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
+            expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         }
     });
 
@@ -111,6 +111,7 @@ describe('Daily Checkup Navigation', () => {
             dcPage.clickFarmfeed().clickToModal('Yes');
 
             expect(browser.getUrl(), 'checkup url').to.match(/(\/farmfeed)$/);
+            expect($('.FarmfeedPost').isExisting(), 'farmfeed post').to.equal(true);
         }
     });
 

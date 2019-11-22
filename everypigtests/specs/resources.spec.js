@@ -7,7 +7,7 @@ describe('Resources', () => {
     });
 
     it('Open', () => {
-        resPage.clickResources();
+        resPage.clickSidebar('Resources');
 
         expect(browser.getUrl(), 'url').match(/\/tenant-assets/);
     });
@@ -42,7 +42,7 @@ describe('Resources', () => {
     it('Download video', () => {
         resPage.clickMenuCell('', 1).clickOption('Download');
         const file = resPage.cell('',0,1).getText();
-        
+
         resPage.checkFileExists(file, 30000);
     });
 
@@ -60,7 +60,7 @@ describe('Resources', () => {
         resPage.waitLoader();
 
         expect(resPage.mediaViewer.$('video').isExisting(), 'mediaViewer').to.equal(true);
-        
+
         browser.pause(1500);
         resPage.mediaViewer.doubleClick();
         browser.pause(1500);
@@ -84,7 +84,7 @@ describe('Resources', () => {
     it('Download photo', () => {
         resPage.clickMenuCell('', 1).clickOption('Download');
         const file = resPage.cell('',0,1).getText();
-        
+
         resPage.checkFileExists(file, 30000);
     });
 
@@ -124,7 +124,7 @@ describe('Resources', () => {
     it('Download document', () => {
         resPage.cell('',0,1).$('div[class^="asset-name"]').waitClick();
         const file = resPage.cell('',0,1).getText();
-        
+
         resPage.checkFileExists(file, 30000);
     });
 
@@ -149,7 +149,7 @@ describe('Resources', () => {
     it('Download pdf', () => {
         resPage.clickMenuCell('', 1).clickOption('Download');
         const file = resPage.cell('',0,1).getText();
-        
+
         resPage.checkFileExists(file, 30000);
     });
 
@@ -185,7 +185,7 @@ describe('Resources', () => {
         resPage.clickBtn('Add').uploadMedia(file);
 
         expect(resPage.notification.getText(), 'error text').to.have
-            .string(file + ' has type not allowed, please upload files of type')
+            .string(file + ' has type not allowed, please upload files of type');
         expect(resPage.cell('',0,1).getText(), 'name').to.not.equal(file);
     });
 
@@ -208,14 +208,14 @@ describe('Resources', () => {
             first = resPage.cell('',0,1).getText(),
             last = resPage.cell('',0,idx).getText();
 
-        expect(first <= last, 'fist <= last').to.equal(true);
+        expect(first <= last, `${first} <= ${last}`).to.equal(true);
 
         resPage.clickSortBy('Name');
 
         first = resPage.cell('',0,1).getText();
         last = resPage.cell('',0,idx).getText();
 
-        expect(first >= last, 'first >= last').to.equal(true);
+        expect(first >= last, `${first} >= ${last}`).to.equal(true);
     });
 
     it('Sort by type', () => {
@@ -225,14 +225,14 @@ describe('Resources', () => {
             first = resPage.cell('',1,1).getText(),
             last = resPage.cell('',1,idx).getText();
 
-        expect(first <= last, 'first <= last').to.equal(true);
+        expect(first <= last, `${first} <= ${last}`).to.equal(true);
 
         resPage.clickSortBy('Type');
 
         first = resPage.cell('',1,1).getText();
         last = resPage.cell('',1,idx).getText();
 
-        expect(first >= last, 'first >= last').to.equal(true);
+        expect(first >= last, `${first} >= ${last}`).to.equal(true);
     });
 
     it('Sort by date', () => {
@@ -242,14 +242,14 @@ describe('Resources', () => {
             first = resPage.cell('',2,1).getText(),
             last = resPage.cell('',2,idx).getText();
 
-        expect(first <= last, 'first <= last').to.equal(true);
+        expect(first <= last, `${first} <= ${last}`).to.equal(true);
 
         resPage.clickSortBy('Date');
 
         first = resPage.cell('',2,1).getText();
         last = resPage.cell('',2,idx).getText();
 
-        expect(first >= last, 'first >= last').to.equal(true);
+        expect(first >= last, `${first} >= ${last}`).to.equal(true);
     });
 
     it('Search', () => {
@@ -274,8 +274,8 @@ describe('Resources', () => {
         resPage.reload();
         const rows = resPage.tableRowsWith('').length,
             idx = tdata.rand(rows - 2) + 1;
-            file = resPage.cell('', 0, idx).getText();
-        resPage.clickMenuCell('', idx).clickOption('Remove')
+        file = resPage.cell('', 0, idx).getText();
+        resPage.clickMenuCell('', idx).clickOption('Remove');
         const fileAfter = resPage.cell('', 0, idx).getText();
 
         expect(resPage.notification.getText(), 'error text')

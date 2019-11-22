@@ -17,29 +17,31 @@ class MovementsPage extends ReportPage {
     setCondition(condition, index) {
         switch (condition) {
             case 'good':
-                this.paramRow(index).$('.good-condition').click();
+                this.inputBlock(index).$('.good-condition').click();
                 break;
             case 'average':
-                this.paramRow(index).$('.avg-condition').click();
+                this.inputBlock(index).$('.avg-condition').click();
                 break;
             case 'poor':
-                this.paramRow(index).$('.poor-condition').click();
+                this.inputBlock(index).$('.poor-condition').click();
                 break;
             default:
-                this.paramRow(index).$('.good-condition').click();
+                this.inputBlock(index).$('.good-condition').click();
                 break;
         }
         return this;
     }
 
-    clickSelectParam(index) { return this.paramRow(index).$(this.selectWrapper).waitClick() && this; }
+    clickSelectParam(index) {
+        return this.inputBlock(index).$(this.selectWrapper).waitClick() && this;
+    }
 
     setShipment(nHeads, weight, condition, index) {
         if (this.isMobile) {
-            this.mSetReportParam('Shipment');
+            this.setPicker('Shipment');
             this.mClickNext();
-        } else { 
-            this.setReportParam('Shipment', index); 
+        } else {
+            this.setDropdown('Shipment', index);
         }
         if (nHeads !== undefined) { this.setHeads(nHeads, index); }
         if (weight !== undefined) { this.setAvgWeight(weight, index); }
@@ -49,10 +51,10 @@ class MovementsPage extends ReportPage {
 
     setTransfer(nHeads, index) {
         if (this.isMobile) {
-            this.mSetReportParam('Transfer');
+            this.setPicker('Transfer');
             this.mClickNext();
-        } else { 
-            this.setReportParam('Transfer', index);
+        } else {
+            this.setDropdown('Transfer', index);
         }
         if (nHeads !== undefined) { this.setHeads(nHeads, index); }
         return this;
@@ -60,10 +62,10 @@ class MovementsPage extends ReportPage {
 
     setSale(nHeads, index) {
         if (this.isMobile) {
-            this.mSetReportParam('Sale');
+            this.setPicker('Sale');
             this.mClickNext();
-        } else { 
-            this.setReportParam('Sale', index);
+        } else {
+            this.setDropdown('Sale', index);
         }
         if (nHeads !== undefined) { this.setHeads(nHeads, index); }
         return this;
@@ -71,10 +73,10 @@ class MovementsPage extends ReportPage {
 
     setFixAdding(nHeads, weight, condition, index) {
         if (this.isMobile) {
-            this.mSetReportParam('add');
+            this.setPicker('add');
             this.mClickNext();
-        } else { 
-            this.setReportParam('add', index);
+        } else {
+            this.setDropdown('add', index);
         }
         if (nHeads !== undefined) { this.setHeads(nHeads, index); }
         return this;
@@ -82,10 +84,10 @@ class MovementsPage extends ReportPage {
 
     setFixRemoving(nHeads, index) {
         if (this.isMobile) {
-            this.mSetReportParam('remov');
+            this.setPicker('remov');
             this.mClickNext();
-        } else { 
-            this.setReportParam('remov', index);
+        } else {
+            this.setDropdown('remov', index);
         }      
         if (nHeads !== undefined) { this.setHeads(nHeads, index); }
         return this;
@@ -93,10 +95,10 @@ class MovementsPage extends ReportPage {
 
     setMovement(type, nHeads, weight, condition, index) {
         if (this.isMobile && type) {
-            this.mSetReportParam(type);
+            this.setPicker(type);
             this.mClickNext();
         } else if (type) {
-            this.setReportParam(type, index);
+            this.setDropdown(type, index);
         }
         (nHeads === undefined) || this.setHeads(nHeads, index);
         (weight === undefined) || this.inputLabel('Est. Avg. Weight', index).isExisting() && this.setAvgWeight(weight, index);

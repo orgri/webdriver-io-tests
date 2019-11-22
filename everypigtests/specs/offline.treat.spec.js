@@ -21,7 +21,7 @@ describe('Treats page, navigation (offline)', () => {
 
         it('Check and uncheck treat', () => {
             let treat = tdata.randTreat;
-            treatPage.mSetReportParam(treat).mSetReportParam(treat);
+            treatPage.setPicker(treat).setPicker(treat);
 
             expect(treatPage.isSelected(treat), 'isSelected()').to.equal(false);
         });
@@ -150,7 +150,7 @@ describe('Report single treat (offline)', () => {
             heads = tdata.randHeads + '';
 
         treatPage.setWithCcsDosage(tdata.randCcs, tdata.randHeads, tdata.randDosage)
-            .clickSelectParam() // need for Mobile
+            .clickSelect() // need for Mobile
             .setWithoutDosage(treat, heads).submit();
         checkupPage.section(2).scrollIntoView({block: "center"});
         const rslt = checkupPage.treatInfo;
