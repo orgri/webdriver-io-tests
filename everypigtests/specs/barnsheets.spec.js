@@ -82,7 +82,7 @@ describe('Barnsheets Navigation', () => {
     it('Pig movements tab', () => {
         sheetsPage.clickSubTab('Pig Movements');
 
-        expect($(sheetsPage.block).isExisting(), 'is UserPanel').to.equal(true);
+        expect($('.UserPanel').isExisting(), 'is UserPanel').to.equal(true);
     });
 
     it('Media tab', () => {
@@ -507,14 +507,16 @@ describe('Edit full checkup', () => {
 
     it('Media changes', () => {
         sheetsPage.section('Media').scrollIntoView({ block: 'center' });
+        rslt = sheetsPage.mediaInfo;
 
-        expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('2');
+        expect(rslt.amount, 'nOfMedia').to.equal('2');
     });
 
     it('Audio changes', () => {
         sheetsPage.section('Audio').scrollIntoView({ block: 'center' });
+        rslt = sheetsPage.audioInfo;
 
-        expect(sheetsPage.nOfAudio, 'nOfAudio').to.equal('1');
+        expect(rslt.amount, 'nOfAudio').to.equal('1');
     });
 
     it('Save changes', () => {
@@ -667,14 +669,16 @@ describe('Edit few checkups', () => {
 
         it('Media changes, ' + (i + 1) + '-checkup', () => {
             sheetsPage.section('Media').scrollIntoView({ block: 'center' });
+            rslt = sheetsPage.mediaInfo;
 
-            expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('2');
+            expect(rslt.amount, 'nOfMedia').to.equal('2');
         });
 
         it('Audio changes, ' + (i + 1) + '-checkup', () => {
             sheetsPage.section('Audio').scrollIntoView({ block: 'center' });
+            rslt = sheetsPage.audioInfo;
 
-            expect(sheetsPage.nOfAudio, 'nOfAudio').to.equal('1');
+            expect(rslt.amount, 'nOfAudio').to.equal('1');
         });
 
         it('Close, ' + (i + 1) + '-checkup', () => {

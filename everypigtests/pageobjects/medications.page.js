@@ -14,28 +14,28 @@ class MedicationsPage extends ReportPage {
     get total() { return $('#head-total-count'); }
  
     setHead(number, index) {
-        this.inputLabel('Head', index).waitClick();
-        this.input('Head Treated', index).addValue(number);
+        this.inputLabel(index, 'Head').waitClick();
+        this.input(index, 'Head Treated').addValue(number);
         browser.keys('Tab');
         return this;
     }
     setUnits(number, index) {
-        this.input('Units', index).waitSetValue(number);
+        this.input(index, 'Units').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
     setGals(number, index) {
-        this.input('Gals', index).waitSetValue(number);
+        this.input(index, 'Gals').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
     setCcs(number, index) {
-        this.input('ccs', index).waitSetValue(number);
+        this.input(index, 'ccs').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
     setMls(number, index) {
-        this.input('Milliliters', index).waitSetValue(number);
+        this.input(index, 'Milliliters').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
@@ -55,9 +55,9 @@ class MedicationsPage extends ReportPage {
         } else {
             this.setDropdown(product, index);
         }
-        if (heads !== undefined) { this.setHead(heads); }
-        if (units !== undefined) { this.setUnits(units); }
-        if (gals !== undefined) { this.setGals(gals); }
+        if (heads !== undefined) { this.setHead(heads, index); }
+        if (units !== undefined) { this.setUnits(units, index); }
+        if (gals !== undefined) { this.setGals(gals, index); }
         return this;
     }
 
@@ -68,8 +68,8 @@ class MedicationsPage extends ReportPage {
         } else {
             this.setDropdown(product, index);
         }
-        if (heads !== undefined) { this.setHead(heads); }
-        if (mls !== undefined) { this.setMls(mls); }
+        if (heads !== undefined) { this.setHead(heads, index); }
+        if (mls !== undefined) { this.setMls(mls, index); }
         return this;
     }
 
@@ -80,8 +80,8 @@ class MedicationsPage extends ReportPage {
         } else {
             this.setDropdown(product, index);
         }
-        if (heads !== undefined) { this.setHead(heads); }
-        if (ccs !== undefined) { this.setCcs(ccs); }
+        if (heads !== undefined) { this.setHead(heads, index); }
+        if (ccs !== undefined) { this.setCcs(ccs, index); }
         return this;
     }
 
@@ -92,7 +92,7 @@ class MedicationsPage extends ReportPage {
         } else {
             this.setDropdown(product, index);
         }
-        if (heads !== undefined) { this.setHead(heads); }
+        if (heads !== undefined) { this.setHead(heads, index); }
         return this;
     }
 
@@ -103,11 +103,11 @@ class MedicationsPage extends ReportPage {
         } else {
             this.setDropdown(product, index);
         }
-        (heads === undefined) || this.setHead(heads);
-        (dosage === undefined) || this.inputLabel('Units', index).isExisting() && this.setUnits(dosage);
-        (gals === undefined) || this.inputLabel('Gals', index).isExisting() && this.setGals(gals);
-        (dosage === undefined) || this.inputLabel('ccs', index).isExisting() && this.setCcs(dosage);
-        (dosage === undefined) || this.inputLabel('Milliliters', index).isExisting() && this.setMls(dosage);
+        (heads === undefined) || this.setHead(heads, index);
+        (dosage === undefined) || this.inputLabel(index, 'Units').isExisting() && this.setUnits(dosage, index);
+        (gals === undefined) || this.inputLabel(index, 'Gals').isExisting() && this.setGals(gals, index);
+        (dosage === undefined) || this.inputLabel(index, 'ccs').isExisting() && this.setCcs(dosage, index);
+        (dosage === undefined) || this.inputLabel(index, 'Milliliters').isExisting() && this.setMls(dosage, index);
         return this;
     }
 }

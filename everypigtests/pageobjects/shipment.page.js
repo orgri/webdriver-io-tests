@@ -17,11 +17,11 @@ class ShipmentPage extends ReportPage {
     }
 
     setHeads(number) {
-        return this.input('Head').waitSetValue(number) && this;
+        return this.input(0, 'Head').waitSetValue(number) && this;
     }
 
     setAvgWeight(number) {
-        return this.input('Est. Avg. Weight').waitSetValue(number) && this;
+        return this.input(0, 'Est. Avg. Weight').waitSetValue(number) && this;
     }
 
     fillValue(number) {

@@ -41,7 +41,7 @@ describe('Edit Moves', () => {
     });
 
     it('weight', () => {
-        expect(rslt.weight[0], 'weight').to.equal(test.weight + ' lbs');
+        expect(rslt.weight[0], 'weight').to.equal(test.weight);
     });
 
     it('condition', () => {
@@ -128,10 +128,10 @@ describe('Edit Moves', () => {
     });
 
     it('Shipment (weight)', () => {
-        expect(rslt.weight[1], 'weight').to.equal(test.weight);
+        expect(rslt.weight[0], 'weight').to.equal(test.weight);
     });
     it('Shipment (condition)', () => {
-        expect(rslt.condition[1].toLowerCase(), 'condition').to.equal(test.condition);
+        expect(rslt.condition[0].toLowerCase(), 'condition').to.equal(test.condition);
     });
 
     it('Transferred heads', () => {
@@ -191,7 +191,7 @@ describe('Edit Deaths', () => {
         });
 
         it('euthanasia ' + i, () => {
-            expect(rslt.ethanas[i], 'euthanas').to.equal(test.euthanas[i]);
+            expect(rslt.euthanas[i], 'euthanas').to.equal(test.euthanas[i]);
         });
     }
 
@@ -496,14 +496,16 @@ describe('Edit Media', () => {
 
     it('Number of audio', () => {
         sheetsPage.section('Audio').scrollIntoView({ block: 'center' });
+        let rslt = sheetsPage.audioInfo;
 
-        expect(sheetsPage.nOfAudio, 'nOfAudio').to.equal('1');
+        expect(rslt.amount, 'nOfAudio').to.equal('1');
     });
 
     it('Number of media', () => {
         sheetsPage.section('Media').scrollIntoView({ block: 'center' });
+        let rslt = sheetsPage.mediaInfo;
 
-        expect(sheetsPage.nOfMedia, 'nOfMedia').to.equal('3');
+        expect(rslt.amount, 'nOfMedia').to.equal('3');
     });
 
     it('Save and review', () => {
@@ -641,7 +643,7 @@ describe('Edit Diagnosis', () => {
         });
 
         it('Changes (type ' + i + ')', () => {
-            expect(rslt.type[i], 'type').to.equal(test.types[i]);
+            expect(rslt.type[i], 'type').to.equal(test.types[i] + ' Diagnosis');
         });
 
         it('Changes (comment ' + i + ')', () => {

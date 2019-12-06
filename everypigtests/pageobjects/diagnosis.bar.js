@@ -4,7 +4,7 @@ var ReportPage = require('./report.page');
 class DiagnosisBar extends ReportPage {
     constructor() {
         super();
-        this.row = 'div[class^="diagnosis-field"]';
+        this.row = '[class^="diagnosis-field"]';
     }
 
     get addRowBtn() { return $('div[class^="add-diagnosis"]'); }
@@ -16,42 +16,30 @@ class DiagnosisBar extends ReportPage {
     get diagnosTab() { return this.box.$('.item=Diagnose'); }
     get groupInfoTab() { return this.box.$('.item=Group Info'); }
     get groupInfoColl() { return $('.group-info-collapse'); }
-    get diagnosInfoColl() { return $('.diagnose-collapse'); }
+    get diagnosCollapse() { return $('.diagnose-collapse'); }
+    get diagnosWrapper() { return '[class^=diagnosis-info-row]'; }
 
     clickSave() { return this.saveBtn.waitClick() && this.waitLoader(); }
     clickGroupInfoTab() { return this.groupInfoTab.waitClick() && this.waitLoader(); }
-    clickDiagnosInfoCol() { return this.diagnosInfoColl.waitClick() && this.waitLoader(); }
+    clickDiagnosInfoCol() { return this.diagnosCollapse.waitClick() && this.waitLoader(); }
 
-    get info() {
-        let data = {};
-        const name = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row] .semibold');
-        const type = this.diagnosInfoColl.$$('div[class^=diagnosis-info-row] span span');
-        const dNote = this.diagnosInfoColl.$$('div[class^=diagnosis-note-row] span[class^=Translation] > span');
-        const reType = /(.+)(?=\sDiagnosis)/g;
-
-        data.amount = this.getNumber(this.diagnosInfoColl);
-        data.name = this.getArray(name);
-        data.type = this.getArray(type, reType);
-        data.comment = this.getArray(dNote);
-
-        return data;
-    }
+    get info() { return super.diagnosInfo(this.diagnosCollapse, this.diagnosWrapper); }
 
     setType(type, index) {
-        return this.inputBlock(index).$('span*=' + type).waitClick() && this;
+        return this.block(index).$('span*=' + type).waitClick() && this;
     }
 
     setAlert(index) {
-        return this.inputBlock(index).$('.unchecked').waitClick() && this;
+        return this.block(index).$('.unchecked').waitClick() && this;
     }
 
     addNote(index) {
-        return this.inputBlock(index).$(this.addNoteBtn).waitClick() && this;
+        return this.block(index).$(this.addNoteBtn).waitClick() && this;
     }
 
     setComment(text, index) {
-        this.inputBlock(index).$(this.commentClosed).isExisting() && this.addNote(index);
-        this.inputBlock(index).$(this.comment).waitSetValue(text);
+        this.block(index).$(this.commentClosed).isExisting() && this.addNote(index);
+        this.block(index).$(this.comment).waitSetValue(text);
         return this;
     }
 

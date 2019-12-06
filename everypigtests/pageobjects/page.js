@@ -85,6 +85,8 @@ module.exports = class Page {
         return isMobile ? $('input[type=text]') : $('#date');
     }
 
+    get collapseWrapper() { return '[class^="collapse_"]'; }
+
     clickSidebar(item) {
         return this.sidebar.$('span=' + item).waitClick() && this.waitLoader();
     }
@@ -199,15 +201,21 @@ module.exports = class Page {
         browser.refresh();
         return this.waitLoader();
     }
-
-    getArray(selector, regex = /.+/u) { return selector.map(el => (el.getText().match(regex) || [])[0]); }
+    getClassName(str) { return '.' + $(str).getProperty('classList')[0]; }
     getString(selector, regex = /.+/u) { return (selector.getText().match(regex) || [])[0]; }
+    getFloat(selector) { return (selector.getText().match(/(\d+.\d+)|(\d+)/u) || ['0'])[0]; }
+    getNumber(selector) { return (selector.getText().match(/[0-9\-]+/u) || ['0'])[0]; }
 
-    clickOn(str, wrapper = this.root) {
-        return wrapper.$('span=' + str).waitClick()
-            && this.waitLoader();
+    getArray(selector, regex = /.+/u) {
+        return selector.map(el => (el.getText().match(regex) || [])[0])
+            .filter(el => el !== undefined);
     }
-    getFloat(selector) { return (selector.getText().match(/[\d.]+/u) || ['0'])[0]; }
+
+    clickOn(selector, wrapper = this.root) {
+        if (typeof selector === 'string') { selector = wrapper.$(selector); }
+
+        return selector.waitClick() && this.waitLoader();
+    }
 
     /********************************* Tables *************************************/
 
@@ -256,10 +264,6 @@ module.exports = class Page {
             && this.waitLoader();
     }
 
-    getNumber(selector) {
-        return (selector.getText().match(/[0-9\-]+/u) || ['0'])[0];
-    }
-
     clickDots(wrapper = this.root) {
         return wrapper.$(this.dots).waitClick()
             && this.waitLoader();
@@ -280,6 +284,8 @@ module.exports = class Page {
     }
 
     cell(str, column = 0, row = 0) { return this.tableRowsWith(str)[row].$$(this.tableItem)[column]; }
+
+    clickCell(str, column, row) { return this.cell(str, column, row).waitClick() && this.waitLoader(); }
 
     clickMenuCell(str, row) {
         let col = this.tableColumns.length - 1;

@@ -71,60 +71,60 @@ describe('Treats page, input)', () => {
         treatPage.setWithGalsDosage(tdata.randUnits);
         let total = treatPage.pigs;
 
-        expect(treatPage.input('Head Treated').getValue(), 'heads').to.equal(total);
+        expect(treatPage.input(0, 'Head Treated').getValue(), 'heads').to.equal(total);
     });
 
     it('Not able to set Heads bigger than total pigs', () => {
         treatPage.setWithGalsDosage(tdata.randUnits, '99999');
         let total = treatPage.pigs;
 
-        expect(treatPage.input('Head Treated').getValue(), 'heads').to.equal(total);
+        expect(treatPage.input(0, 'Head Treated').getValue(), 'heads').to.equal(total);
     });
 
     it('Not able to set float value in Heads', () => {
         treatPage.setWithCcsDosage(tdata.randCcs, '1.01');
 
-        expect(treatPage.input('Head Treated').getValue(), 'heads').to.equal('101');
+        expect(treatPage.input(0, 'Head Treated').getValue(), 'heads').to.equal('101');
     });
 
     it('Not able to set float value in Gals', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setGals('1.01');
         
-        expect(treatPage.input('Gals').getValue(), 'gals').to.equal('1');
+        expect(treatPage.input(0, 'Gals').getValue(), 'gals').to.equal('1');
     });
 
     it('Not able to set negative value in Heads', () => {
         treatPage.setWithGalsDosage(tdata.randUnits, '-123');
         
-        expect(treatPage.input('Head Treated').getValue(), 'heads').to.equal('123');
+        expect(treatPage.input(0, 'Head Treated').getValue(), 'heads').to.equal('123');
     });
 
     it('Not able to set negative value in Units', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setUnits('-123');
 
-        isChrome && expect(treatPage.input('Units').getProperty('value'), 'units').to.equal('0123');
-        isSafari && expect(treatPage.input('Units').getProperty('value'), 'units').to.equal('023');
+        isChrome && expect(treatPage.input(0, 'Units').getProperty('value'), 'units').to.equal('0123');
+        isSafari && expect(treatPage.input(0, 'Units').getProperty('value'), 'units').to.equal('023');
     });
 
     it('Not able to set negative value in Gals', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setGals('-123');
 
-        isChrome && expect(treatPage.input('Gals').getProperty('value'), 'gals').to.equal('0123');
-        isSafari && expect(treatPage.input('Gals').getProperty('value'), 'gals').to.equal('023');
+        isChrome && expect(treatPage.input(0, 'Gals').getProperty('value'), 'gals').to.equal('0123');
+        isSafari && expect(treatPage.input(0, 'Gals').getProperty('value'), 'gals').to.equal('023');
     });
 
     it('Not able to set negative value in Ccs', () => {
         treatPage.setWithCcsDosage(tdata.randCcs).setCcs('-123');
 
-        isChrome && expect(treatPage.input('ccs').getProperty('value'), 'ccs').to.equal('0123');
-        isSafari && expect(treatPage.input('ccs').getProperty('value'), 'ccs').to.equal('023');
+        isChrome && expect(treatPage.input(0, 'ccs').getProperty('value'), 'ccs').to.equal('0123');
+        isSafari && expect(treatPage.input(0, 'ccs').getProperty('value'), 'ccs').to.equal('023');
     });
 
     it('Not able to set negative value in Mls', () => {
         treatPage.setWithMlsDosage(tdata.randMls).setMls('-123');
         
-        isChrome && expect(treatPage.input('Milliliters').getProperty('value'), 'mls').to.equal('0123');
-        isSafari && expect(treatPage.input('Milliliters').getProperty('value'), 'mls').to.equal('023');
+        isChrome && expect(treatPage.input(0, 'Milliliters').getProperty('value'), 'mls').to.equal('0123');
+        isSafari && expect(treatPage.input(0, 'Milliliters').getProperty('value'), 'mls').to.equal('023');
     });
 
     it('Not able to set negative value in Total', () => {
@@ -138,56 +138,56 @@ describe('Treats page, input)', () => {
     it('Not able to set values bigger than 99999 in Units', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setUnits('1234567890');
         
-        expect(treatPage.input('Units').getValue(), 'units').to.equal('12345');
+        expect(treatPage.input(0, 'Units').getValue(), 'units').to.equal('12345');
     });
 
     it('Not able to set values bigger than 99999  in Gals', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setGals('1234567890');
         
-        expect(treatPage.input('Gals').getValue(), 'gals').to.equal('12345');
+        expect(treatPage.input(0, 'Gals').getValue(), 'gals').to.equal('12345');
     });
 
 
     it('Not able to set values bigger than 99999  in Ccs', () => {
         treatPage.setWithCcsDosage(tdata.randCcs).setCcs('1234567890');
         
-        expect(treatPage.input('ccs').getValue(), 'ccs').to.equal('12345');
+        expect(treatPage.input(0, 'ccs').getValue(), 'ccs').to.equal('12345');
     });
 
     it('Not able to set values bigger than 99999 in Mls', () => {
         treatPage.setWithMlsDosage(tdata.randMls).setMls('1234567890');
         
-        expect(treatPage.input('Milliliters').getValue(), 'mls').to.equal('12345');
+        expect(treatPage.input(0, 'Milliliters').getValue(), 'mls').to.equal('12345');
     });
 
     it('Not able to set letters in Heads', () => {
         treatPage.setWithGalsDosage(tdata.randUnits, 'qwerty ~!@#$%^&*()');
         
-        expect(treatPage.input('Head Treated').getValue(), 'heads').to.equal('0');
+        expect(treatPage.input(0, 'Head Treated').getValue(), 'heads').to.equal('0');
     });
 
     it('Not able to set letters in Units', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setUnits('qwerty ~!@#$%^&*()');
         
-        expect(treatPage.input('Units').getValue(), 'units').to.equal('0');
+        expect(treatPage.input(0, 'Units').getValue(), 'units').to.equal('0');
     });
 
     it('Not able to set letters in Gals', () => {
         treatPage.setWithGalsDosage(tdata.randUnits).setGals('qwerty ~!@#$%^&*()');
         
-        expect(treatPage.input('Gals').getValue(), 'gals').to.equal('0');
+        expect(treatPage.input(0, 'Gals').getValue(), 'gals').to.equal('0');
     });
 
     it('Not able to set letters  in Ccs', () => {
         treatPage.setWithCcsDosage(tdata.randCcs).setCcs('qwerty ~!@#$%^&*()');
         
-        expect(treatPage.input('ccs').getValue(), 'ccs').to.equal('0');
+        expect(treatPage.input(0, 'ccs').getValue(), 'ccs').to.equal('0');
     });
 
     it('Not able to set letters in Mls', () => {
         treatPage.setWithMlsDosage(tdata.randMls).setMls('qwerty ~!@#$%^&*()');
         
-        expect(treatPage.input('Milliliters').getValue(), 'mls').to.equal('0');
+        expect(treatPage.input(0, 'Milliliters').getValue(), 'mls').to.equal('0');
     });
 
     it('Not able to set letters in Total', () => {

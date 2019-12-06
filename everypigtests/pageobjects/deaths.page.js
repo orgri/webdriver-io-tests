@@ -12,14 +12,14 @@ class DeathsPage extends ReportPage {
 
     get message() { return $('.MessageBox'); }
     get isMortReason() { return $('.add-mortality-reason').isExisting(); }
-
+/*
     clickSelectParam(index) {
-        return this.inputBlock(index).$(this.selectWrapper).waitClick() && this;
+        return this.block(index).$(this.selectWrapper).waitClick() && this;
     }
-
-    setChronic(number, index) { return this.input('Chronic', index).setValue(number) && this; }
-    setAcute(number, index) { return this.input('Acute', index).setValue(number) && this; }
-    setEuthanasia(number, index) { return this.input('Euthanasia', index).setValue(number) && this; }
+*/
+    setChronic(value, index) { return this.input(index, 'Chronic').setValue(value) && this; }
+    setAcute(value, index) { return this.input(index, 'Acute').setValue(value) && this; }
+    setEuthanasia(value, index) { return this.input(index, 'Euthanasia').setValue(value) && this; }
 
     setMortalities(chronic, acute, euthanas, index) {
         this.box.waitForExist();

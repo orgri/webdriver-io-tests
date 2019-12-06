@@ -46,7 +46,7 @@ describe('Report death (offline)', () => {
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
-        expect(rslt.chronic, 'chronic').to.equal(deaths);
+        expect(rslt.chronic[0], 'chronic').to.equal(deaths);
     });
 
     it('Report acute death', () => {
@@ -56,7 +56,7 @@ describe('Report death (offline)', () => {
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
-        expect(rslt.acute, 'acute').to.equal(deaths);
+        expect(rslt.acute[0], 'acute').to.equal(deaths);
     });
 
     it('Report euthanasia death', () => {
@@ -66,7 +66,7 @@ describe('Report death (offline)', () => {
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
-        expect(rslt.ethanas, 'ethanas').to.equal(deaths);
+        expect(rslt.euthanas[0], 'ethanas').to.equal(deaths);
     });
 
     it.skip('Chronic Death Alert', () => {
@@ -324,7 +324,7 @@ describe('Report few death reasons (offline)', () => {
         });
 
         it('Euthanasia(' + i + ')', () => {
-            expect(rslt.ethanas[i], 'euthanas').to.equal(test.euthanas[i]);
+            expect(rslt.euthanas[i], 'euthanas').to.equal(test.euthanas[i]);
         });
     }
 
@@ -361,7 +361,7 @@ describe('Report few death reasons (offline)', () => {
         });
 
         it('Euthanasia(' + i + ') after sync', () => {
-            expect(rslt.ethanas[i], 'euthanas').to.equal(test.euthanas[i]);
+            expect(rslt.euthanas[i], 'euthanas').to.equal(test.euthanas[i]);
         });
     }
 

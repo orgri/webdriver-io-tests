@@ -15,7 +15,7 @@ describe('Manage entities', () => {
             .clickBtn('Set Date').setDate('15').clickBtn('Save')
             .clickBtn('Set Ownership').setDropdown('TA').clickBtn('Save')
             .clickBtn('Set Farm').setDropdown('0000').clickBtn('Save')
-            .clickOn('Use A Custom Group ID')
+            .clickOn('span=Use A Custom Group ID')
             .setInput(group, 'Custom Group ID', undefined, '.modal-wrapper')
             .clickToModal('Save').clickBtn('Create Group');
 

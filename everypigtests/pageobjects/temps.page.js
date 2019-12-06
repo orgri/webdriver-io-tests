@@ -4,7 +4,8 @@ const ReportPage = require('./report.page');
 class TempsPage extends ReportPage {
     constructor() {
         super();
-        this.inputWrapper = '.NumberStepInput';
+        this.row = '.NumberStepInput';
+        this.inputWrapper = '.step-buttons';
     }
 
     setHigh(number) { return this.input('High').waitSetValue(number) && this; }

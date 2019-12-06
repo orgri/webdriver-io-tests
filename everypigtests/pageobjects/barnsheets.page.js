@@ -1,9 +1,10 @@
 // barnsheets.page.js
-var ReportPage = require('./report.page');
+const ReportPage = require('./report.page');
 
 class BarnSheetsPage extends ReportPage {
 
-    /********************************************** Navigation *****************************************************/
+    /*********************************************** Navigation ******************************************************/
+
     get barnsheetsUrl() { return this.baseUrl + '/barnsheets'; }
     get farmName() { return $('.farm-information h1'); }
     get groupName() { return $('.group-info-wrapper .group-name'); }
@@ -56,11 +57,8 @@ class BarnSheetsPage extends ReportPage {
     get saveButton() { return isMobile ? $$('.button*=Save')[1] : $$('.button*=Save')[0]; }
     get escapeButton() { return $('.edit-mode-off'); }
     get reasonWrapper() { return 'div[class*="reason-collapse"]'; }
-    get isReasonExist() { return this.section('Dead').$(this.reasonWrapper).isExisting(); }
     get deathReasons() { return this.section('Dead').$$(this.reasonWrapper); }
     get mainComment() { return (this.section('NotesNotes').getText().match(/(?<=Edit(\n|))(.)+?(?=(\n|)See)/g) || [])[0]; }
-    get nOfMedia() { return this.section('Media').getText().match(/[0-9]+/)[0]; }
-    get nOfAudio() { return this.section('Audio').getText().match(/[0-9]+/)[0]; }
     get reComment() { return /(?<=Notes(\n|))(.)+?(?=(\n|)See)/g; }
 
     clickRight() { return this.rightButton.waitClick() && this.waitLoader(); }
@@ -79,112 +77,15 @@ class BarnSheetsPage extends ReportPage {
 
     deathReasonCollapse(idx = 0) { return this.deathReasons[idx].waitClick() && this.waitLoader(); }
 
-    get moveInfo() {
-        let obj = {};
-
-        obj.amount = this.getNumber(this.section('Move'));
-        obj.added = this.moveRowInfo('Added');
-        obj.removed = this.moveRowInfo('Removed');
-        obj.weight = this.moveRowInfo('Weight');
-        obj.condition = this.moveRowInfo('Condition');
-        obj.comment = this.getString(this.section('Move'), this.reComment);
-
-        return obj;
-    }
-
-    deathRowInfo(type) {
-        const reNumber = /(\d+)$/u;
-        return (this.isReasonExist) ?
-            this.deathReasons.map(el => (el.$('span*=' + type)
-                .getText().match(reNumber) || [])[0]) :
-            (this.section('Dead').$('.item*=' + type).$('div[class^="value"]')
-                .getText().match(reNumber) || [])[0];
-    }
-
-    get diagnosInfo() {
-        let obj = {};
-        const noteSelector = $(this.sectionWrapper).isExisting()
-            ? $$('.diagnose-note span[class^=Translation_] > span')
-            : $$('.diagnose-note .italic');
-
-        obj.name = this.getArray($$('.diagnose-name .name'));
-        obj.type = this.getArray($$('.diagnose-name span span'));
-        obj.comment = this.getArray(noteSelector);
-
-        return obj;
-    }
-
-    get deathInfo() {
-        let obj = {};
-        const reReason = /(.+?)(?=\s\u2022)/u;
-
-        obj.amount = this.getNumber(this.section('Dead'));
-        obj.reason = this.isReasonExist ? this.getArray(this.deathReasons, reReason) : undefined;
-        obj.acute = this.deathRowInfo('Acute');
-        obj.chronic = this.deathRowInfo('Chronic');
-        obj.ethanas = this.deathRowInfo('Euthanasia');
-        obj.comment = this.getString(this.section('Dead'), this.reComment);
-
-        return obj;
-    }
-
-    get treatInfo() {
-        let obj = {};
-        const selector = this.section('Medic').$$('.content-row');
-        const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
-        const reDosage = /(?<=\u2022\s)(\d+\.\d+)/u;
-        const reHeads = /(\d+)$/u;
-        const reGals = /(\d+)(?=\sgal)/u;
-
-        obj.amount = this.getNumber(this.section('Medic'));
-        obj.name = this.getArray(selector, reName).filter(el => el !== undefined);
-        obj.dosage = this.getArray(selector, reDosage).filter(el => el !== undefined);
-        obj.heads = this.getArray(selector, reHeads).filter(el => el !== undefined);
-        obj.gals = this.getArray(selector, reGals).filter(el => el !== undefined);
-        obj.comment = this.getString(this.section('Medic'), this.reComment);
-
-        return obj;
-    }
-
-    get symptInfo() {
-        let obj = {};
-        const selector = this.section('Sympt').$$('.content-row');
-        const reName = /[^\n\d%]+/u;
-        const rePercent = /(\d+)%/u;
-
-        obj.amount = this.getNumber(this.section('Sympt'));
-        obj.name = this.getArray(selector, reName);
-        obj.percent = this.getArray(selector, rePercent);
-        obj.comment = this.getString(this.section('Sympt'), this.reComment);
-
-        return obj;
-    }
-
-    get tempsInfo() {
-        let obj = {};
-        const selector = this.section('Temps').$$('.content-row');
-
-        obj.high = this.getFloat(selector[0]);
-        obj.low = this.getFloat(selector[1]);
-        obj.comment = this.getString(this.section('Temps'), this.reComment);
-
-        return obj;
-    }
-
-    get waterInfo() {
-        let obj = {};
-        const selector = this.section('Water Usage');
-        obj.consumed = this.getFloat(selector.$('.content-row'));
-        obj.comment = this.getString(selector, this.reComment);
-
-        return obj;
-    }
-
-    moveRowInfo(type) {
-        return (this.isExist(this.section('Move').$('.info-row*=' + type))) ?
-            this.section('Move').$$('.info-row*=' + type)
-                .map(el => el.$('.float-right').getText()) : [];
-    }
+    get moveInfo() { return super.moveInfo(this.section('Movement'), '[class^=info-row_]'); }
+    get deathInfo() { return super.deathInfo(this.section('Dead'), '[class^=item_]'); }
+    get treatInfo() { return super.treatInfo(this.section('Medication'), '.content-row'); }
+    get symptInfo() { return super.symptInfo(this.section('Symptom'), '.content-row'); }
+    get tempsInfo() { return super.tempsInfo(this.section('Temps'), '.content-row'); }
+    get waterInfo() { return super.waterInfo(this.section('Water'), '.content-row'); }
+    get mediaInfo() { return super.mediaInfo(this.section('Media')); }
+    get audioInfo() { return super.audioInfo(this.section('Audio')); }
+    get diagnosInfo() { return super.diagnosInfo(this.root, '.diagnose-name', '.diagnose-note > :last-child'); }
 
     clear() {
         this.removeComment().clearMedia();
@@ -274,8 +175,7 @@ class BarnSheetsPage extends ReportPage {
 
     /********************************************** Diagnosis tab *****************************************************/
 
-    get block() { return '.UserPanel'; }
-    clickDiagnosMenu(index = 0) { return $$(this.block)[index].$('.user-actions').waitClick() && this.waitLoader(); }
+    clickDiagnosMenu(index = 0) { return $$('.UserPanel')[index].$('.user-actions').waitClick() && this.waitLoader(); }
 
     chooseRandGroup(farmPrefix = 'TA_Farm_0000', groupPrefix = 'TA_PigGroup') {
         this.open().clickSubTab('Farms').setElemsOnPage(100);
@@ -295,21 +195,20 @@ class BarnSheetsPage extends ReportPage {
     /********************************************** Movements tab *****************************************************/
 
     moveTabInfo(date) {
-        let data = {};
-        const selector = $$(this.block + '*=' + date);
-        const reHeads = /(?<=(Head Transferred|Head Placed)(\n|))(\d+)/u;
-        const reWeight = /(?<=(Est. Avg. Weight)(\n|))([\d.]+)/u;
-        const reCondition = /(?<=(Condition at Arrival)(\n|))(.+)/u;
+        const selector = $$('.UserPanel*=' + date);
+        const reHeads = /(?<=(Transferred|Placed)(\n|))([\d.\-]+)/;
+        const reWeight = /(?<=Weight|Weight\n)([\d.\-]+)/;
+        const reCondition = /(?<=Arrival|Arrival\n)([a-zA-Z]+)/;
 
-        data.amount = selector.length + '';
-        data.heads = this.getArray(selector, reHeads);
-        data.weight = this.getArray(selector, reWeight);
-        data.condition = this.getArray(selector, reCondition);
-
-        return data;
+        return {
+            amount : selector.length + '',
+            heads : this.getArray(selector, reHeads),
+            weight : this.getArray(selector, reWeight),
+            condition : this.getArray(selector, reCondition)
+        }
     }
 
-    /**********************************************Media tab*****************************************************/
+    /********************************************** Media tab *****************************************************/
 
     get scale() { return $('.current-scale.visible'); }
     get mediaViewer() { return $('.mediaViewer.is-open'); }

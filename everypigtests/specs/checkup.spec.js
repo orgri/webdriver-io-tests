@@ -433,15 +433,15 @@ describe('Media in DC', () => {
             expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
         });
 
-        it('Amount', () => {
+        it('Amount audio', () => {
             dcPage.mediaUploader.scrollIntoView({block: 'center'});
-            rslt = dcPage.mediaInfo;
+            rslt = dcPage.audioInfo;
 
-            expect(rslt.amount, 'nOfMedia').to.equal('4');
+            expect(rslt.sum, 'nOfAudio').to.equal(2);
         });
 
-        it('Comment', () => {
-            expect(rslt.audioNote, 'audioComment').to.equal(comment);
+        it('Audio comment', () => {
+            expect(rslt.comment[0], 'audioComment').to.equal(comment);
         });
     }
 });

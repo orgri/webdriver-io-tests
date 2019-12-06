@@ -11,29 +11,29 @@ class MovementsPage extends ReportPage {
         this.selectWrapper = '.movement-type-select';
     }
 
-    setHeads(number, index) { return this.input('Head', index).waitSetValue(number) && this; }
-    setAvgWeight(number, index) { return this.input('Est. Avg. Weight', index).waitSetValue(number) && this; }
+    setHeads(number, index) { return this.input(index, 'Head').waitSetValue(number) && this; }
+    setAvgWeight(number, index) { return this.input(index, 'Est. Avg. Weight').waitSetValue(number) && this; }
  
     setCondition(condition, index) {
         switch (condition) {
             case 'good':
-                this.inputBlock(index).$('.good-condition').click();
+                this.block(index).$('.good-condition').click();
                 break;
             case 'average':
-                this.inputBlock(index).$('.avg-condition').click();
+                this.block(index).$('.avg-condition').click();
                 break;
             case 'poor':
-                this.inputBlock(index).$('.poor-condition').click();
+                this.block(index).$('.poor-condition').click();
                 break;
             default:
-                this.inputBlock(index).$('.good-condition').click();
+                this.block(index).$('.good-condition').click();
                 break;
         }
         return this;
     }
 
     clickSelectParam(index) {
-        return this.inputBlock(index).$(this.selectWrapper).waitClick() && this;
+        return this.block(index).$(this.selectWrapper).waitClick() && this;
     }
 
     setShipment(nHeads, weight, condition, index) {
@@ -101,8 +101,8 @@ class MovementsPage extends ReportPage {
             this.setDropdown(type, index);
         }
         (nHeads === undefined) || this.setHeads(nHeads, index);
-        (weight === undefined) || this.inputLabel('Est. Avg. Weight', index).isExisting() && this.setAvgWeight(weight, index);
-        (condition === undefined) || this.inputLabel('Condition', index).isExisting() && this.setCondition(condition, index);
+        (weight === undefined) || this.inputLabel(index, 'Est. Avg. Weight').isExisting() && this.setAvgWeight(weight, index);
+        (condition === undefined) || this.inputLabel(index, 'Condition').isExisting() && this.setCondition(condition, index);
         return this;
     }
 

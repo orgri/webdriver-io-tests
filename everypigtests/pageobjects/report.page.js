@@ -2,7 +2,7 @@
 const Page = require('./page');
 
 module.exports = class ReportPage extends Page {
-    constructor({row = 'div', input = 'div', label = 'div', select = '.ReactSelect'} = {}) {
+    constructor({row = 'row', input = 'div', label = 'div', select = '.ReactSelect'} = {}) {
         super();
         this.index = 0;
         this.pagename = 'root';
@@ -87,16 +87,21 @@ module.exports = class ReportPage extends Page {
     get rowIndex() { return '.row-index'; }
     get selectIcon() { return '.icon.selected'; }
 
-    inputBlock(id) {
+    block(id) {
         let selector = this.root;
         if ($(this.row).isExisting()) {
-            if (typeof id === 'string') {
-                selector = $(this.row + '*=' + id);
-            } else if (typeof id === 'number' && id < $$(this.row).length) {
-                selector = $$(this.row)[id];
-            } else if ((typeof id === 'number' && id >= $$(this.row).length)
-                || (id === undefined && this.index > 0)) {
+            this.row = this.getClassName(this.row);
+            const length = $$(this.row).length;
+            if (id === undefined) {
                 selector = $$(this.row)[this.index];
+            } else if (typeof id === 'object') {
+                selector = id;
+            } else if (typeof id === 'string') {
+                selector = $(this.row + '*=' + id);
+            } else if (typeof id === 'number' && id < length) {
+                selector = $$(this.row)[id];
+            } else if (typeof id === 'number' && id >= length) {
+                selector = $$(this.row)[length - 1];
             }
         }
         return selector;
@@ -104,16 +109,18 @@ module.exports = class ReportPage extends Page {
 
     mobileRow(text) { return $(this.mRowPicker + '*=' + text); }
 
-    input(name, id, wrap = this.inputWrapper) {
-        return this.inputBlock(id).$(wrap + '*=' + name).$('input');
+    input(id, name, wrap = this.inputWrapper) {
+        wrap = name ? (wrap + '*=' + name) : wrap;
+        return this.block(id).$(wrap).$('input');
     }
 
-    inputLabel(name, id, wrap = this.labelWrapper) {
-        return this.inputBlock(id).$(wrap + '*=' + name);
+    inputLabel(id, name, wrap = this.labelWrapper) {
+        wrap = name ? (wrap + '*=' + name) : wrap;
+        return this.block(id).$(wrap);
     }
 
     select(id, wrap = this.selectWrapper) {
-        return this.inputBlock(id).$(wrap);
+        return this.block(id).$(wrap);
     }
 
     selectInput(...args) {
@@ -177,7 +184,7 @@ module.exports = class ReportPage extends Page {
 
     deleteRow(id) {
         if ($(this.trashBtn).isDisplayed()) {
-            this.inputBlock(id).$(this.trashBtn).waitClick();
+            this.block(id).$(this.trashBtn).waitClick();
             this.index > 0 && this.index--;
         }
         return this;
@@ -187,11 +194,147 @@ module.exports = class ReportPage extends Page {
         this.removeComment();
         const rows = $$(this.rowIndex).length;
         for (let i = 0; i < rows; i++) {
-            this.deleteRow();
+            this.deleteRow(0);
         }
         this.submit();
         return this;
     }
 
     resetIndex() { this.index = 0; }
+
+    /********************************************** Report Info *****************************************************/
+
+    get commentWrapper() { return '[class^=Translation_] > span'; }
+
+    info(type, section, rowWrap) {
+        rowWrap = $(rowWrap).isExisting() ? this.getClassName(rowWrap): 'div';
+        return (section.$(rowWrap + '*=' + type).isExisting())
+            ? section.$$(rowWrap + '*=' + type).map(el => this.getFloat(el)) : [];
+    }
+
+    moveInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const selector = section.$$(rowWrap);
+        const comment = section.$(commentWrap);
+        const reCondition = /(?<=arrival|arrival\n)([a-zA-Z]+)/u;
+
+        return {
+            amount : this.getNumber(section),
+            added : this.info('Added', section, rowWrap),
+            removed : this.info('Removed', section, rowWrap),
+            weight : this.info('Weight', section, rowWrap),
+            condition : this.getArray(selector, reCondition),
+            comment : comment.isExisting() ? this.getString(comment) : undefined
+        }
+    }
+
+    deathInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const comment = section.$(commentWrap);
+        const collapse = section.$$(this.collapseWrapper);
+        const reReason = /(.+?)(?=\s\u2022)/u;
+
+        return {
+            amount : this.getNumber(section),
+            reason : collapse.length ? this.getArray(collapse, reReason) : [],
+            chronic : this.info('Chronic', section, rowWrap),
+            acute : this.info('Acute', section, rowWrap),
+            euthanas : this.info('Euthanasia', section, rowWrap),
+            comment : comment.isExisting() ? this.getString(comment) : undefined
+        }
+    }
+
+    symptInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const selector = section.$$(rowWrap);
+        const comment = section.$(commentWrap);
+        const reName = /([^\n\d%]+)(?=\n\d|\d)/u;
+        const rePercent = /(\d+)%/u;
+
+        return {
+            amount : this.getNumber(section),
+            name : this.getArray(selector, reName),
+            percent : this.getArray(selector, rePercent),
+            comment : comment.isExisting() ? this.getString(comment) : undefined
+        }
+    }
+
+    treatInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const selector = section.$$(rowWrap);
+        const comment = section.$(commentWrap);
+        const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
+        const reDosage = /(?<=\u2022\s)(\d+\.\d+)/u;
+        const reHeads = /(\d+)$/u;
+        const reGals = /(\d+)(?=\sgal)/u;
+
+        return {
+            amount : this.getNumber(section),
+            name : this.getArray(selector, reName),
+            dosage : this.getArray(selector, reDosage),
+            heads : this.getArray(selector, reHeads),
+            gals : this.getArray(selector, reGals),
+            comment : comment.isExisting() ? this.getString(comment) : undefined
+        }
+    }
+
+    tempsInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const selector = section.$$(rowWrap);
+        const comment = section.$(commentWrap);
+
+        return {
+            high : this.getFloat(selector[0]),
+            low : this.getFloat(selector[1]),
+            comment : comment.isExisting() ? this.getString(comment) : undefined
+        }
+    }
+
+    waterInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const selector = section.$$(rowWrap);
+        const comment = section.$(commentWrap);
+
+        return {
+            consumed : this.getFloat(selector[0]),
+            comment : comment.isExisting() ? this.getString(comment) : undefined
+        }
+    }
+
+    mediaInfo(section, rowWrap = '[class^=image]') {
+        const amount = section.getText().includes('Media') ? this.getNumber(section) : undefined;
+        let sum, titles;
+        if (section.$(rowWrap).isExisting()) {
+            section.$(rowWrap).waitClick() && this.waitLoader();
+            browser.pause(1500);
+            sum = this.mediaViewer.$$(rowWrap).length;
+            titles = this.mediaViewer.$$(rowWrap).map(el => el.getAttribute('title'));
+            this.clickCloseView();
+        }
+
+        return {
+            amount: amount,
+            sum: sum,
+            titles: titles
+        }
+    }
+
+    audioInfo(section, rowWrap = '.AudioPreview', commentWrap = '.description') {
+        const audio = section.$$(rowWrap);
+        const comments = section.$$(commentWrap);
+
+        return {
+            amount: section.getText().includes('Audio') ? this.getNumber(section) : undefined,
+            sum: audio.length,
+            comment: comments.length ? this.getArray(comments) : [],
+        }
+    }
+
+    diagnosInfo(section, rowWrap, commentWrap = this.commentWrapper) {
+        const collapse = section.$('b*=Diagnos');
+        const comments = section.$$(commentWrap);
+        const reComment = /(.+)(?=\n|See)|(.+)/u;
+
+        return {
+            amount: collapse.isExisting() ? this.getNumber(collapse) : undefined,
+            name: this.getArray(section.$$(rowWrap + ' > :first-child')),
+            type: this.getArray(section.$$(rowWrap + ' > :last-child')),
+            comment: comments.length ? this.getArray(comments, reComment) : []
+        }
+    }
+
 };

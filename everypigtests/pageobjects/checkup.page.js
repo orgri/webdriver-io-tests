@@ -10,6 +10,7 @@ class CheckupPage extends ReportPage {
     }
 
 /********************************************** Navigation *****************************************************/
+
     get checkupUrl() { return this.baseUrl + '/daily-checkup/'; }
     get farmRow() { return '.DailyCheckupsFarmRow'; }
     get groupRow() { return '.DailyCheckupsGroupRow'; }
@@ -89,9 +90,11 @@ class CheckupPage extends ReportPage {
 
     get sectionWrapper() { return '.checkup-segment'; }
     get collapseWrapper() { return 'div[class^="collapse_"]'; }
-    get treatWrapper() { return 'div[class^="treatment-line"]'; }
-    get symptWrapper() { return 'div[class^="symptom-row"]'; }
-    get contentWrapper() { return 'div[class^="line"]'; }
+    get moveWrapper() { return '[class^=info-row_]'; }
+    get deathWrapper() { return '[class^=item_]'; }
+    get treatWrapper() { return '[class^="treatment-line"]'; }
+    get symptWrapper() { return '[class^="symptom-row"]'; }
+    get contentWrapper() { return '[class^="line_"]'; }
     get checkinState() { return $('.checked-in-state'); }
     get dcStatus() { return '.group-status'; }
     get reComment() { return /(?<=Notes(\n|))(.)+?(?=(\n|)See)/g; }
@@ -158,116 +161,17 @@ class CheckupPage extends ReportPage {
         }, true);
     }
 
-    isMoveExist(type) { return this.section(0).$('.info-row*=' + type).isExisting(); }
-
-    moveRowInfo(type) {
-        return (this.isMoveExist(type)) ?
-            this.section(0).$$('.info-row*=' + type)
-                .map(el => el.$('.float-right').getText().toLowerCase()) : [];
-    }
-
-    get isReasonExist() { return this.section(1).$(this.collapseWrapper).isExisting(); }
     get reasons() { return this.section(1).$$(this.collapseWrapper); }
     reasonCollapse(idx = 0) { return this.reasons[idx].waitClick() && this.waitLoader(); }
-    isDeathExist(type) { return this.section(1).$('.item*=' + type).isExisting(); }
 
-    deathRowInfo(type) {
-        return (this.isReasonExist)
-            ? this.reasons.map(el => this.getNumber( el.$('span*=' + type) ) )
-            : this.isDeathExist(type)
-                ? this.getFloat(this.section(1).$('.item*=' + type).$('div[class^="value"]'))
-                : '0';
-    }
-
-    get moveInfo() {
-        let obj = {};
-
-        obj.amount = this.getNumber(this.section(0));
-        obj.added = this.moveRowInfo('Added');
-        obj.removed = this.moveRowInfo('Removed');
-        obj.weight = this.moveRowInfo('Weight');
-        obj.condition = this.moveRowInfo('Condition');
-        obj.comment = this.getString(this.section(0), this.reComment);
-
-        return obj;
-    }
-
-    get deathInfo() {
-        let obj = {};
-        const reReason = /(.+?)(?=\s\u2022)/u;
-
-        obj.amount = this.getNumber(this.section(1));
-        obj.reason = this.isReasonExist ? this.getArray(this.reasons, reReason) : undefined;
-        obj.acute = this.deathRowInfo('Acute');
-        obj.chronic = this.deathRowInfo('Chronic');
-        obj.ethanas = this.deathRowInfo('Euthanasia');
-        obj.comment = this.getString(this.section(1), this.reComment);
-
-        return obj;
-    }
-
-    get treatInfo() {
-        let obj = {};
-        const selector = this.section(2).$$(this.treatWrapper);
-        const reName = /(.+?)(?=(\s\u2022)|(\d+|\n\d+)$)/u;
-        const reDosage = /(?<=\u2022\s)([\d.]+)/u;
-        const reHeads = /(\d+)$/u;
-        const reGals = /(\d+)(?=\sgal)/u;
-
-        obj.amount = this.getNumber(this.section(2));
-        obj.name = this.getArray(selector, reName).filter(el => el !== undefined);
-        obj.dosage = this.getArray(selector, reDosage).filter(el => el !== undefined);
-        obj.heads = this.getArray(selector, reHeads).filter(el => el !== undefined);
-        obj.gals = this.getArray(selector, reGals).filter(el => el !== undefined);
-        obj.comment = this.getString(this.section(2), this.reComment);
-
-        return obj;
-    }
-
-    get symptInfo() {
-        let obj = {};
-        const selector = this.section(3).$$(this.symptWrapper);
-        const reName = /[^\n\d%]+/u;
-        const rePercent = /(\d+)%/u;
-
-        obj.amount = this.getNumber(this.section(3));
-        obj.name = this.getArray(selector, reName);
-        obj.percent = this.getArray(selector, rePercent);
-        obj.comment = this.getString(this.section(3), this.reComment);
-
-        return obj;
-    }
-
-    get tempsInfo() {
-        let obj = {};
-        const selector = this.section(4).$$(this.contentWrapper);
-
-        obj.high = this.getFloat(selector[0]);
-        obj.low = this.getFloat(selector[1]);
-        obj.comment = this.getString(this.section(4), this.reComment);
-
-        return obj;
-    }
-
-    get waterInfo() {
-        let obj = {};
-        const selector = this.section(5);
-
-        obj.consumed = this.getFloat(selector.$(this.contentWrapper));
-        obj.comment = this.getString(selector, this.reComment);
-
-        return obj;
-    }
-
-    get mediaInfo() {
-        let obj = {};
-        const reComment = /(?<=Note\n)(.+)/g;
-
-        obj.amount = this.getNumber(this.mediaUploader);
-        obj.audioNote = this.getString(this.mediaUploader, reComment);
-
-        return obj;
-    }
+    get moveInfo() { return super.moveInfo(this.section('Movement'), this.moveWrapper); }
+    get deathInfo() { return super.deathInfo(this.section('Mortal'), this.deathWrapper); }
+    get treatInfo() { return super.treatInfo(this.section('Medication'), this.treatWrapper); }
+    get symptInfo() { return super.symptInfo(this.section('Symptom'), this.symptWrapper); }
+    get tempsInfo() { return super.tempsInfo(this.section('Temps'), this.contentWrapper); }
+    get waterInfo() { return super.waterInfo(this.section('Water'), this.contentWrapper); }
+    get mediaInfo() { return super.mediaInfo(this.mediaUploader); }
+    get audioInfo() { return super.audioInfo(this.mediaUploader); }
 
     clear() {
         this.removeComment();

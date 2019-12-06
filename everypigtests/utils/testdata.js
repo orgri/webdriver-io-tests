@@ -218,9 +218,11 @@ class TestData {
     get randPhoto() {
         return faker.random.arrayElement(
             ["pig1.jpg", "pig2.jpg", "pig3.jpg", "pig4.jpeg", "pig5.jpg", 
-            "pig6.jpg", "pig7.jpeg", "pig8.jpg", "pig9.jpg", "pig10.jpg",
-            "pig11.jpg", "pig12.jpg", "pig13.jpg", "pig14.png", "pig15.png",
-            "pig16.gif", "pig17.gif", "pig18.gif", "pig19.gif", "pig20.gif",
+                "pig6.jpg", "pig7.jpeg", "pig8.jpg", "pig9.jpg", "pig10.jpg",
+                "pig11.jpg", "pig12.jpg", "pig13.jpg", "pig14.png", "pig15.png",
+                "pig16.gif", "pig17.gif", "pig18.gif", "pig19.gif", "pig20.gif",
+                "inj_pig_1.jpg", "inj_pig_2.jpg", "inj_pig_3.jpg", "inj_pig_4.jpg",
+                "inj_pig_5.jpg", "inj_pig_6.jpg", "inj_pig_7.jpg", "inj_pig_8.jpg",
             /*"image_15MB.jpg",*/ "image_1MB.gif", "image_5MB.jpg", "image_5MB.png"]
             //image_15MB.jpg is not uploaded (reason is unknown)
         );

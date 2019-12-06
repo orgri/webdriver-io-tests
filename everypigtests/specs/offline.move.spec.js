@@ -105,8 +105,8 @@ describe('Report single move (offline)', () => {
         const rslt = checkupPage.moveInfo;
 
         expect(rslt.added[0], 'pigs added').to.equal(heads);
-        expect(rslt.weight[0], 'avgWeight').to.equal(weight + ' lbs');
-        expect(rslt.condition[0], 'condition').to.equal(condition);
+        expect(rslt.weight[0], 'avgWeight').to.equal(weight);
+        expect(rslt.condition[0].toLowerCase(), 'condition').to.equal(condition);
     });
 
     it('Fix adding ', () => {
@@ -161,7 +161,7 @@ describe('Report single move (offline)', () => {
         const rslt = checkupPage.moveInfo;
 
         expect(rslt.added[0], 'pigs added').to.equal(heads[1]);
-        expect(rslt.weight[0], 'avgWeight').to.equal(weight + ' lbs');
+        expect(rslt.weight[0], 'avgWeight').to.equal(weight);
     });
 });
 
@@ -217,7 +217,7 @@ describe('Report few moves (offline)', () => {
     });
 
     it('Pigs avg. weight', () => {
-        expect(rslt.weight[0], 'weight').to.equal(test.weight + ' lbs');
+        expect(rslt.weight[0], 'weight').to.equal(test.weight);
     });
 
     it('Pigs condition', () => {
@@ -260,7 +260,7 @@ describe('Report few moves (offline)', () => {
     });
 
     it('Pigs avg. weight after sync', () => {
-        expect(rslt.weight[0], 'weight').to.equal(test.weight + ' lbs');
+        expect(rslt.weight[0], 'weight').to.equal(test.weight);
     });
 
     it('Pigs condition after sync', () => {
