@@ -9,21 +9,21 @@ class SymptomsPage extends ReportPage {
         this.selectWrapper = '.select-symptom-wrapper';
     }
 
-    setPercent(index) {
-        let target = this.block(index).$('.symptomatic');
-        this.block(index).$('.toggler-btn').dragAndDrop(target);
-        this.pause();
-        return this;
+    setPercent( val = 5, index) {
+        const width = this.block(index).$('.toggler-wrapper').getCSSProperty('width').parsed.value;
+        val = Math.floor(width*(val-50)/100);
+        this.block(index).$('.toggler-wrapper').click({x: val});
+        return this.pause();
     }
 
-    setSymptom(value, index) {
+    setSymptom(value, percent, index) {
         if (this.isMobile) {
             this.setPicker(value);
             this.mClickNext();
         } else {
             this.setDropdown(value, index);
         }
-        this.setPercent(index);
+        this.setPercent(percent, index);
         return this;
     }
 } 
