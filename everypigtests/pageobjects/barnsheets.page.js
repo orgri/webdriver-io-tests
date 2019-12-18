@@ -164,9 +164,7 @@ class BarnSheetsPage extends ReportPage {
         this.chooseSection('Notes').setComment(data.comment).submit();
 
         this.chooseSection('Media')
-            .uploadMedia(data.files.pic)
-            .uploadMedia(data.files.video)
-            .uploadMedia(data.files.audio)
+            .uploadMedia([data.files.video, data.files.pic, data.files.audio])
             .submit();
     }
     /********************************************** Treatments tab *****************************************************/

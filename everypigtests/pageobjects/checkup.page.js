@@ -197,6 +197,10 @@ class CheckupPage extends ReportPage {
         return this;
     }
 
+    noToAllReports() {
+        return $$(this.sectionWrapper).forEach((el, idx) => this.clickNoToReport(idx)) || this;
+    }
+
     createCheckup(data) {
         const movePage = require('../pageobjects/movements.page');
         const deathPage = require('../pageobjects/deaths.page');
@@ -258,9 +262,7 @@ class CheckupPage extends ReportPage {
         this.isDCSectionExist || this.close();
 
         this.section('Media').isExisting() && this.chooseSection('Media');
-        this.clearMedia().uploadMedia(data.files.pic)
-            .uploadMedia(data.files.video)
-            .uploadMedia(data.files.audio);
+        this.clearMedia().uploadMedia([data.files.video, data.files.pic, data.files.audio]);
 
         this.isPageOf('/barnsheets/') && this.submit().chooseSection(6, 'Notes');
         this.removeComment().setComment(data.comment);

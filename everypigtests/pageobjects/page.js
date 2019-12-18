@@ -21,12 +21,9 @@ module.exports = class Page {
     get isMobile() { return $('.AppContainer.isMobile').isExisting(); }
     get isOffNet() { return this.offNet.isExisting(); }
     get notification() { return $('.rrt-text'); }
-
-    get nothingBox() {
-        return $('.nothing-box');
-    }
+    get nothingBox() { return $('.nothing-box'); }
     get mediaUploader() { return $('.MediaUploader'); }
-    get uploadProgress() { return $('div[class^=upload-progress]'); }
+    get uploadProgress() { return $('[class^=upload-progress]'); }
     get removeMediaButton() { return this.mediaUploader.$('.asset-wrapper').$('.fa.fa-trash-o'); }
     get image() { return this.mediaUploader.$('.asset-wrapper').$('.image'); }
     get audio() { return this.mediaUploader.$('.asset-wrapper').$('.soundwave'); }
@@ -148,10 +145,12 @@ module.exports = class Page {
     }
 
     waitUploader() {
+        const n = $$('[class^=upload-progress]').length;
         browser.waitUntil(() => {
             return (this.notification.isExisting()
                 || !this.uploadProgress.isExisting())
         }, 90000, 'Time to upload is exceeded 90000ms');
+        browser.pause(n * 3000); // due to converting all formats to mp4 by backend
         return this;
     }
 
@@ -237,16 +236,13 @@ module.exports = class Page {
         return exist;
     }
 
-    uploadMedia(file) {
-        isSafari && ($('#add-file-modal').isExisting() || this.reload().waitLoader());
-        const pathToMedia = path.resolve(browser.config.mediaPath, file);
+    uploadMedia(files, wrapper = '#root') {
+        files = [].concat(files).flatMap(el => path.resolve(browser.config.mediaPath, el));
         const idx = isMobile ? '1' : '0';
-        const script = `document.querySelectorAll('input[type=file]')[IDX].style.display = 'block'`
-            .replace(/IDX/, idx);
-        browser.execute(script);
+        browser.execute(`document.querySelectorAll('${wrapper} input[type=file]')[${idx}].style.display = 'block'`);
         this.inputFile.waitForDisplayed();
         try {
-            this.inputFile.setValue(pathToMedia);
+            this.inputFile.setValue(files.join('\n'));
         } catch (err) {
             //console.error(err); //not throw, because of Safari issue
         } finally {

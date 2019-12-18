@@ -375,7 +375,6 @@ describe('Report death reason', () => {
             deaths = tdata.randDeaths + '';
 
         deathPage.setMortWithReason(reason, deaths, '0', '0').submit();
-        checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
@@ -388,7 +387,6 @@ describe('Report death reason', () => {
             deaths = tdata.randDeaths + '';
 
         deathPage.setMortWithReason(reason, '0', deaths, '0').submit();
-        checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
@@ -401,7 +399,6 @@ describe('Report death reason', () => {
             deaths = tdata.randDeaths + '';
 
         deathPage.setMortWithReason(reason, '0', '0', deaths).submit();
-        checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
@@ -416,7 +413,6 @@ describe('Report death reason', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '1', '0')
             .clickSelect().setMortWithReason(reason, '0', deaths, '0')
             .submit();
-        checkupPage.reasonCollapse();
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
@@ -450,10 +446,6 @@ describe('Report few death reasons', () => {
             .setComment(test.comment).submit();
 
         expect(browser.getUrl(), 'checkup url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
-    });
-
-    it('Collapse reasons', () => {
-        checkupPage.reasonCollapse(0).reasonCollapse(1).reasonCollapse(2);
     });
 
     it('Amount', () => {

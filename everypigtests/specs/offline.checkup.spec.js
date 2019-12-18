@@ -102,7 +102,6 @@ describe('Daily Checkup Navigation (offline)', () => {
         dcPage.randCheckup('Update');
 
         expect(dcPage.offlineWarning.isExisting(), 'no checkup warning existing').to.equal(true);
-        expect(dcPage.isSubmitDisabled, 'disabled submit button').to.equal(true);
     });
 });
 
@@ -764,7 +763,7 @@ describe('Media in DC (offline)', () => {
             dcPage.mediaUploader.scrollIntoView({block: 'center'});
             rslt = dcPage.audioInfo;
 
-            expect(rslt.sum, 'nOfMedia').to.equal(2);
+            expect(rslt.sum, 'sum').to.equal(2);
         });
 
         it('Audio comment', () => {
@@ -776,16 +775,23 @@ describe('Media in DC (offline)', () => {
         dcPage.netOn();
     });
 
-    it('Amount after sync', () => {
-        dcPage.currentDC().mediaUploader.scrollIntoView({block: 'center'});
+    it('Amount audio after sync', () => {
+        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        rslt = dcPage.audioInfo;
+
+        isIOS || expect(rslt.sum, 'sum').to.equal(2);
+        isIOS && expect(rslt.sum, 'sum').to.equal(1);
+    });
+
+    it('Audio comment after sync', () => {
+        isIOS || expect(rslt.comment[0], 'audioComment').to.equal(comment);
+    });
+
+    it('Amount media after sync', () => {
         rslt = dcPage.mediaInfo;
 
         isIOS || expect(rslt.amount, 'nOfMedia').to.equal('4');
         isIOS && expect(rslt.amount, 'nOfMedia').to.equal('3');
-    });
-
-    it('Comment after sync', () => {
-        isIOS || expect(rslt.audioNote, 'audioComment').to.equal(comment);
     });
 
 });

@@ -166,11 +166,6 @@ describe('Edit Deaths', () => {
         expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     });
 
-    it('Collapse reasons', () => {
-        sheetsPage.deathReasonCollapse(0)
-            .deathReasonCollapse(1).deathReasonCollapse(2);
-    });
-
     it('amount', () => {
         rslt = sheetsPage.deathInfo;
 
@@ -469,7 +464,7 @@ describe('Edit Water usage', () => {
 
 describe('Edit Media', () => {
     let date, scale;
-    const photo = tdata.randArrayPhoto(2);
+    const files = [tdata.randVideo, tdata.randPhoto, tdata.randPhoto, tdata.randAudio];
 
     it('Choose random group', () => {
         date = sheetsPage.chooseRandGroup().getRandDates();
@@ -486,10 +481,7 @@ describe('Edit Media', () => {
 
     it('Make changes to checkup', () => {
         sheetsPage.reload().clearMedia()
-            .uploadMedia(photo[0]).uploadMedia(photo[1])
-            .uploadMedia(tdata.randVideo)
-            .uploadMedia(tdata.randAudio)
-            .submit();
+            .uploadMedia(files).submit();
 
         expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     }, 1);

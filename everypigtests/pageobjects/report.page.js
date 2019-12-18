@@ -232,6 +232,8 @@ module.exports = class ReportPage extends Page {
         const collapse = section.$$(this.collapseWrapper);
         const reReason = /(.+?)(?=\s\u2022)/u;
 
+        collapse.length && collapse.forEach((el) => this.clickOn(el));
+
         return {
             amount : this.getNumber(section),
             reason : collapse.length ? this.getArray(collapse, reReason) : [],
@@ -286,24 +288,26 @@ module.exports = class ReportPage extends Page {
     }
 
     waterInfo(section, rowWrap, commentWrap = this.commentWrapper) {
-        const selector = section.$$(rowWrap);
+        const selector = section.$(rowWrap);
         const comment = section.$(commentWrap);
 
         return {
-            consumed : this.getFloat(selector[0]),
+            consumed : this.getFloat(selector),
             comment : comment.isExisting() ? this.getString(comment) : undefined
         }
     }
 
     mediaInfo(section, rowWrap = '[class^=image]') {
         const amount = section.getText().includes('Media') ? this.getNumber(section) : undefined;
+        const wrap = this.mediaUploader.isExisting() ? this.mediaUploader : this.mediaViewer;
         let sum, titles;
+
         if (section.$(rowWrap).isExisting()) {
-            section.$(rowWrap).waitClick() && this.waitLoader();
+            this.clickOn(section.$(rowWrap));
             browser.pause(1500);
-            sum = this.mediaViewer.$$(rowWrap).length;
-            titles = this.mediaViewer.$$(rowWrap).map(el => el.getAttribute('title'));
-            this.clickCloseView();
+            sum = wrap.$$(rowWrap).length;
+            titles = wrap.$$(rowWrap).map(el => el.getAttribute('title'));
+            $('.MediaViewerHeader').isExisting() && this.clickCloseView();
         }
 
         return {

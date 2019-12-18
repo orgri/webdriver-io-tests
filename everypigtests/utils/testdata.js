@@ -97,7 +97,7 @@ class TestData {
     }
 
     randDeathsData() {
-        let data = new Object();
+        let data = {};
         data.reasons = this.randArrayReason(3);
         data.acute = [0, this.randDeaths, 0];
         data.chronic = [this.randDeaths, 0, 0];
@@ -109,7 +109,7 @@ class TestData {
     }
 
     randTreatsData() {
-        let data = new Object();
+        let data = {};
         data.treats = [this.randCcs, this.randUnits, this.randMls, this.randNoDosage];
         data.heads = this.randArrayHeads(4);
         data.dosage = this.randArrayDosage(3);
@@ -122,7 +122,7 @@ class TestData {
     }
 
     randSymptData() {
-        let data = new Object();
+        let data = {};
         data.sympt = this.randArraySymptom(4);
         data.comment = this.randComment;
         data.amount = 4;
@@ -131,7 +131,7 @@ class TestData {
     }
 
     randDiagnosData() {
-        let data = new Object();
+        let data = {};
         data.diseases = this.randArrayDisease(3);
         data.types = this.randArrayDiagnosType(3);
         data.comments = this.randArrayComments(3);
@@ -141,7 +141,7 @@ class TestData {
     }
 
     get randCheckupData() {
-        let data = new Object();
+        let data = {};
         let currAmount = Array.from(Array(4), () => this.rand(2) + 1 );
         data.moves = {
             amount: currAmount[0],
@@ -150,14 +150,14 @@ class TestData {
             weight: this.randArrayWeight(currAmount[0]),
             condition: this.randArrayCondition(currAmount[0]),
             comment: this.randComment
-        }
+        };
         data.deaths = {
             reasons: this.randArrayReason(currAmount[1]),
             acute: this.randArrayDeaths(currAmount[1]),
             chronic: this.randArrayDeaths(currAmount[1]),
             euthanas: this.randArrayDeaths(currAmount[1]),
             comment: this.randComment
-        }
+        };
         data.treats = {
             amount: currAmount[2],
             name: this.randArrayTreats(currAmount[2]),
@@ -165,26 +165,26 @@ class TestData {
             dosage: this.randArrayDosage(currAmount[2]),
             gals: this.randArrayGals(currAmount[2]),
             comment: this.randComment
-        }
+        };
         data.sympts = {
             amount: currAmount[3],
             name: this.randArraySymptom(currAmount[3]),
             comment: this.randComment
-        }
+        };
         data.temps = {
             high: this.randHighTemp,
             low: this.randLowTemp,
             comment: this.randComment
-        }
+        };
         data.water = {
             consumed: this.randWater,
             comment: this.randComment
-        }
+        };
         data.files = {
             pic: this.randPhoto,
             video: this.randVideo,
             audio: this.randAudio
-        }
+        };
         data.comment = this.randComment;
 
         return data;

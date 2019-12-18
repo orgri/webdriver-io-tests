@@ -395,6 +395,7 @@ describe('Update checkup', () => {
 describe('Media in DC', () => {
     const audioPage = require('../pageobjects/audio.page');
     const comment = tdata.randComment;
+    const files = [tdata.randVideo, tdata.randPhoto, tdata.randPhoto, tdata.randAudio];
     let rslt;
 
     it('Choose random group', () => {
@@ -404,17 +405,14 @@ describe('Media in DC', () => {
     });
 
     it('Upload media', () => {
-        dcPage.clearMedia()
-            .uploadMedia(tdata.randPhoto)
-            .uploadMedia(tdata.randVideo)
-            .uploadMedia(tdata.randAudio);
+        dcPage.clearMedia().uploadMedia(files);
     });
 
     it('Amount', () => {
-        dcPage.mediaUploader.scrollIntoView({block: 'center'});
+        dcPage.reload().mediaUploader.scrollIntoView({block: 'center'});
         rslt = dcPage.mediaInfo;
 
-        expect(rslt.amount, 'nOfMedia').to.equal('3');
+        expect(rslt.amount, 'nOfMedia').to.equal('4');
     });
 
     if (isChrome && !isIOS) {
