@@ -52,16 +52,11 @@ class CheckupPage extends ReportPage {
         return this.setSearch(farm).chooseFarm(farm).chooseGroup(group);
     }
 
-    open(path = this.checkupUrl) {
-        browser.url(path);
-        this.waitLoader();
-        return this;
-    }
-
+    open() { super.open(this.checkupUrl); }
     openCurrent() { return this.open(this.checkupUrl + this.id) && this.waitLoader(); }
 
     randFarm() {
-        !this.offNet.isExisting() && this.open();
+        !this.offNet.isExisting() && this.open(this.checkupUrl);
         this.clickCheckup().setElemsOnPage(100);
         const rows = $$(this.rowDC + '*=Pending');
         this.setFarm(rows[tdata.rand(rows.length - 1)]);

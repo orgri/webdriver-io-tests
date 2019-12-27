@@ -22,14 +22,15 @@ describe('Create shipment', () => {
 
     it('Close shipment', () => {
         if (isMobile) {
-            shipPage.setDate('15').clickBtn('Save').clickBtn('Next')
+            shipPage.clickOn('input[type=text]')
+                .setDate('15').clickBtn('Save').clickBtn('Next')
                 .fillValue(tdata.randHeads).clickBtn('Next')
                 .fillValue(tdata.randWeight).clickBtn('Next')
                 .setCondition('average').clickBtn('Next')
                 .setBarn().clickBtn('Next').setComment(tdata.randComment)
                 .close();
         } else {
-            shipPage.setDate('15').setHeads(tdata.randHeads).setAvgWeight(tdata.randWeight)
+            shipPage.clickOn('#date').setDate('15').setHeads(tdata.randHeads).setAvgWeight(tdata.randWeight)
                 .setCondition('average').setComment(tdata.randComment)
                 .close();
         }

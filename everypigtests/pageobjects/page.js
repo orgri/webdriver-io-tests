@@ -47,7 +47,6 @@ module.exports = class Page {
         return $('.Subnavigation');
     }
     get modalWrapper() { return $('.ModalsContainer.isOpen'); }
-    get inputSearch() { return $('input[placeholder="Search..."]'); }
 
     get checkup() {
         return isMobile
@@ -78,10 +77,6 @@ module.exports = class Page {
 
     /********************************* Input *************************************/
 
-    get dateInput() {
-        return isMobile ? $('input[type=text]') : $('#date');
-    }
-
     get collapseWrapper() { return '[class^="collapse_"]'; }
 
     clickSidebar(item) {
@@ -105,7 +100,13 @@ module.exports = class Page {
 
     clickToModal(str) { return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     closeModal() { return this.modalWrapper.$('.close-button').waitClick() && this.waitLoader(); }
-    setSearch(str) { return this.inputSearch.waitSetValue(str) && this.waitLoader(); }
+
+    setSearch(str, wrap = this.root) {
+        if (typeof wrap === 'string') { wrap = $(wrap); }
+        const selector = wrap.$('input[placeholder^="Search"]');
+        return selector.waitSetValue(str) && this.waitLoader();
+    }
+
     clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
 
     setElemsOnPage(number) {
@@ -119,6 +120,12 @@ module.exports = class Page {
         } else {
             browser.pause(timeout);
         }
+        return this;
+    }
+
+    open(path = this.baseUrl) {
+        browser.url(path);
+        this.waitLoader();
         return this;
     }
 
@@ -155,6 +162,7 @@ module.exports = class Page {
     }
 
     clickBtn(str, wrapper = this.root) {
+        if (typeof wrapper === 'string') { wrapper = $(wrapper); }
         return wrapper.$('.button=' + str).$('span').waitClick()
             && this.waitLoader();
     }
@@ -211,6 +219,7 @@ module.exports = class Page {
     }
 
     clickOn(selector, wrapper = this.root) {
+        if (typeof wrapper === 'string') { wrapper = $(wrapper); }
         if (typeof selector === 'string') { selector = wrapper.$(selector); }
 
         return selector.waitClick() && this.waitLoader();
@@ -313,16 +322,11 @@ module.exports = class Page {
         return $('button[aria-label^="Move forward"]').waitClick() && this;
     }
 
-    clickDate() {
-        return this.dateInput.waitClick() && this;
-    }
-
     setDay(day = '15') {
         return this.calendarDay(day).waitClick() && this;
     }
 
     setDate(day) {
-        this.clickDate();
         this.isDayAvailable(day) || this.prevMonth().prevMonth().nextMonth();
         this.setDay(day);
         return this;

@@ -2,7 +2,7 @@ const Page = require('../pageobjects/report.page');
 const dcPage = require('../pageobjects/checkup.page');
 const admin = require('../pageobjects/admin.page');
 
-page = new Page({ row: '[class^=activity-box]' });
+let page = new Page({ row: '[class^=activity-box]' });
 
 describe('Farmfeed', () => {
     let activity;
@@ -105,7 +105,7 @@ describe('Farmfeed', () => {
         expect(flag !== flagged, `flag(${flag}) !== flagged(${flagged})`).to.equal(true);
     });
 
-    it.skip('Symptom trigger', () => {
+    it('Symptom trigger', () => {
         const symptomPage = require('../pageobjects/symptoms.page');
         const section = '.section-collapse_*=';
 
@@ -192,6 +192,7 @@ describe('Farmfeed', () => {
         const text = tdata.randComment;
         const files = [tdata.randVideo, tdata.randPhoto, tdata.randAudio];
 
+        page.clickFarmfeed();
         post.waitClick().$('textarea').waitSetValue(text);
         page.clickOn(post.$('span*=Mention Someone'))
             .setDropdown('TA', post)
@@ -215,6 +216,7 @@ describe('Farmfeed', () => {
         const test = tdata.randDiagnosData();
         let rslt;
 
+        page.clickFarmfeed();
         activity = page.block('Diagnose');
         page.clickOn(activity.$('span=Diagnose'));
 
@@ -238,6 +240,7 @@ describe('Farmfeed', () => {
     });
 
     it('Share post', () => {
+        page.clickFarmfeed();
         activity = page.block('Share');
         const text = tdata.randComment;
         const body = activity.$('[class^=checkup-box]').getText();
@@ -268,10 +271,11 @@ describe('Farmfeed', () => {
     });
 
     it('Write comment to post', () => {
-        activity = page.block();
-
         const text = tdata.randComment;
         const comment = '.comment__text span span';
+
+        page.clickFarmfeed();
+        activity = page.block();
 
         activity.$('div textarea').waitSetValue(text);
         page.clickBtn('Post', activity);
@@ -288,16 +292,9 @@ describe('Farmfeed', () => {
 
         expect(activity.$(comment).isExisting(), 'comment does not exist').to.equal(false);
     });
-
-    /*
-            activity.$('span=Share').waitClick();
-            page.clickOption('Share with a farm').closeModal();
-
-            page.clickDots(activity).clickOption('View Barn Sheet');
-    */
 });
 
-describe('Checkup data', () => {
+describe('Farmfeed Checkup data', () => {
     let rslt, activity;
     const test = tdata.randCheckupData,
         nOfDeaths = test.deaths.chronic[0] + test.deaths.acute[0] + test.deaths.euthanas[0];
@@ -473,4 +470,215 @@ describe('Checkup data', () => {
         expect(rslt.sum, 'nOfAudio').to.equal(1);
     });
 
+});
+
+page = new Page({ row: '[class^=activity-box]', input: '[class^=value-input-line]' });
+
+const reachEnd = () => {
+    do {
+        const activities = $$(page.row + ' [class^=activity-actions-bar]');
+        activities.length && activities.slice(-1)[0].scrollIntoView();
+        page.waitLoader();
+    } while (!$('.ReachEndPlaceholder').isDisplayed());
+};
+
+describe('Farmfeed Filters', () => {
+    let activities;
+
+    it('Scroll events', () => {
+        for(let i = 0; i < 10; i++) {
+            page.open();
+            activities = $$(page.row + ' [class^=activity-actions-bar]');
+            let number = activities.length;
+
+            expect(number, `${number} of events`).to.equal((i+1)*12);
+
+            activities[activities.length - 1].scrollIntoView();
+            page.waitLoader();
+
+            activities = $$(page.row + ' [class^=activity-actions-bar]' );
+            number = activities.length;
+
+            expect(number, `after scroll: ${number}  of events`).to.equal((i+2)*12);
+        }
+    });
+
+    it('Search events', () => {
+        const list = '[class^=search-list]';
+        activities = page.row + ' [class^=activity-actions-bar]';
+
+        page.reload().clickFarmfeed()
+            .setSearch('ta');
+        browser.keys('Enter');
+        page.waitLoader()
+            .clickOn('.DatesFilter')
+            .setDate('1').setDate('10');
+        reachEnd();
+
+        const topDate = +page.getNumber($$('.TimeLineSeparator')[0]);
+        const bottomDate = +page.getNumber($$('.TimeLineSeparator').slice(-1)[0]);
+
+        expect(topDate <= 10, `top Date <= 10`).to.equal(true);
+        expect(bottomDate >= 1, `bottom Date >= 1`).to.equal(true);
+
+        page.clickOn('.filter-item=Company')
+            .setSearch('TA_Tenant', list)
+            .clickOn(list + ' [class^=line_]');
+        reachEnd();
+
+        let filtered = $$(page.getClassName(page.row) + '*=TA_Tenant' ).length;
+        let all = $$(activities).length;
+
+        expect(filtered, 'filtered activities by Company ').to.equal(all);
+
+        const farm = $(page.row).$('strong*=TA_Farm').getText();
+        page.clickOn('.filter-item=Farm')
+            .setSearch(farm, list)
+            .clickOn(list + ' [class^=line_]');
+        reachEnd();
+
+        filtered = $$(page.getClassName(page.row) + '*=' + farm).length;
+        all = $$(activities).length;
+
+        expect(filtered, 'filtered activities by Farm ').to.equal(all);
+
+        const group = $(page.row).$('strong*=TA_PigGroup').getText();
+        page.clickOn('.filter-item=Group')
+            .setSearch(group, list)
+            .clickOn(list + ' [class^=line_]');
+        reachEnd();
+
+        filtered = $$(page.getClassName(page.row) + '*=' + group).length;
+        all = $$(activities).length;
+
+        expect(filtered, 'filtered activities by Group ').to.equal(all);
+
+        page.clickBtn('Clear All');
+        filtered = $$('.farmfeed-page .fa.fa-angle-down').length;
+        all = $$(activities).length;
+
+        expect(filtered, 'cleared filters').to.equal(4);
+        expect(all, 'all events').to.equal(12);
+    });
+
+    it('Create Filter for events', () => {
+        const dropdown = '[class^=menu][class*=opened]';
+
+        page.reload().clickFarmfeed()
+            .clickOn('.open-filter-icon')
+            .clickOn('span=Add Filter')
+            .clickOn('li=Event Date')
+            .clickOn('label=before')
+            .setDate('1')
+            .clickBtn('Done')
+
+            .clickOn('span=Add Filter')
+            .clickOn('li=Group ID')
+            .clickOn('label=contains')
+            .setInput('PigGroup', $(dropdown))
+            .clickBtn('Done', dropdown)
+
+            .clickOn('span=Add Filter')
+            .clickOn('li=User')
+            .clickOn('label=is', dropdown)
+            .setDropdown('TA Caretaker', $(dropdown))
+            .clickBtn('Done', dropdown)
+
+            .clickOn('span=Save Filter')
+            .setInput('First filter', $('.modal-wrapper'), 'Filter Name', 'section')
+            .clickBtn('Save')
+            .clickBtn('View Filter');
+
+        activities = $(page.row);
+        const user = page.getString(activities.$('[class^=activity-author-line] b'));
+
+        expect(user, `user`).to.equal('TA Caretaker');
+    });
+
+    it('Change and Create filter from existing one', () => {
+        const dropdown ='[class^=menu][class*=opened]';
+
+        page.reload().clickFarmfeed()
+            .clickSidebar('First filter')
+            .clickBtn('View Filter')
+            .clickOn('span*=Group ID')
+            .clickOn('[class*=remove-icon][class*=visible]')
+
+            .clickOn('span=Add Filter')
+            .clickOn('li=Farm Name')
+            .clickOn('label=contains')
+            .setInput('TA_Farm', $(dropdown))
+            .clickBtn('Done', dropdown)
+
+            .clickOn('span=Add Filter')
+            .clickOn('li=Est. Avg. Weight')
+            .clickOn('label=has range', dropdown)
+            .setInput('9', $(dropdown), 'from')
+            .setInput('11', $(dropdown), 'to')
+            .clickBtn('Done', dropdown)
+
+            .clickOn('span=Add Filter')
+            .clickOn('li=Mortality Rate')
+            .clickOn('label=less than', dropdown)
+            .setInput('1.01', $(dropdown))
+            .clickBtn('Done', dropdown)
+
+            .clickOn('span=Save Filter')
+            .clickOn('b=Create New Filter')
+            .setInput('Second filter', $('.modal-wrapper'), undefined, 'div')
+            .clickBtn('Save');
+
+        activities = $(page.row);
+        page.clickOn('strong*=TA_PigGroup');
+        const weight = +page.getNumber(activities.$('strong*=lbs'));
+        const rate = +page.getFloat(activities.$('strong*=%'));
+
+        expect(weight > 9 && weight < 11, `weight(${weight}) has range [9, 11]`).to.equal(true);
+        expect(rate < 1.01, `rate(${rate}) < 1.01`).to.equal(true);
+    });
+
+    it('Update filter', () => {
+        page.reload().clickFarmfeed()
+            .clickSidebar('First filter')
+            .clickBtn('View Filter')
+            .clickOn('span=Events that match all filters')
+            .clickOn('span=Events that match any filters')
+            .clickOn('span*=Show me events before')
+            .clickOn('[class*=remove-icon][class*=visible]')
+
+            .clickOn('span=Add Filter')
+            .clickOn('li=Media')
+            .clickOn('li=Does not have Media')
+
+            .clickOn('span=Save Filter')
+            .clickBtn('Save');
+
+        let number = $$(page.row + ' [class^=activity-actions-bar]').length;
+
+        expect(number, `number of events`).to.equal(25);
+
+        page.clickOn('span=Events that match any filters')
+            .clickOn('span=Events that match all filters')
+            .clickOn('span=Save Filter')
+            .clickBtn('Save');
+
+        const user = page.getString($(page.row).$('[class^=activity-author-line] b'));
+        number = $$('[class^=image]').length + $$('.audio-item').length;
+
+        expect(user, `user`).to.equal('TA Caretaker');
+        expect(number, `${number} of media`).to.equal(0);
+    });
+
+    it('Delete filter', () => {
+        page.reload().clickFarmfeed()
+            .clickSidebar('First filter')
+            .clickBtn('Delete Filter')
+            .clickBtn('Yes, Delete Filter')
+            .clickSidebar('Second filter')
+            .clickBtn('Delete Filter')
+            .clickBtn('Yes, Delete Filter');
+
+        expect(page.sidebar.$('span=First filter').isExisting(), 'no First filter in left sidebar').to.equal(false);
+        expect(page.sidebar.$('span=Second filter').isExisting(), 'no Second filter in left sidebar').to.equal(false);
+    });
 });

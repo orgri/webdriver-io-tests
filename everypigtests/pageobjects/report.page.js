@@ -88,14 +88,12 @@ module.exports = class ReportPage extends Page {
     get selectIcon() { return '.icon.selected'; }
 
     block(id) {
-        let selector = this.root;
+        let selector = (typeof id === 'object') ? id : this.root;
         if ($(this.row).isExisting()) {
             this.row = this.getClassName(this.row);
             const length = $$(this.row).length;
             if (id === undefined) {
                 selector = $$(this.row)[this.index];
-            } else if (typeof id === 'object') {
-                selector = id;
             } else if (typeof id === 'string') {
                 selector = $(this.row + '*=' + id);
             } else if (typeof id === 'number' && id < length) {
@@ -110,8 +108,9 @@ module.exports = class ReportPage extends Page {
     mobileRow(text) { return $(this.mRowPicker + '*=' + text); }
 
     input(id, name, wrap = this.inputWrapper) {
+        wrap = wrap.includes('class') ? this.getClassName(wrap) : wrap;
         wrap = name ? (wrap + '*=' + name) : wrap;
-        return this.block(id).$(wrap).$('input');
+        return this.block(id).$(wrap).$('input:not([type=radio])');
     }
 
     inputLabel(id, name, wrap = this.labelWrapper) {
