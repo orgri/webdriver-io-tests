@@ -486,20 +486,20 @@ describe('Farmfeed Filters', () => {
     let activities;
 
     it('Scroll events', () => {
+        page.open();
         for(let i = 0; i < 10; i++) {
-            page.open();
             activities = $$(page.row + ' [class^=activity-actions-bar]');
             let number = activities.length;
 
-            expect(number, `${number} of events`).to.equal((i+1)*12);
+            expect(number, `number of events`).to.equal((i+1)*12);
 
-            activities[activities.length - 1].scrollIntoView();
+            activities.slice(-1)[0].scrollIntoView();
             page.waitLoader();
 
             activities = $$(page.row + ' [class^=activity-actions-bar]' );
             number = activities.length;
 
-            expect(number, `after scroll: ${number}  of events`).to.equal((i+2)*12);
+            expect(number, `after scroll: number  of events`).to.equal((i+2)*12);
         }
     });
 
@@ -508,7 +508,7 @@ describe('Farmfeed Filters', () => {
         activities = page.row + ' [class^=activity-actions-bar]';
 
         page.reload().clickFarmfeed()
-            .setSearch('ta');
+            .setInput('ta', $('.FarmfeedSearch'), undefined, 'div');
         browser.keys('Enter');
         page.waitLoader()
             .clickOn('.DatesFilter')

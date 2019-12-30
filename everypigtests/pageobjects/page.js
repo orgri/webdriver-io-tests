@@ -103,7 +103,7 @@ module.exports = class Page {
 
     setSearch(str, wrap = this.root) {
         if (typeof wrap === 'string') { wrap = $(wrap); }
-        const selector = wrap.$('input[placeholder^="Search"]');
+        const selector = wrap.$('input[placeholder^="Search..."]');
         return selector.waitSetValue(str) && this.waitLoader();
     }
 

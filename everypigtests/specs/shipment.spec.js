@@ -95,7 +95,7 @@ describe('Create shipment', () => {
     });
 
     it('Checkup Pigs avg. weight', () => {
-        expect(rslt.weight[0], 'weight').to.equal('10' + ' lbs');
+        expect(rslt.weight[0], 'weight').to.equal('10');
     });
 
     it('Checkup Pigs condition', () => {

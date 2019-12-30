@@ -52,11 +52,11 @@ class CheckupPage extends ReportPage {
         return this.setSearch(farm).chooseFarm(farm).chooseGroup(group);
     }
 
-    open() { super.open(this.checkupUrl); }
-    openCurrent() { return this.open(this.checkupUrl + this.id) && this.waitLoader(); }
+    open(path = this.checkupUrl) { return super.open(path); }
+    openCurrent() { return this.open(this.checkupUrl + this.id); }
 
     randFarm() {
-        !this.offNet.isExisting() && this.open(this.checkupUrl);
+        !this.offNet.isExisting() && this.open();
         this.clickCheckup().setElemsOnPage(100);
         const rows = $$(this.rowDC + '*=Pending');
         this.setFarm(rows[tdata.rand(rows.length - 1)]);
@@ -64,17 +64,15 @@ class CheckupPage extends ReportPage {
     }
 
     randGroup(status = 'Start') {
-        let rows, btns, id = 0, text;
+        let rows, btns, id = 0;
         do {
             this.randFarm().chooseFarm();
             rows = $$(this.groupRow);
             btns = $$('.button=' + status);
         } while (btns.length === 0);
         do {
-            text = rows[id++].$('.button').getText();
-            //TODO: avoid this scratch
-            text = (status === 'Start' && text === 'All Good') ? 'Start' : text;
-        } while (text !== status);
+            btns = this.getArray(rows[id++].$$('.button'));
+        } while (!btns.includes(status));
         this.setGroup(rows[id - 1]);
         return this;
     }

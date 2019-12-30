@@ -28,7 +28,7 @@ describe('Daily Checkup Navigation', () => {
             dcPage.open();
             dcPage.setSearch(el);
 
-            expect(dcPage.inputSearch.isExisting(), 'search').to.equal(true);
+            expect($('.DailyCheckupHome').isExisting(), 'DC farms page').to.equal(true);
         });
     });
 
@@ -59,11 +59,10 @@ describe('Daily Checkup Navigation', () => {
     });
 
     it('Choose group', () => {
-        let i = 0, rows = $$(dcPage.groupRow);
+        let i = 0, btns, rows = $$(dcPage.groupRow);
         do {
-            dcStatus = rows[i].$('.button').getText();
-            i++;
-        } while (dcStatus !== 'Start' && i < rows.length);
+            btns = dcPage.getArray(rows[i++].$$('.button'));
+        } while (!btns.includes('Start') && i < rows.length);
         dcPage.setGroup(rows[--i]).chooseGroup(dcPage.group);
 
         expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -153,12 +152,11 @@ describe('All Good to Farm', () => {
 
     it('Groups statuses', () => {
         dcPage.chooseFarm();
-        const rows = $$(dcPage.groupRow);
-        for (let i = 0; i < rows.length; i++) {
-            let status = rows[i].$('.button').getText();
+        $$(dcPage.groupRow).forEach((el) => {
+            let status = dcPage.getString(el.$$('.button').slice(-1)[0]);
 
             expect(status, 'button status').to.equal('Update');
-        }
+        });
     });
 });
 
@@ -167,6 +165,9 @@ describe('All Good to Group', () => {
 
     before(function () {
         admin.openPrefs('DC').setOff('Water Usage').setOff('Temp Tracking');
+
+        dcPage.clickCheckup().setElemsOnPage(100).chooseFarm('TA_Farm_0000');
+        dcPage.rowWith('Reconcile').isExisting() && this.skip();
     });
 
     it('Choose group', () => {
@@ -448,14 +449,18 @@ describe('Head Treated conflict', () => {
     const treatPage = require('../pageobjects/medications.page');
     const deathPage = require('../pageobjects/deaths.page');
 
+    before(function () {
+        admin.openPrefs().setOff('Track Mortality Reasons');
+    });
+
     it('Choose group', () => {
-        dcPage.randCheckup('Update');
+        dcPage.randCheckup();
 
         expect(dcPage.isDCSectionExist, 'checkup section').to.equal(true);
     });
 
     it('Create conflict', () => {
-        dcPage.chooseSection(2);
+        dcPage.noToAllReports().chooseSection(2);
         treatPage.setTreat(tdata.randTreat, 999999, tdata.randDosage, tdata.randGals)
             .submit();
 

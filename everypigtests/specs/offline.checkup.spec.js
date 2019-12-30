@@ -27,7 +27,7 @@ describe('Daily Checkup Navigation (offline)', () => {
             dcPage.netOn(false).open().netOff().clickCheckup();
             dcPage.setSearch(el);
 
-            expect(dcPage.inputSearch.isExisting(), 'search').to.equal(true);
+            expect($('.DailyCheckupHome').isExisting(), 'search').to.equal(true);
         });
     });
 
@@ -49,11 +49,10 @@ describe('Daily Checkup Navigation (offline)', () => {
     });
 
     it('Choose group', () => {
-        let i = 0, dcStatus, rows = $$(dcPage.groupRow);
+        let i = 0, btns, rows = $$(dcPage.groupRow);
         do {
-            dcStatus = rows[i].$('.button').getText();
-            i++;
-        } while (dcStatus !== 'Start' && i < rows.length);
+            btns = dcPage.getArray(rows[i++].$$('.button'));
+        } while (!btns.includes('Start') && i < rows.length);
         dcPage.setGroup(rows[--i]).chooseGroup(dcPage.group);
 
         expect($(dcPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
@@ -136,12 +135,11 @@ describe('All Good to Farm (offline)', () => {
 
     it('Groups statuses', () => {
         dcPage.chooseFarm();
-        const rows = $$(dcPage.groupRow);
-        for (let i = 0; i < rows.length; i++) {
-            let status = rows[i].$('.button').getText();
+        $$(dcPage.groupRow).forEach((el) => {
+            let status = dcPage.getString(el.$$('.button').slice(-1)[0]);
 
             expect(status, 'button status').to.equal('Update');
-        }
+        });
     });
 
     it('Net on(sync)', () => {
@@ -164,6 +162,9 @@ describe('All Good to Group (offline)', () => {
 
     before(function () {
         admin.netOn(false).openPrefs('DC').setOff('Water Usage').setOff('Temp Tracking');
+
+        dcPage.netOff().clickCheckup().setElemsOnPage(100).chooseFarm('TA_Farm_0000');
+        dcPage.rowWith('Reconcile').isExisting() && this.skip();
     });
 
     it('Choose group', () => {
