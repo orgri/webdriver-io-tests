@@ -4,7 +4,7 @@ const admin = require('../pageobjects/admin.page');
 
 let page = new Page({ row: '[class^=activity-box]' });
 
-describe('Farmfeed', () => {
+describe('Farmfeed posts', () => {
     let activity;
     const mention = ['Mention Someone', 'Mention a Farm', 'Post a Company Message'];
 
@@ -28,13 +28,13 @@ describe('Farmfeed', () => {
                 .clickOption('Delete')
                 .clickToModal('Yes, Delete Post');
 
-            expect(page.block().$('div[class^=direct-post-box]').isExisting(), 'direct post not exist')
+            expect(page.block().$('[class^=direct-post-box]').isExisting(), 'direct post not exist')
                 .to.equal(false);
         });
     });
 
     it('Min/max event', () => {
-        activity = page.block();
+        activity = page.open().block();
         const before = activity.getCSSProperty('height').parsed.value;
         page.reload()
             .clickDots(activity)
@@ -52,7 +52,7 @@ describe('Farmfeed', () => {
     });
 
     it('Post options: Manage Group', () => {
-        activity = page.reload().block('Share');
+        activity = page.open().block('Share');
         const group = activity.$('strong*=PigGroup').getText();
         page.clickDots(activity).clickOption('Manage Group');
         const rslt = $('.GroupProfileHeader .group-name').getText();
@@ -192,7 +192,7 @@ describe('Farmfeed', () => {
         const text = tdata.randComment;
         const files = [tdata.randVideo, tdata.randPhoto, tdata.randAudio];
 
-        page.clickFarmfeed();
+        page.open();
         post.waitClick().$('textarea').waitSetValue(text);
         page.clickOn(post.$('span*=Mention Someone'))
             .setDropdown('TA', post)
@@ -216,8 +216,7 @@ describe('Farmfeed', () => {
         const test = tdata.randDiagnosData();
         let rslt;
 
-        page.clickFarmfeed();
-        activity = page.block('Diagnose');
+        activity = page.open().block('Diagnose');
         page.clickOn(activity.$('span=Diagnose'));
 
         dBar.clear().setDiagnos(test.diseases[0], test.types[0], test.comments[0]).setAlert()
@@ -240,8 +239,7 @@ describe('Farmfeed', () => {
     });
 
     it('Share post', () => {
-        page.clickFarmfeed();
-        activity = page.block('Share');
+        activity = page.open().block('Share');
         const text = tdata.randComment;
         const body = activity.$('[class^=checkup-box]').getText();
 
@@ -274,9 +272,7 @@ describe('Farmfeed', () => {
         const text = tdata.randComment;
         const comment = '.comment__text span span';
 
-        page.clickFarmfeed();
-        activity = page.block();
-
+        activity = page.open().block();
         activity.$('div textarea').waitSetValue(text);
         page.clickBtn('Post', activity);
 
@@ -472,34 +468,30 @@ describe('Farmfeed Checkup data', () => {
 
 });
 
-page = new Page({ row: '[class^=activity-box]', input: '[class^=value-input-line]' });
-
-const reachEnd = () => {
-    do {
-        const activities = $$(page.row + ' [class^=activity-actions-bar]');
-        activities.length && activities.slice(-1)[0].scrollIntoView();
-        page.waitLoader();
-    } while (!$('.ReachEndPlaceholder').isDisplayed());
-};
-
 describe('Farmfeed Filters', () => {
     let activities;
+    page.inputWrapper = '[class^=value-input-line]';
+    const reachEnd = () => {
+        do {
+            const events = $$(page.row + ' [class^=activity-actions-bar]');
+            events.length && events.slice(-1)[0].scrollIntoView();
+            page.waitLoader();
+        } while (!$('.ReachEndPlaceholder').isDisplayed());
+    };
 
     it('Scroll events', () => {
         page.open();
         for(let i = 0; i < 10; i++) {
             activities = $$(page.row + ' [class^=activity-actions-bar]');
-            let number = activities.length;
 
-            expect(number, `number of events`).to.equal((i+1)*12);
+            expect(activities.length, `number of events`).to.equal((i+1)*12);
 
             activities.slice(-1)[0].scrollIntoView();
             page.waitLoader();
 
             activities = $$(page.row + ' [class^=activity-actions-bar]' );
-            number = activities.length;
 
-            expect(number, `after scroll: number  of events`).to.equal((i+2)*12);
+            expect(activities.length, `after scroll: number  of events`).to.equal((i+2)*12);
         }
     });
 
@@ -507,12 +499,11 @@ describe('Farmfeed Filters', () => {
         const list = '[class^=search-list]';
         activities = page.row + ' [class^=activity-actions-bar]';
 
-        page.reload().clickFarmfeed()
-            .setInput('ta', $('.FarmfeedSearch'), undefined, 'div');
+        page.open().setInput('ta', $('.FarmfeedSearch'), undefined, 'div');
         browser.keys('Enter');
         page.waitLoader()
             .clickOn('.DatesFilter')
-            .setDate('1').setDate('10');
+            .prevMonth().setDate('1').setDate('10');
         reachEnd();
 
         const topDate = +page.getNumber($$('.TimeLineSeparator')[0]);
@@ -564,7 +555,7 @@ describe('Farmfeed Filters', () => {
     it('Create Filter for events', () => {
         const dropdown = '[class^=menu][class*=opened]';
 
-        page.reload().clickFarmfeed()
+        page.open()
             .clickOn('.open-filter-icon')
             .clickOn('span=Add Filter')
             .clickOn('li=Event Date')
@@ -598,7 +589,7 @@ describe('Farmfeed Filters', () => {
     it('Change and Create filter from existing one', () => {
         const dropdown ='[class^=menu][class*=opened]';
 
-        page.reload().clickFarmfeed()
+        page.open()
             .clickSidebar('First filter')
             .clickBtn('View Filter')
             .clickOn('span*=Group ID')
@@ -638,7 +629,7 @@ describe('Farmfeed Filters', () => {
     });
 
     it('Update filter', () => {
-        page.reload().clickFarmfeed()
+        page.open()
             .clickSidebar('First filter')
             .clickBtn('View Filter')
             .clickOn('span=Events that match all filters')
@@ -662,15 +653,15 @@ describe('Farmfeed Filters', () => {
             .clickOn('span=Save Filter')
             .clickBtn('Save');
 
-        const user = page.getString($(page.row).$('[class^=activity-author-line] b'));
+        const user = page.getString($(page.row + ' [class^=activity-author-line] b'));
         number = $$('[class^=image]').length + $$('.audio-item').length;
 
         expect(user, `user`).to.equal('TA Caretaker');
-        expect(number, `${number} of media`).to.equal(0);
+        expect(number, `number of media`).to.equal(0);
     });
 
     it('Delete filter', () => {
-        page.reload().clickFarmfeed()
+        page.open()
             .clickSidebar('First filter')
             .clickBtn('Delete Filter')
             .clickBtn('Yes, Delete Filter')

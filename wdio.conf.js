@@ -31,6 +31,7 @@ exports.config = {
             './everypigtests/specs/barnsheets.spec.js',
             './everypigtests/specs/resources.spec.js',
             './everypigtests/specs/entity.spec.js',
+            './everypigtests/specs/farmfeed.spec.js'
         ],
         smokeoffline: [
             './everypigtests/specs/offline.checkup.spec.js',
@@ -70,13 +71,13 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 1,
+    maxInstances: 5,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: [/*
+    capabilities: [/**
         {
             browserName: 'safari',
             platformName: 'macOS',
@@ -90,7 +91,7 @@ exports.config = {
             //mobileEmulation: { 'deviceName': 'iPhone 8' },
             //mobileEmulation: { 'deviceName': 'iPad' },
             //mobileEmulation: { 'deviceName': 'iPad Pro' },
-            mobileEmulation: {'deviceName': 'Pixel 2'},
+            //mobileEmulation: {'deviceName': 'Pixel 2'},
             'args': [
                 '--headless', '--window-size=1920,1080',
                 //'--start-fullscreen',
