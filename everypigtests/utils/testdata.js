@@ -29,7 +29,7 @@ class TestData {
     }
 
     get randDiagnosType() { return faker.random.arrayElement(['Clinical', 'Lab Confirmed']); }
-    rand(max) { return faker.random.number(max); }
+    rand(max, min = 0) { return faker.random.number({ min: min, max: max }); }
 
     randArrayNumbers(max, length) { return Array.from(Array(length), () => this.rand(max)); }
     randArrayMoveTypes(length) { return Array.from(Array(length), () => this.randMoveType); }

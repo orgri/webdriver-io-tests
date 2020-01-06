@@ -56,10 +56,13 @@ class CheckupPage extends ReportPage {
     openCurrent() { return this.open(this.checkupUrl + this.id); }
 
     randFarm() {
-        !this.offNet.isExisting() && this.open();
+        !this.isOffNet && this.open();
         this.clickCheckup().setElemsOnPage(100);
         const rows = $$(this.rowDC + '*=Pending');
-        this.setFarm(rows[tdata.rand(rows.length - 1)]);
+        const id = this.isOffNet
+            ? tdata.rand(rows.length - 1, rows.length / 2)
+            : tdata.rand(rows.length / 2 - 1);
+        this.setFarm(rows[id]);
         return this;
     }
 

@@ -31,7 +31,7 @@ describe('Manage entities', () => {
             .setSearch(group)
             .clickBtn('Manage').clickDots().clickOption('Delete Group');
 
-        expect(page.notification.getText(), 'notification').to.equal('Group was successfully deleted');
+        expect(page.notification.isExisting(), 'notification').to.equal(true);
 
         page.clickSidebar('Groups').setSearch(group);
 

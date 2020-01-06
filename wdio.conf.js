@@ -28,18 +28,19 @@ exports.config = {
     suites: {
         smoke: [
             './everypigtests/specs/checkup.spec.js',
+            './everypigtests/specs/offline.checkup.spec.js',
             './everypigtests/specs/barnsheets.spec.js',
             './everypigtests/specs/resources.spec.js',
             './everypigtests/specs/entity.spec.js',
-            './everypigtests/specs/farmfeed.spec.js'
         ],
-        smokeoffline: [
-            './everypigtests/specs/offline.checkup.spec.js',
+        farmfeed: [
+            './everypigtests/specs/farmfeed.spec.js'
         ],
         editmode: [
             './everypigtests/specs/editcheckup.spec.js',
         ],
         checkup: [
+            './everypigtests/specs/allgood.spec.js',
             './everypigtests/specs/move.spec.js',
             './everypigtests/specs/death.spec.js',
             './everypigtests/specs/symptom.spec.js',
@@ -47,10 +48,11 @@ exports.config = {
             './everypigtests/specs/shipment.spec.js'
         ],
         offline: [
+            './everypigtests/specs/offline.allgood.spec.js',
             './everypigtests/specs/offline.move.spec.js',
             './everypigtests/specs/offline.sympt.spec.js',
             './everypigtests/specs/offline.treat.spec.js',
-            './everypigtests/specs/offline.death.spec.js',
+            './everypigtests/specs/offline.death.spec.js'
         ]
     },
     // Patterns to exclude.
@@ -71,7 +73,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 5,
+    maxInstances: 10,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:

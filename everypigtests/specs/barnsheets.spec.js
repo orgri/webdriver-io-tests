@@ -11,13 +11,13 @@ describe('Barnsheets Navigation', () => {
         expect($(sheetsPage.tableRow).isExisting(), 'table-row').to.equal(true);
     });
 
-    it('Search special chars', () => {
+    it('Search special chars (groups)', () => {
         //just check whether page crashes or not, need to clarify expected behaviour
         sheetsPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
             .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
             .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
 
-        expect(sheetsPage.inputSearch.isExisting(), 'search').to .equal(true);
+        expect($('.BarnsheetsHome').isExisting(), 'is barnsheets exist').to.equal(true);
     });
 
     it('Search farm', () => {
@@ -43,13 +43,13 @@ describe('Barnsheets Navigation', () => {
         expect(sheetsPage.tableRows, 'table rows').to.have.lengthOf.above(10);
     });
 
-    it('Search special chars', () => {
+    it('Search special chars (farms)', () => {
         //just check whether page crashes or not, need to clarify expected behaviour
         sheetsPage.setSearch('&').setSearch('%').setSearch('#').setSearch('\\')
             .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
             .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
 
-        expect(sheetsPage.inputSearch.isExisting(), 'search').to .equal(true);
+        expect($('.BarnsheetsFarmGroups').isExisting(), 'is barnsheets farm exist').to.equal(true);
     });
 
     it('Search group', () => {
@@ -193,7 +193,7 @@ These fuctionality must be checked by Unit tests.
     it('Next page', () => {
         sheetsPage.clickNextPage();
 
-        expect(sheetsPage.tableRows, 'length').to.have.lengthOf(2);
+        expect(sheetsPage.tableRows, 'length').to.have.lengthOf.below(101);
     });
 
     it('Previous page', () => {

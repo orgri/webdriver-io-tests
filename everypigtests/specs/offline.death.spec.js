@@ -66,7 +66,7 @@ describe('Report death (offline)', () => {
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.amount, 'amount of deaths').to.equal(deaths);
-        expect(rslt.euthanas[0], 'ethanas').to.equal(deaths);
+        expect(rslt.euthanas[0], 'euthanas').to.equal(deaths);
     });
 
     it.skip('Chronic Death Alert', () => {
@@ -235,7 +235,7 @@ describe('Report death reason (offline)', () => {
         const rslt = checkupPage.deathInfo;
 
         expect(rslt.reason[0], 'reason').to.equal(reason);
-        expect(rslt.ethanas[0], 'ethanas').to.equal(deaths);
+        expect(rslt.euthanas[0], 'euthanas').to.equal(deaths);
     });
 
     it('Change death reason', () => {
