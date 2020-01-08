@@ -29,12 +29,12 @@ describe('Treats page, navigation (offline)', () => {
         tdata.specialChars.forEach((el) => {
             it('Search special chars: ' + el, () => {
                 //just check whether page crashes or not, need to clarify expected behaviour
-                checkupPage.inputSearch.isExisting() 
+                $('.MobileListPicker').isExisting()
                     || checkupPage.netOn(false).open().netOff()
                         .currentDC().chooseSection(2, 'Treats');
                 checkupPage.setSearch(el);
 
-                expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+                expect($('.MobileListPicker').isExisting(), 'picker isExisting').to.equal(true);
             });
         });
 

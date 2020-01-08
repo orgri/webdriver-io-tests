@@ -54,7 +54,8 @@ class ShipmentPage extends ReportPage {
         //TODO: set certain barn and for desktop view
         if (isMobile) {
             const barns = $$('.barn-checkbox');
-            barns[tdata.rand(barns.length - 1)].waitClick();
+            const id = tdata.rand(barns.length - 1);
+            this.clickOn(barns[id]);
         }
         return this;
     }

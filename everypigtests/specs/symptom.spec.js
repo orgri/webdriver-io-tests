@@ -32,7 +32,7 @@ describe('Symptoms page, navigation', () => {
                 .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
                 .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
     
-            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            expect($('.MobileListPicker').isExisting(), 'picker isExisting').to.equal(true);
         });
 
         it('Search when choosing symptoms', () => {

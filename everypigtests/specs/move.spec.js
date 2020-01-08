@@ -31,7 +31,7 @@ describe('Moves page, navigation', () => {
                 .setSearch('/').setSearch('\"').setSearch('$').setSearch('?')
                 .setSearch('^').setSearch('|').setSearch(':').setSearch('*');
     
-            expect(checkupPage.inputSearch.isExisting(), 'search').to .equal(true);
+            expect($('.MobilePortalSelector').isExisting(), 'picker isExisting').to.equal(true);
         });
 
         it('Search when choosing movements', () => {
