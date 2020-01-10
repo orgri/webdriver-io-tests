@@ -82,7 +82,7 @@ module.exports = class ReportPage extends Page {
     get comment() { return ('.comment.opened textarea'); }
     get commentClosed() { return ('.comment.closed'); }
     get removeCommentBtn() { return ('.remove-comment.visible'); }
-    get mRowPicker() { return '.MobileRow'; }
+    get mRowPicker() { return this.getClassName('[class^=MobileRow]'); }
     get mRows() { return $$(this.mRowPicker); }
     get rowIndex() { return '.row-index'; }
     get selectIcon() { return '.icon.selected'; }
@@ -298,7 +298,8 @@ module.exports = class ReportPage extends Page {
 
     mediaInfo(section, rowWrap = '[class^=image]') {
         const amount = section.getText().includes('Media') ? this.getNumber(section) : undefined;
-        const wrap = this.mediaUploader.isExisting() ? this.mediaUploader : this.mediaViewer;
+        let wrap = this.mediaUploader.isExisting() ? this.mediaUploader : this.mediaViewer;
+        wrap = isMobile ? section : wrap;
         let sum, titles;
 
         if (section.$(rowWrap).isExisting()) {

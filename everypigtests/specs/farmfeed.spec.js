@@ -10,13 +10,20 @@ describe('Farmfeed posts', () => {
 
     mention.forEach((el) => {
         it('Create post: ' + el, () => {
-            const post = $('.post-content');
+            const post = isMobile ? $('[class^=ff-post-mobile]') : $('.post-content');
             const text = tdata.randComment;
 
-            page.clickFarmfeed();
-            post.waitClick().$('textarea').waitSetValue(text);
-            page.clickOn(post.$('span=' + el));
-            el.includes('Company') || page.setDropdown('TA', post);
+            page.open()
+                .clickOn(isMobile ? '.write-message-block' : post)
+                .type(text, post.$('textarea'))
+                .clickOn(post)
+                .clickOn(post.$('span=' + el));
+            if (isMobile) {
+                el.includes('Company') || page.setPicker('TA');
+                el.includes('Someone') && page.clickBtn('Next');
+            } else {
+                el.includes('Company') || page.setDropdown('TA', post);
+            }
             page.clickBtn('Post', post);
             activity = page.block();
 
@@ -64,7 +71,8 @@ describe('Farmfeed posts', () => {
         activity = page.clickFarmfeed().block('Share');
         const farm = activity.$('strong*=Farm').getText();
         page.clickDots(activity).clickOption('Manage Farm');
-        const rslt = $('.AdminPanel .farm-info-wrapper h1').getText();
+
+        const rslt = isMobile ? $('.hide-for-large h1').getText() : $('.AdminPanel .farm-info-wrapper h1').getText();
 
         expect(rslt === farm, `${rslt} === ${farm}`).to.equal(true);
     });
@@ -73,7 +81,7 @@ describe('Farmfeed posts', () => {
         activity = page.clickFarmfeed().block('TA_PigGroup');
         const user = 'TA TenantAdmin';
         page.clickDots(activity).clickOption('Manage User');
-        const rslt = $('.AdminPanel .user-name').getText();
+        const rslt = isMobile ? $('.hide-for-large h1').getText() : $('.AdminPanel .user-name').getText();
 
         expect(rslt === user, `${rslt} === ${user}`).to.equal(true);
     });
@@ -81,28 +89,30 @@ describe('Farmfeed posts', () => {
     it('Flag/Unflag event', () => {
         activity = page.clickFarmfeed().block('Share');
         const flag = activity.$('[class^=activity-body]').getText();
-        page.clickOn(activity.$('span=Flag'));
+        page.clickOn(activity.$('.activity-action_*=Flag'));
 
         expect(activity.$('[class^=flagged]').isExisting(), `status flagged`).to.equal(true);
 
-        page.clickSidebar('Flagged Activities');
-        activity = page.block('TA_PigGroup');
-        page.clickOn(activity.$('span=Unflag'));
+        isMobile || page.clickSidebar('Flagged Activities');
+        activity = page.block('Share');
+        page.clickOn(activity.$('.activity-action_*=Unflag'));
         let flagged = activity.$('[class^=activity-body]').getText();
 
         expect(activity.$('[class^=flagged]').isExisting(), `status flagged`).to.equal(false);
         expect(flag === flagged, `flag(${flag}) === flagged(${flagged})`).to.equal(true);
 
         page.clickFarmfeed();
-        activity = page.block('TA_PigGroup');
+        activity = page.block('Share');
 
         expect(activity.$('[class^=flagged]').isExisting(), `status flagged`).to.equal(false);
 
-        page.clickSidebar('Flagged Activities');
-        activity = page.block('TA_PigGroup');
-        flagged = activity.$('[class^=activity-body]').getText();
+        if (!isMobile) {
+            page.clickSidebar('Flagged Activities');
+            activity = page.block('Share');
+            flagged = activity.$('[class^=activity-body]').getText();
 
-        expect(flag !== flagged, `flag(${flag}) !== flagged(${flagged})`).to.equal(true);
+            expect(flag !== flagged, `flag(${flag}) !== flagged(${flagged})`).to.equal(true);
+        }
     });
 
     it('Symptom trigger', () => {
@@ -188,17 +198,19 @@ describe('Farmfeed posts', () => {
     });
 
     it('Create post with media', () => {
-        const post = $('.post-content');
+        const post = isMobile ? $('[class^=ff-post-mobile]') : $('.post-content');
         const text = tdata.randComment;
         const files = [tdata.randVideo, tdata.randPhoto, tdata.randAudio];
 
-        page.open();
-        post.waitClick().$('textarea').waitSetValue(text);
-        page.clickOn(post.$('span*=Mention Someone'))
-            .setDropdown('TA', post)
-            .uploadMedia(files);
+        page.open()
+            .clickOn(isMobile ? '.write-message-block' : post)
+            .type(text, post.$('textarea'))
+            .clickOn(post)
+            .clickOn(post.$('span*=Mention a Farm'));
+        isMobile ? page.setPicker('TA', post) : page.setDropdown('TA', post);
+        page.uploadMedia(files);
 
-        $('.post-btn').waitForEnabled(90000);
+        post.$('.button=Post').waitForEnabled(90000);
         page.clickBtn('Post', post);
         activity = page.block();
 
@@ -217,12 +229,12 @@ describe('Farmfeed posts', () => {
         let rslt;
 
         activity = page.open().block('Diagnose');
-        page.clickOn(activity.$('span=Diagnose'));
+        page.clickOn(activity.$('.activity-action_*=Diagnose'));
 
         dBar.clear().setDiagnos(test.diseases[0], test.types[0], test.comments[0]).setAlert()
             .addRow().setDiagnos(test.diseases[1], test.types[1], test.comments[1])
             .addRow().setDiagnos(test.diseases[2], test.types[2], test.comments[2])
-            .clickSave();
+            .clickBtn(isMobile ? 'Continue' : 'Save Diagnoses');
 
         page.notification.waitForExist(5000, true);
         page.reload();        //page.clickOn($('.FarmFeedNewLabel.active')).pause(1000);
@@ -242,21 +254,32 @@ describe('Farmfeed posts', () => {
         activity = page.open().block('Share');
         const text = tdata.randComment;
         const body = activity.$('[class^=checkup-box]').getText();
+        let mentions;
 
-        page.clickOn(activity.$('span=Share'))
+        page.clickOn(activity.$('.activity-action_*=Share'))
             .clickOption('Share with another user');
-        page.modalWrapper.$('textarea').setValue(text);
-        page.setDropdown('Care', page.modalWrapper)
-            .setDropdown('User', page.modalWrapper);
 
-        const mentions = page.modalWrapper.$('[class^=activity-mentions]').getText();
-        page.clickOn($('.remove-icon'))
-            .setDropdown('Care', page.modalWrapper)
-            .clickBtn('Post', $('.modal-footer'))
-            .clickOn($('.FarmFeedNewLabel.active'))
-            .pause(1000);
+        if (isMobile) {
+            const post = $('.ShareActivityPortal');
+            page.setPicker('Care')
+                .setPicker('User')
+                .setPicker('Care')
+                .clickBtn('Next')
+                .type(text, post.$('textarea'));
+            mentions = post.$('[class^=activity-mentions]').getText();
+            page.clickBtn('Post', post);
+        } else {
+            page.type(text, page.modalWrapper.$('textarea'))
+                .setDropdown('Care', page.modalWrapper)
+                .setDropdown('User', page.modalWrapper);
 
-        activity = page.block();
+            mentions = page.modalWrapper.$('[class^=activity-mentions]').getText();
+            page.clickOn($('.remove-icon'))
+                .setDropdown('Care', page.modalWrapper)
+                .clickBtn('Post', $('.modal-footer'));
+        }
+
+        activity = page.clickOn($('.FarmFeedNewLabel.active')).pause(1000).block();
         page.clickOn(activity.$('span=View Full Event'));
 
         const sheader = activity.$$('[class^=activity-header]')[0].getText();
@@ -273,14 +296,14 @@ describe('Farmfeed posts', () => {
         const comment = '.comment__text span span';
 
         activity = page.open().block();
-        activity.$('div textarea').waitSetValue(text);
-        page.clickBtn('Post', activity);
+        page.type(text, activity.$('div textarea'))
+            .clickOn(isMobile ? '.post-button' : '.desktop-post-button', activity);
 
         expect(activity.$(comment).getText(), 'comment text').to.equal(text);
 
-        page.clickBtn('Edit', activity);
-        activity.$('div textarea').setValue('edited');
-        page.clickBtn('Save', activity);
+        page.clickBtn('Edit', activity)
+            .type('edited', activity.$('div textarea'))
+            .clickBtn('Save', activity);
 
         expect(activity.$(comment).getText(), 'edited comment text').to.equal(text + 'edited');
 

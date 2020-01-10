@@ -7,7 +7,7 @@ class DiagnosisBar extends ReportPage {
         this.row = '[class^="diagnosis-field"]';
     }
 
-    get addRowBtn() { return $('div[class^="add-diagnosis"]'); }
+    get addRowBtn() { return isMobile ? $('.add-disease') : $('[class^="add-diagnosis"]'); }
     get trashBtn() { return '.fa-trash-o'; }
     get closeBtn() { return $('.cancel-button'); }
     get cancelBtn() { return $('.button=Cancel'); }
@@ -44,7 +44,12 @@ class DiagnosisBar extends ReportPage {
     }
 
     setDiagnos(name, type, comment) {
-        this.setDropdown(name);
+        if(isMobile) {
+            this.setPicker(name)
+                .clickBtn('Next');
+        } else {
+            this.setDropdown(name);
+        }
         (type === undefined) || this.setType(type);
         (comment === undefined) || this.addNote();
         (comment === undefined) || this.setComment(comment);

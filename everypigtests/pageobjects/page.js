@@ -60,7 +60,9 @@ module.exports = class Page {
     }
 
     get inputFile() {
-        return isMobile ? $$('input[type="file"]')[1] : $$('input[type="file"]')[0];
+        const input = 'input[type=file]';
+        const idx = (isMobile && $$(input).length > 1) ? 1 : 0;
+        return $$(input)[idx];
     }
 
     clickCheckup() { return this.checkup.waitClick() && this.waitLoader(); }
@@ -208,7 +210,7 @@ module.exports = class Page {
         browser.refresh();
         return this.waitLoader();
     }
-    getClassName(str) { return '.' + $(str).getProperty('classList')[0]; }
+    getClassName(str) { return $(str).isExisting() ? '.' + $(str).getProperty('classList')[0] : str; }
     getString(selector, regex = /.+/u) { return (selector.getText().match(regex) || [])[0]; }
     getFloat(selector) { return (selector.getText().match(/(\d+.\d+)|(\d+)/u) || ['0'])[0]; }
     getNumber(selector) { return (selector.getText().match(/[0-9\-]+/u) || ['0'])[0]; }
@@ -223,6 +225,12 @@ module.exports = class Page {
         if (typeof selector === 'string') { selector = wrapper.$(selector); }
 
         return selector.waitClick() && this.waitLoader();
+    }
+
+    type(text, selector = 'textarea') {
+        if (typeof selector === 'string') { selector = $(selector); }
+        selector.waitSetValue(text);
+        return this;
     }
 
     /********************************* Tables *************************************/
@@ -247,11 +255,12 @@ module.exports = class Page {
 
     uploadMedia(files, wrapper = '#root') {
         files = [].concat(files).flatMap(el => path.resolve(browser.config.mediaPath, el));
-        const idx = isMobile ? '1' : '0';
-        browser.execute(`document.querySelectorAll('${wrapper} input[type=file]')[${idx}].style.display = 'block'`);
-        this.inputFile.waitForDisplayed();
+        const input = 'input[type=file]';
+        const idx = (isMobile && $$(input).length > 1) ? 1 : 0;
+        browser.execute(`document.querySelectorAll('${wrapper} ${input}')[${idx}].style.display = 'block'`);
+        $$(input)[idx].waitForDisplayed();
         try {
-            this.inputFile.setValue(files.join('\n'));
+            $$(input)[idx].setValue(files.join('\n'));
         } catch (err) {
             //console.error(err); //not throw, because of Safari issue
         } finally {
