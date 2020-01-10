@@ -40,6 +40,22 @@ describe('Farmfeed posts', () => {
         });
     });
 
+    it('Scroll events', () => {
+        page.open();
+        for(let i = 0; i < 10; i++) {
+            activities = $$(page.row + ' [class^=activity-actions-bar]');
+
+            expect(activities.length, `number of events`).to.equal((i+1)*12);
+
+            activities.slice(-1)[0].scrollIntoView();
+            page.waitLoader();
+
+            activities = $$(page.row + ' [class^=activity-actions-bar]' );
+
+            expect(activities.length, `after scroll: number  of events`).to.equal((i+2)*12);
+        }
+    });
+
     it('Min/max event', () => {
         activity = page.open().block();
         const before = activity.getCSSProperty('height').parsed.value;
@@ -386,8 +402,7 @@ describe('Farmfeed Checkup data', () => {
         const section = '.section-collapse_*=';
         let wrap;
 
-        page.clickFarmfeed();
-        activity = page.block();
+        activity = page.clickFarmfeed().block();
 
         expect(activity.$('strong*=TA_PigGroup').getText(), 'group').to.equal(dcPage.group);
 
@@ -443,10 +458,11 @@ describe('Farmfeed Checkup data', () => {
 
     it('Reported data (Barn Sheets)', () => {
         const sheetsPage = require('../pageobjects/barnsheets.page');
-        activity = page.block();
+        activity = page.open().block();
 
         page.clickDots(activity).clickOption('View Barn Sheet')
             .clickCell('', 0, 1);
+        isMobile && page.clickBtn('View Checkup');
 
         rslt = sheetsPage.moveInfo;
 
@@ -502,20 +518,8 @@ describe('Farmfeed Filters', () => {
         } while (!$('.ReachEndPlaceholder').isDisplayed());
     };
 
-    it('Scroll events', () => {
-        page.open();
-        for(let i = 0; i < 10; i++) {
-            activities = $$(page.row + ' [class^=activity-actions-bar]');
-
-            expect(activities.length, `number of events`).to.equal((i+1)*12);
-
-            activities.slice(-1)[0].scrollIntoView();
-            page.waitLoader();
-
-            activities = $$(page.row + ' [class^=activity-actions-bar]' );
-
-            expect(activities.length, `after scroll: number  of events`).to.equal((i+2)*12);
-        }
+    before(function () {
+        isMobile && this.skip();
     });
 
     it('Search events', () => {
