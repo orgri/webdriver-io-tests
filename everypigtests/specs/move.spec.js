@@ -54,7 +54,7 @@ describe('Moves page, navigation', () => {
     }
 });
 
-describe('Moves page, input)', () => {
+describe('Moves page, input', () => {
 
     beforeEach(function () {
         this.currentTest.title === 'Choose group'

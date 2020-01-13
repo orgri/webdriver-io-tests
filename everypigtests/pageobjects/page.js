@@ -100,6 +100,11 @@ module.exports = class Page {
         return this.topbar.$('a*=' + item).waitClick() && this.waitLoader();
     }
 
+    clickMobileMenu(item) {
+        const wrap = this.getClassName('[class^=section-row_]');
+        return $(wrap + '=' + item).waitClick() && this.waitLoader();
+    }
+
     clickToModal(str) { return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
     closeModal() { return this.modalWrapper.$('.close-button').waitClick() && this.waitLoader(); }
 
@@ -279,8 +284,8 @@ module.exports = class Page {
     }
 
     clickDots(wrapper = this.root) {
-        return wrapper.$(this.dots).waitClick()
-            && this.waitLoader();
+        if (typeof wrapper === 'string') { wrapper = $(wrapper); }
+        return wrapper.$(this.dots).waitClick() && this.waitLoader();
     }
 
     tableItemsWith(str) {
@@ -302,7 +307,7 @@ module.exports = class Page {
     clickCell(str, column, row) { return this.cell(str, column, row).waitClick() && this.waitLoader(); }
 
     clickMenuCell(str, row) {
-        let col = this.tableColumns.length - 1;
+        const col = isMobile ? 0 : this.tableColumns.length - 1;
         return this.clickDots(this.cell(str, col, row));
     }
 

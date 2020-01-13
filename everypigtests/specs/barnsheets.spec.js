@@ -102,9 +102,14 @@ describe('Barnsheets Navigation', () => {
 });
 
 describe('Barnsheets Tabs and Sorting', () => {
+    beforeEach(function () {
+        //because Sorting functionality is not available in mobile view
+        isMobile && this.currentTest.title.includes('Sort') && this.skip();
+    });
 
     it('Open', () => {
-        sheetsPage.clickSidebar('Barn Sheets');
+        isMobile ? sheetsPage.clickDots('.main-footer').clickMobileMenu('Barn Sheets')
+            : sheetsPage.clickSidebar('Barn Sheets');
 
         expect(browser.getUrl(), 'barnsheet url').to.match(/(\/barnsheets\/groups)$/);
     });
@@ -203,7 +208,9 @@ These fuctionality must be checked by Unit tests.
     });
 
     it('Groups tab', () => {
-        sheetsPage.clickSidebar('Barn Sheets').clickSubTab('Groups');
+        isMobile ? sheetsPage.clickDots('.main-footer').clickMobileMenu('Barn Sheets')
+            : sheetsPage.clickSidebar('Barn Sheets');
+        sheetsPage.clickSubTab('Groups');
 
         expect(sheetsPage.tableColumns, 'tableColumns number').to.have.lengthOf(12);
     });
@@ -391,13 +398,16 @@ describe('Download', () => {
             .getAttribute('href').match(/[0-9]+/u)[0],
             file = 'daily-checkup-' + href + '.csv';
 
-        sheetsPage.clickMenuCell('', 1).clickOption('Download Data')
-            .checkFileExists(file, 30000);
+        isMobile ? sheetsPage.clickOn('.fa-download-btn')
+            : sheetsPage.clickMenuCell('/').clickOption('Download Data');
+        sheetsPage.checkFileExists(file, 30000);
     });
 
     it('Barn Sheet Data', () => {
         const file = 'barnsheets-' + groupName + '.csv';
-        sheetsPage.clickTopTab('TA_Farm_').clickMenuCell(groupName)
+        isMobile ? sheetsPage.clickOn('.group-farm-info a')
+            : sheetsPage.clickTopTab('TA_Farm_');
+        sheetsPage.clickMenuCell(groupName)
             .clickOption('Download Barn Sheet')
             .checkFileExists(file, 30000);
     });
@@ -552,6 +562,11 @@ describe('Edit few checkups', () => {
         nOfDeaths[i] = (+el.deaths.chronic[0]) + (+el.deaths.acute[0]) + (+el.deaths.euthanas[0]);
         diffInv[i] = tdata.calcDiffMoves(el) - nOfDeaths[i];
         inventory[i] = diffInv.reduce((accum, currVal) => accum + currVal, 0);
+    });
+
+    before(function () {
+        //some functionality is not available in mobile view and tests almost duplicate previous, so they are skipped
+        isMobile && this.skip();
     });
 
     it('Choose random group', () => {

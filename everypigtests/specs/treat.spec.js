@@ -55,7 +55,7 @@ describe('Treats page, navigation', () => {
     }
 });
 
-describe('Treats page, input)', () => {
+describe('Treats page, input', () => {
     beforeEach(function () {
         this.currentTest.title === 'Choose group'
             || checkupPage.openCurrent().chooseSection(2, 'Treats');
