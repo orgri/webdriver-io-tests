@@ -9,6 +9,11 @@ describe('Manage entities', () => {
     const company = 'Company_created_by_TA_' + id;
     const user = 'User_' + id;
 
+    before(function () {
+        //skip this tests because there are no Admin and Groups option in mobile view
+        isMobile && this.skip();
+    });
+
     it('Create group', () => {
         page.clickSidebar('Groups')
             .clickBtn('Create Group')
