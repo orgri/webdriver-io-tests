@@ -8,13 +8,8 @@ class ShipmentPage extends ReportPage {
         this.labelWrapper = '.label-wrapper';
     }
 
-    get mClose() {
-        return $('a[class^=back-link] .fa.fa-times');
-    }
-
-    get mWrapper() {
-        return $('.CreateShipmentMobileWizard');
-    }
+    get closeBtn() { return isMobile ? 'a[class^=back-link] .fa.fa-times' : '.close-center-box'; }
+    get mobileWrapper() { return $('.CreateShipmentMobileWizard'); }
 
     setHeads(number) {
         return this.input(0, 'Head').waitSetValue(number) && this;
@@ -29,7 +24,7 @@ class ShipmentPage extends ReportPage {
     }
 
     clickEdit() {
-        return $('.link=Edit').waitClick() && this;
+        return this.clickOn('.link=Edit');
     }
 
     setCondition(condition) {
@@ -59,7 +54,6 @@ class ShipmentPage extends ReportPage {
         }
         return this;
     }
-
 }
 
 module.exports = new ShipmentPage();

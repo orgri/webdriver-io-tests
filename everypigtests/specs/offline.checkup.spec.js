@@ -189,7 +189,7 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Main comment', () => {
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test.comment);
     });
 
     it('Media report', () => {
@@ -253,7 +253,7 @@ describe('Create full checkup (offline)', () => {
     });
 
     it('Main comment report after sync', () => {
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test.comment);
     });
 
     it('Media report after sync', () => {
@@ -277,7 +277,7 @@ describe('Create 3 checkups (offline)', () => {
         dcPage.open().netOff();
     });
 
-    for(let i = 0; i < 3; i++) {
+    test.forEach((el, i) => {
         it('Choose random group', () => {
             dcPage.randCheckup();
             farm.push(dcPage.farm);
@@ -343,7 +343,7 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Main comment-' + i, () => {
-            expect($(dcPage.comment).getText(), 'main comment').to.equal(test[i].comment);
+            expect(dcPage.noteInfo, 'main comment').to.equal(test[i].comment);
         });
 
         it('Media report-' + i, () => {
@@ -352,13 +352,13 @@ describe('Create 3 checkups (offline)', () => {
 
             expect(rslt.amount, 'nOfMedia').to.equal('3');
         });
-    }
+    });
 
     it('Net on(sync)', () => {
         dcPage.netOn();
     });
 
-    for(let i = 0; i < 3; i++) {
+    test.forEach((el, i) => {
         it('Moves report (after sync)-' + i, () => {
             dcPage.currentDC(farm[i], group[i]);//.waitForSync();
             rslt = dcPage.moveInfo;
@@ -409,7 +409,7 @@ describe('Create 3 checkups (offline)', () => {
         });
 
         it('Main comment (after sync)-' + i, () => {
-            expect($(dcPage.comment).getText(), 'main comment').to.equal(test[i].comment);
+            expect(dcPage.noteInfo, 'main comment').to.equal(test[i].comment);
         });
 
         it('Media report (after sync)-' + i, () => {
@@ -418,7 +418,7 @@ describe('Create 3 checkups (offline)', () => {
 
             expect(rslt.amount, 'nOfMedia').to.equal('3');
         });
-    }
+    });
 });
 
 describe('Update checkup (offline)', () => {
@@ -438,11 +438,7 @@ describe('Update checkup (offline)', () => {
     });
 
     it('Create empty checkup', () => {
-        const length = $$(dcPage.sectionWrapper).length;
-        for (let i = 0; i < length; i++) {
-            dcPage.clickNoToReport(i);
-        }
-        dcPage.submitDC().clickToModal('Got it');
+        dcPage.noToAllReports().submitDC().clickToModal('Got it');
 
         expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
@@ -453,13 +449,13 @@ describe('Update checkup (offline)', () => {
         expect(dcPage.isAllEmpty(), 'isAllEmpty').to.equal(true);
     });
 
-    for (let i = 0; i < 2; i++) {
+    test.forEach((data, i) => {
         it('Make changes ' + i, () => {
-            dcPage.currentDC().createCheckup(test[i]).submitDC().clickToModal('OK');
+            dcPage.currentDC().createCheckup(data).submitDC().clickToModal('OK');
 
             expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
         });
-    }
+    });
 
     it('Moves report', () => {
         dcPage.currentDC();
@@ -511,7 +507,7 @@ describe('Update checkup (offline)', () => {
     });
 
     it('Main comment', () => {
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test[1].comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test[1].comment);
     });
 
     it('Media report', () => {
@@ -575,7 +571,7 @@ describe('Update checkup (offline)', () => {
     });
 
     it('Main comment report after sync', () => {
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test[1].comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test[1].comment);
     });
 
     it('Media report after sync', () => {
@@ -678,7 +674,7 @@ describe('Deaths and Treats conflict (offline)', () => {
     it('Choose group', () => {
         dcPage.netOn(false).open().netOff().randCheckup();
 
-        expect(dcPage.isDCSectionExist, 'checkup section').to.equal(true);
+        expect(dcPage.isCheckup, 'checkup section').to.equal(true);
     });
 
     it('Create conflict', () => {
@@ -689,7 +685,7 @@ describe('Deaths and Treats conflict (offline)', () => {
         dcPage.chooseSection(1);
         deathPage.setMortalities('1').submit();
 
-        expect(dcPage.isDCSectionExist, 'checkup section').to.equal(true);
+        expect(dcPage.isCheckup, 'checkup section').to.equal(true);
     });
 
     it('Net on(sync)', () => {

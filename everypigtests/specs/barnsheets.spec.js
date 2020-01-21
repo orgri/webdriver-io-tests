@@ -60,7 +60,7 @@ describe('Barnsheets Navigation', () => {
     });
 
     it('Choose group', () => {
-        sheetsPage.choose(groupName);
+        sheetsPage.clickOn('*=' + groupName);
         groupUrl = browser.getUrl();
 
         expect(sheetsPage.groupName.getText(), 'groupName').to.equal(groupName);
@@ -459,14 +459,14 @@ describe('Edit full checkup', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).createCheckup(test);
+        sheetsPage.clickOn('*=' + date[1]).createCheckup(test);
 
         expect(browser.getUrl(), 'barnsheet url')
             .to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
     });
 
     it('Moves changes', () => {
-        sheetsPage.closeBtn.isExisting() && sheetsPage.close();
+        !sheetsPage.isCheckup && sheetsPage.hasClose && sheetsPage.close();
         rslt = sheetsPage.moveInfo;
         const heads = [].concat(rslt.added, rslt.removed);
 
@@ -512,7 +512,7 @@ describe('Edit full checkup', () => {
     });
 
     it('Main comment changes', () => {
-        expect(sheetsPage.mainComment, 'main comment').to.equal(test.comment);
+        expect(sheetsPage.noteInfo, 'main comment').to.equal(test.comment);
     });
 
     it('Media changes', () => {
@@ -579,28 +579,28 @@ describe('Edit few checkups', () => {
     });
 
     it('Choose checkup', () => {
-        sheetsPage.choose(date[1]);
+        sheetsPage.clickOn('*=' + date[1]);
 
         expect(sheetsPage.section('Move').isExisting(), 'isSection(Move)').to.equal(true);
     });
 
-    for (let i = 0, length = test.length - 1; i <= length; i++) {
+    test.forEach((el, i) => {
         it((i + 1) + '-checkup', () => {
-            sheetsPage.closeBtn.isExisting() && sheetsPage.close();
+            !sheetsPage.isCheckup && sheetsPage.hasClose && sheetsPage.close(); //if fail in some report
             (i === 0) || sheetsPage.rightButton.isExisting() && sheetsPage.clickRight();
             sheetsPage.createCheckup(test[i]);
 
             expect(browser.getUrl(), 'barnsheet url')
                 .to.match(/(\/barnsheets\/daily-checkup\/)([\d]+)/);
         });
-    }
+    });
 
     it('Save edits', () => {
-        sheetsPage.closeBtn.isExisting() && sheetsPage.close();
+        !sheetsPage.isCheckup && sheetsPage.hasClose && sheetsPage.close();
         sheetsPage.clickSave();
     });
 
-    for (let i = 0, length = test.length - 1; i <= length; i++) {
+    test.forEach((el, i) => {
         it('Table changes(deaths), ' + (i + 1) + '-checkup', () => {
             expect(sheetsPage.deathsCell(date[i + 1]), 'deathsCell (after save)').to.equal(nOfDeaths[i] + '');
         });
@@ -620,11 +620,11 @@ describe('Edit few checkups', () => {
 
             expect(sheetsPage.inventoryCell(date[i + 1]), 'invCell (after save)').to.equal(inv);
         });
-    }
+    });
 
-    for (let i = 0, length = test.length - 1; i <= length; i++) {
+    test.forEach((el, i) => {
         it('Display changes ' + (i + 1) + '-checkup', () => {
-            sheetsPage.choose(date[i + 1]);
+            sheetsPage.clickOn('*=' + date[i + 1]);
 
             expect(sheetsPage.moveInfo.amount, 'amount of moves').to.equal(test[i].moves.amount);
         });
@@ -679,7 +679,7 @@ describe('Edit few checkups', () => {
         });
 
         it('Main comment changes, ' + (i + 1) + '-checkup', () => {
-            expect(sheetsPage.mainComment, 'main comment').to.equal(test[i].comment);
+            expect(sheetsPage.noteInfo, 'main comment').to.equal(test[i].comment);
         });
 
         it('Media changes, ' + (i + 1) + '-checkup', () => {
@@ -699,5 +699,5 @@ describe('Edit few checkups', () => {
         it('Close, ' + (i + 1) + '-checkup', () => {
             sheetsPage.clickCloseDC();
         });
-    }
+    });
 });

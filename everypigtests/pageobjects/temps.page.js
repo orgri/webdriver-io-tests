@@ -8,9 +8,17 @@ class TempsPage extends ReportPage {
         this.inputWrapper = '.step-buttons';
     }
 
-    setHigh(number) { return this.input('High').waitSetValue(number) && this; }
-    setLow(number) { return this.input('Low').waitSetValue(number) && this; }
-    setTemps(highValue = '0', lowValue = '0') { return this.setHigh(highValue).setLow(lowValue) && this; }
+    setHigh(number) {
+        return this.input('High').waitSetValue(number) && this;
+    }
+
+    setLow(number) {
+        return this.input('Low').waitSetValue(number) && this;
+    }
+
+    setTemps(highValue = '0', lowValue = '0') {
+        return this.setHigh(highValue).setLow(lowValue) && this;
+    }
 }
 
 module.exports = new TempsPage();

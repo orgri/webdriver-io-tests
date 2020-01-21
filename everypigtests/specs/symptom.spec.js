@@ -40,8 +40,8 @@ describe('Symptoms page, navigation', () => {
             symptomPage.setSearch(sympt);
 
             expect(symptomPage.mobileRow(sympt).isExisting()).to.equal(true) &&
-            expect(symptomPage.mRows).to.have.lengthOf(1) &&
-            expect(symptomPage.mRows[0].getText()).to.have.string(sympt);
+            expect(symptomPage.pickerRows, 'pickerRows').to.have.lengthOf(1) &&
+            expect(symptomPage.pickerRows[0].getText()).to.have.string(sympt);
         });
 
         it('Not able to tap Next without choosed symptom', () => {
@@ -49,13 +49,13 @@ describe('Symptoms page, navigation', () => {
         });
 
         it('Back to checkup', () => {
-            symptomPage.mBack();
+            symptomPage.back();
 
             expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
     } else {
         it('Cancel report', function () {
-            symptomPage.setSymptom(tdata.randSymptom).cancel();
+            symptomPage.setSymptom(tdata.randSymptom).clickBtn('Cancel');
             checkupPage.section(3).scrollIntoView({ block: "center" });
 
             expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);
@@ -84,7 +84,7 @@ describe('Report single symptom', () => {
 
     it('Not able to report without set %', () => {
         if (isMobile) {
-            symptomPage.setPicker(tdata.randSymptom).mClickNext();
+            symptomPage.setPicker(tdata.randSymptom).clickNext();
         } else {
             symptomPage.setDropdown(tdata.randSymptom);
         }
@@ -99,7 +99,7 @@ describe('Report single symptom', () => {
             symptomPage.setPicker(sympt[0])
                 .setPicker(sympt[1])
                 .setPicker(sympt[2])
-                .mClickNext().setPercent().setPercent(2);    
+                .clickNext().setPercent().setPercent(2);
         } else {
             symptomPage.setSymptom(sympt[0])
                 .addRow().addRow()
@@ -167,8 +167,8 @@ describe('Report symptoms', () => {
             symptomPage.setSearch(sympt);
 
             expect(symptomPage.mobileRow(sympt).isExisting()).to.equal(true) &&
-            expect(symptomPage.mRows).to.have.lengthOf(1) &&
-            expect(symptomPage.mRows[0].getText()).to.have.string(sympt);
+            expect(symptomPage.pickerRows, 'pickerRows').to.have.lengthOf(1) &&
+            expect(symptomPage.pickerRows[0].getText()).to.have.string(sympt);
         });
 
         it('Not able to tap Next without choosed symptom', () => {
@@ -176,7 +176,7 @@ describe('Report symptoms', () => {
         });
 
         it('Back to checkup', () => {
-            symptomPage.mBack();
+            symptomPage.back();
 
             expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
@@ -186,7 +186,7 @@ describe('Report symptoms', () => {
         if (isMobile) {
             this.skip();
         } else {
-            symptomPage.setSymptom(tdata.randSymptom).cancel();
+            symptomPage.setSymptom(tdata.randSymptom).clickBtn('Cancel');
             checkupPage.section(3).scrollIntoView({block: "center"});
 
             expect(checkupPage.isEmpty(3), 'isEmpty').to.equal(true);

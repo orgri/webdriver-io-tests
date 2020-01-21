@@ -24,7 +24,7 @@ describe('Edit Moves', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).chooseSection('Move');
+        sheetsPage.clickOn('*=' + date[1]).chooseSection('Move');
         movePage.setShipment(test.heads[0], test.weight, test.condition)
             .addRow().clickSelect().setTransfer(test.heads[1])
             .addRow().clickSelect().setFixAdding(test.heads[2])
@@ -157,7 +157,7 @@ describe('Edit Deaths', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).chooseSection('Dead');
+        sheetsPage.clickOn('*=' + date[1]).chooseSection('Dead');
         deathPage.setMortWithReason(test.reasons[0], test.chronic[0], '0', '0')
             .addRow().setMortWithReason(test.reasons[1], '0', test.acute[1], '0')
             .addRow().setMortWithReason(test.reasons[2], '0', '0', test.euthanas[2])
@@ -245,7 +245,7 @@ describe('Edit Treats', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).chooseSection('Medication');
+        sheetsPage.clickOn('*=' + date[1]).chooseSection('Medication');
         treatPage.setWithCcsDosage(test.treats[0], test.heads[0], test.dosage[0])
             .addRow().setWithGalsDosage(test.treats[1], test.heads[1], test.dosage[1], test.gals)
             .addRow().setWithMlsDosage(test.treats[2], test.heads[2], test.dosage[2])
@@ -342,7 +342,7 @@ describe('Edit Symptoms', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).chooseSection('Symptom');
+        sheetsPage.clickOn('*=' + date[1]).chooseSection('Symptom');
         symptomPage.setSymptom(test.sympt[0])
             .addRow().setSymptom(test.sympt[1])
             .addRow().setSymptom(test.sympt[2])
@@ -395,7 +395,7 @@ describe('Edit Temps', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).chooseSection('Temps');
+        sheetsPage.clickOn('*=' + date[1]).chooseSection('Temps');
         tempsPage.setTemps(high + '', low + '').setComment(comment).submit();
         sheetsPage.section('Temps').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.tempsInfo;
@@ -437,7 +437,7 @@ describe('Edit Water usage', () => {
     });
 
     it('Make changes to checkup', () => {
-        sheetsPage.choose(date[1]).waitLoader().chooseSection('Water Usage');
+        sheetsPage.clickOn('*=' + date[1]).waitLoader().chooseSection('Water Usage');
         waterPage.setGals(consumed + '').setComment(comment).submit();
         sheetsPage.section('Water Usage').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.waterInfo;
@@ -474,7 +474,7 @@ describe('Edit Media', () => {
     });
 
     it('Choose media', () => {
-        sheetsPage.choose(date[1]).chooseSection('Media');
+        sheetsPage.clickOn('*=' + date[1]).chooseSection('Media');
 
         expect(sheetsPage.mediaUploader.isExisting(), 'media uploader').to.equal(true);
     });
@@ -611,7 +611,8 @@ describe('Edit Diagnosis', () => {
         .to.match(/(\/barnsheets\/groups\/)([0-9]+)(\/diagnoses)$/);
     });
 
-    for (let i = 0, length = test.diseases.length - 1; i <= length; i++) {
+    test.diseases.forEach((el, i) => {
+        const length = test.diseases.length - 1;
         it('diseases ' + i, () => {
             expect(rslt.name[length - i], 'name').to.equal(test.diseases[i]);
         });
@@ -623,7 +624,7 @@ describe('Edit Diagnosis', () => {
         it('comment ' + i, () => {
             expect(rslt.comment[length - i], 'comment').to.equal(test.comments[i]);
         });
-    }
+    });
 
     it('Open Diagnosis edit', () => {
         sheetsPage.clickDiagnosMenu().clickOption('Edit Diagnosis');
@@ -638,7 +639,7 @@ describe('Edit Diagnosis', () => {
         expect(rslt.amount, 'amount').to.equal(test.amount + '');
     });
 
-    for (let i = 0, length = test.diseases.length; i < length; i++) {
+    test.diseases.forEach((el, i) => {
         it('Changes (diseases ' + i + ')', () => {
             expect(rslt.name[i], 'name').to.equal(test.diseases[i]);
         });
@@ -650,7 +651,7 @@ describe('Edit Diagnosis', () => {
         it('Changes (comment ' + i + ')', () => {
             expect(rslt.comment[i], 'comment').to.equal(test.comments[i]);
         });
-    }
+    });
 
     it('Close Diagnosis Bar', () => {
         dBar.close();
@@ -686,5 +687,4 @@ describe('Edit Diagnosis', () => {
     it('View (comment 0)', () => {
         expect(rslt.comment[0], 'comment').to.equal(test.comments[0]);
     });
-
 });

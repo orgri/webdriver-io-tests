@@ -390,7 +390,7 @@ describe('Farmfeed Checkup data', () => {
         expect(rslt.consumed, 'water consumed').to.equal(test.water.consumed);
         expect(rslt.comment, 'comment').to.equal(test.water.comment);
 
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test.comment);
 
         dcPage.mediaUploader.scrollIntoView({block: 'center'});
         rslt = dcPage.mediaInfo;
@@ -696,7 +696,7 @@ describe('Farmfeed Filters', () => {
             .clickBtn('Delete Filter')
             .clickBtn('Yes, Delete Filter');
 
-        expect(page.sidebar.$('span=First filter').isExisting(), 'no First filter in left sidebar').to.equal(false);
-        expect(page.sidebar.$('span=Second filter').isExisting(), 'no Second filter in left sidebar').to.equal(false);
+        expect(page.sideBar.$('span=First filter').isExisting(), 'no First filter in left sidebar').to.equal(false);
+        expect(page.sideBar.$('span=Second filter').isExisting(), 'no Second filter in left sidebar').to.equal(false);
     });
 });

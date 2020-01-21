@@ -7,55 +7,44 @@ class DiagnosisBar extends ReportPage {
         this.row = '[class^="diagnosis-field"]';
     }
 
+    get box() { return $('.DiagnosisSidebar'); }
     get addRowBtn() { return isMobile ? $('.add-disease') : $('[class^="add-diagnosis"]'); }
     get trashBtn() { return '.fa-trash-o'; }
-    get closeBtn() { return $('.cancel-button'); }
-    get cancelBtn() { return $('.button=Cancel'); }
-    get saveBtn() { return $('button*=Save'); }
-    get box() { return $('.DiagnosisSidebar'); }
+    get closeBtn() { return isMobile ? 'i.back-link' : '.cancel-button'; }
     get diagnosTab() { return this.box.$('.item=Diagnose'); }
     get groupInfoTab() { return this.box.$('.item=Group Info'); }
     get groupInfoColl() { return $('.group-info-collapse'); }
     get diagnosCollapse() { return $('.diagnose-collapse'); }
     get diagnosWrapper() { return '[class^=diagnosis-info-row]'; }
-
-    clickSave() { return this.saveBtn.waitClick() && this.waitLoader(); }
-    clickGroupInfoTab() { return this.groupInfoTab.waitClick() && this.waitLoader(); }
-    clickDiagnosInfoCol() { return this.diagnosCollapse.waitClick() && this.waitLoader(); }
-
     get info() { return super.diagnosInfo(this.diagnosCollapse, this.diagnosWrapper); }
 
-    setType(type, index) {
-        return this.block(index).$('span*=' + type).waitClick() && this;
+    clickGroupInfoTab() {
+        return this.clickOn(this.groupInfoTab);
     }
 
-    setAlert(index) {
-        return this.block(index).$('.unchecked').waitClick() && this;
+    clickDiagnosInfoCol() {
+        return this.clickOn(this.diagnosCollapse);
     }
 
-    addNote(index) {
-        return this.block(index).$(this.addNoteBtn).waitClick() && this;
+    setType(type, id) {
+        return this.clickOn(this.block(id).$(`span*=${type}`));
     }
 
-    setComment(text, index) {
-        this.block(index).$(this.commentClosed).isExisting() && this.addNote(index);
-        this.block(index).$(this.comment).waitSetValue(text);
-        return this;
+    setAlert(id) {
+        return this.clickOn(this.block(id).$('.unchecked'));
     }
 
     setDiagnos(name, type, comment) {
-        if(isMobile) {
-            this.setPicker(name)
-                .clickBtn('Next');
+        if (isMobile) {
+            this.setPicker(name).clickBtn('Next');
         } else {
             this.setDropdown(name);
         }
-        (type === undefined) || this.setType(type);
-        (comment === undefined) || this.addNote();
-        (comment === undefined) || this.setComment(comment);
+        (type === undefined) || this.setType(type, this.index);
+        (comment === undefined) || this.addNote(this.index);
+        (comment === undefined) || this.setComment(comment, this.index);
         return this;
     }
-
 }
 
 module.exports = new DiagnosisBar();

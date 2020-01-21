@@ -39,8 +39,8 @@ describe('Treats page, navigation', () => {
             treatPage.setSearch(treat);
 
             expect(treatPage.mobileRow(treat).isExisting(), 'mobileRow(treat).isExisting').to.equal(true) &&
-            expect(treatPage.mRows, 'mRows').to.have.lengthOf(1) &&
-            expect(treatPage.mRows[0].getText(), 'mRows[0]').to.have.string(treat);
+            expect(treatPage.pickerRows, 'pickerRows').to.have.lengthOf(1) &&
+            expect(treatPage.pickerRows[0].getText(), 'pickerRows[0]').to.have.string(treat);
         });
 
         it('Not able to tap Next without choosed treat', () => {
@@ -48,7 +48,7 @@ describe('Treats page, navigation', () => {
         });
 
         it('Back to checkup', () => {
-            treatPage.mBack();
+            treatPage.back();
 
             expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
@@ -271,7 +271,7 @@ describe('Report single treat', () => {
         } else {
             treatPage.setWithGalsDosage(tdata.randUnits, tdata.randHeads, 
                 tdata.randDosage, tdata.randGals)
-                .cancel();
+                .clickBtn('Cancel');
             checkupPage.section(2).scrollIntoView({block: "center"});
 
             expect(checkupPage.isEmpty(2), 'isEmpty(2)').to.equal(true);

@@ -194,7 +194,7 @@ describe('Create full checkup', () => {
     });
 
     it('Main comment report', () => {
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test.comment);
     });
 
     it('Media report', () => {
@@ -223,11 +223,7 @@ describe('Update checkup', () => {
     });
 
     it('Create empty checkup', () => {
-        const length = $$(dcPage.sectionWrapper).length;
-        for (let i = 0; i < length; i++) {
-            dcPage.clickNoToReport(i);
-        }
-        dcPage.submitDC().clickToModal('OK');
+        dcPage.noToAllReports().submitDC().clickToModal('OK');
 
         expect($(dcPage.groupRow).isExisting(), 'groups existing').to.equal(true);
     });
@@ -294,7 +290,7 @@ describe('Update checkup', () => {
     });
 
     it('Main comment report', () => {
-        expect($(dcPage.comment).getText(), 'main comment').to.equal(test.comment);
+        expect(dcPage.noteInfo, 'main comment').to.equal(test.comment);
     });
 
     it('Media report', () => {
@@ -368,7 +364,7 @@ describe('Head Treated conflict', () => {
     it('Choose group', () => {
         dcPage.randCheckup();
 
-        expect(dcPage.isDCSectionExist, 'checkup section').to.equal(true);
+        expect(dcPage.isCheckup, 'checkup section').to.equal(true);
     });
 
     it('Create conflict', () => {

@@ -5,71 +5,40 @@ module.exports = class Page {
         this.baseUrl = browser.config.baseUrl;
     }
 
+    get netBox() { return '.NetworkNotificationBox'; }
     get myUrl() { return browser.getUrl(); }
-
-    get root() {
-        return $('#root');
-    }
-
-    get header() {
-        return $('.main-header');
-    }
-    get onNet() { return $('.NetworkNotificationBox*=Back Online'); }
-    get offNet() { return $('.NetworkNotificationBox*=No Internet Connection'); }
-    get synced() { return $('.NetworkNotificationBox*=Syncing data'); }
-    get invis() { return $('.NetworkNotificationBox.visible'); }
+    get root() { return $('#root'); }
+    get header() { return $('.main-header'); }
+    get onNet() { return $(this.netBox + '*=Back Online'); }
+    get offNet() { return $(this.netBox + '*=No Internet Connection'); }
+    get synced() { return $(this.netBox + '*=Syncing data'); }
+    get invis() { return $(this.netBox + '.visible'); }
     get isMobile() { return $('.AppContainer.isMobile').isExisting(); }
     get isOffNet() { return this.offNet.isExisting(); }
     get notification() { return $('.rrt-text'); }
+    get notifCloseBtn() { return $('.close-toastr'); }
     get nothingBox() { return $('.nothing-box'); }
-    get mediaUploader() { return $('.MediaUploader'); }
-    get uploadProgress() { return $('[class^=upload-progress]'); }
-    get removeMediaButton() { return this.mediaUploader.$('.asset-wrapper').$('.fa.fa-trash-o'); }
-    get image() { return this.mediaUploader.$('.asset-wrapper').$('.image'); }
-    get audio() { return this.mediaUploader.$('.asset-wrapper').$('.soundwave'); }
     get pagination() { return $('.CustomSelect  '); }
     get nextPageBtn() { return $('.paginate_button.next'); }
     get prevPageBtn() { return $('.paginate_button.previous'); }
-
-    get sidebar() {
-        return $('.sidebar');
-    }
-
-    get headerbar() {
-        return $('.header-navigation');
-    }
-
-    get topbar() {
-        return $('.Breadcrumbs');
-    }
-
-    get subbar() {
-        return $('.Subnavigation');
-    }
+    get sideBar() { return $('.sidebar'); }
+    get headerBar() { return $('.header-navigation'); }
+    get topBar() { return $('.Breadcrumbs'); }
+    get subBar() { return $('.Subnavigation'); }
     get modalWrapper() { return $('.ModalsContainer.isOpen'); }
+    get arrow() { return '.fa.fa-angle-down'; }
+    get dots() { return '.fa.fa-dots-three-horizontal'; }
 
     get checkup() {
         return isMobile
             ? $('.main-footer a[href="/daily-checkup"]')
-            : $('.sidebar').$('.item-name*=Checkup');
+            : this.sideBar.$('.item-name*=Checkup');
     }
+
     get farmfeed() {
         return isMobile
             ? $('.main-footer a[href="/farmfeed"]')
-            : $('.sidebar').$('.item-name*=Farmfeed');
-    }
-
-    get inputFile() {
-        const input = 'input[type=file]';
-        const idx = (isMobile && $$(input).length > 1) ? 1 : 0;
-        return $$(input)[idx];
-    }
-
-    clickCheckup() { return this.checkup.waitClick() && this.waitLoader(); }
-    clickFarmfeed() { return this.farmfeed.waitClick() && this.waitLoader(); }
-
-    get arrow() {
-        return '.fa.fa-angle-down';
+            : this.sideBar.$('.item-name*=Farmfeed');
     }
 
     get dropdownMenu() {
@@ -77,69 +46,30 @@ module.exports = class Page {
         return selector.isExisting() ? selector : $('.dropdown.active');
     }
 
-    /********************************* Input *************************************/
-
-    get collapseWrapper() { return '[class^="collapse_"]'; }
-
-    clickSidebar(item) {
-        return this.sidebar.$('span=' + item).waitClick() && this.waitLoader();
-    }
-
-    clickNextPage() { return this.nextPageBtn.waitClick() && this.waitLoader(); }
-    clickPrevPage() { return this.prevPageBtn.waitClick() && this.waitLoader(); }
-
-    clickHeaderTab(item) {
-        return this.headerbar.$('span=' + item).waitClick() && this.waitLoader();
-    }
-
-    clickSubTab(item) {
-        return this.subbar.$('span*=' + item).waitClick() && this.waitLoader();
-    }
-
-    clickTopTab(item) {
-        return this.topbar.$('a*=' + item).waitClick() && this.waitLoader();
-    }
-
-    clickMobileMenu(item) {
-        const wrap = this.getClassName('[class^=section-row_]');
-        return $(wrap + '=' + item).waitClick() && this.waitLoader();
-    }
-
-    clickToModal(str) { return this.modalWrapper.$('.button=' + str).waitClick() && this.waitLoader(); }
-    closeModal() { return this.modalWrapper.$('.close-button').waitClick() && this.waitLoader(); }
-
-    setSearch(str, wrap = this.root) {
-        if (typeof wrap === 'string') { wrap = $(wrap); }
-        const selector = wrap.$('input[placeholder^="Search..."]');
-        return selector.waitSetValue(str) && this.waitLoader();
-    }
-
-    clearSearch() { return $('.clear-icon').waitClick() && this.waitLoader(); }
-
-    setElemsOnPage(number) {
-        return this.pagination.waitClick()
-            .$('option=' + number).waitClick() && this.waitLoader();
-    }
-
-    pause(timeout) {
-        if (timeout === undefined) {
-            browser.pause(browser.config.pauseTimeout);
-        } else {
-            browser.pause(timeout);
-        }
+    open(path = this.baseUrl) {
+        browser.url(path);
+        this.pause(1000).waitLoader();
+        //to avoid test failure in mobile view due to notification overlay
+        this.notifCloseBtn.isExisting() && this.clickOn(this.notifCloseBtn);
         return this;
     }
 
-    open(path = this.baseUrl) {
-        browser.url(path);
-        this.waitLoader();
+    reload() {
+        browser.refresh();
+        this.pause(1000).waitLoader();
+        this.notifCloseBtn.isExisting() && this.clickOn(this.notifCloseBtn);
+        return this;
+    }
+
+    pause(timeout = browser.config.pauseTimeout) {
+        browser.pause(timeout);
         return this;
     }
 
     waitForSync() {
-        browser.pause(browser.config.syncTimeout);
-        this.onNet.waitForExist(100000);
-        browser.pause(browser.config.syncTimeout);
+        this.pause(browser.config.syncTimeout)
+            .onNet.waitForExist(100000);
+        this.pause(browser.config.syncTimeout);
         return this;
     }
 
@@ -147,55 +77,6 @@ module.exports = class Page {
         this.offNet.waitForExist();
         browser.pause(browser.config.syncTimeout);
         return this;
-    }
-
-    waitLoader() {
-        if ($('.preloader.is-active').isExisting()) {
-            browser.waitUntil(() => {
-                return !($('.preloader.is-active').isExisting())
-            }, 60000, 'Wait loader time is exceeded 60000ms');
-        }
-        return this;
-    }
-
-    waitUploader() {
-        const n = $$('[class^=upload-progress]').length;
-        browser.waitUntil(() => {
-            return (this.notification.isExisting()
-                || !this.uploadProgress.isExisting())
-        }, 90000, 'Time to upload is exceeded 90000ms');
-        browser.pause(n * 3000); // due to converting all formats to mp4 by backend
-        return this;
-    }
-
-    clickBtn(str, wrapper = this.root) {
-        if (typeof wrapper === 'string') { wrapper = $(wrapper); }
-        return wrapper.$('.button=' + str).$('span').waitClick()
-            && this.waitLoader();
-    }
-
-    convertFile(file) {
-        const fs = require('fs');
-        const path = require('path');
-        const archiver = require('archiver');
-        const localFilePath = path.resolve(browser.config.mediaPath, file);
-
-        const zipData = [];
-        const source = fs.createReadStream(localFilePath);
-
-        return new Promise((resolve, reject) => {
-            archiver('zip')
-                .on('error', err => reject(err))
-                .on('data', data => zipData.push(data))
-                .on('end', () => browser.uploadFile(Buffer.concat(zipData)
-                    .toString('base64')).then(resolve, reject))
-                .append(source, { name: path.basename(localFilePath) })
-                .finalize((err) => {
-                    if (err) {
-                        reject(err);
-                    }
-                });
-        });
     }
 
     netOff() {
@@ -211,25 +92,135 @@ module.exports = class Page {
         return this;
     }
 
-    reload() {
-        browser.refresh();
-        return this.waitLoader();
-    }
-    getClassName(str) { return $(str).isExisting() ? '.' + $(str).getProperty('classList')[0] : str; }
-    getString(selector, regex = /.+/u) { return (selector.getText().match(regex) || [])[0]; }
-    getFloat(selector) { return (selector.getText().match(/(\d+.\d+)|(\d+)/u) || ['0'])[0]; }
-    getNumber(selector) { return (selector.getText().match(/[0-9\-]+/u) || ['0'])[0]; }
-
-    getArray(selector, regex = /.+/u) {
-        return selector.map(el => (el.getText().match(regex) || [])[0])
-            .filter(el => el !== undefined);
+    waitLoader() {
+        if ($$('.preloader.is-active').length) {
+            browser.waitUntil(() => {
+                return !($$('.preloader.is-active').length)
+            }, 60000, 'Wait loader time is exceeded 60000ms');
+        }
+        return this;
     }
 
     clickOn(selector, wrapper = this.root) {
         if (typeof wrapper === 'string') { wrapper = $(wrapper); }
         if (typeof selector === 'string') { selector = wrapper.$(selector); }
-
         return selector.waitClick() && this.waitLoader();
+    }
+
+    clickBtn(str, wrapper = this.root) {
+        if (typeof wrapper === 'string') { wrapper = $(wrapper); }
+        const btn = wrapper.$('.button=' + str).$('span');
+        return this.clickOn(btn);
+    }
+
+    clickCheckup() {
+        return this.clickOn(this.checkup);
+    }
+
+    clickFarmfeed() {
+        return this.clickOn(this.farmfeed);
+    }
+
+    clickSidebar(item) {
+        return this.clickOn('span=' + item, this.sideBar);
+    }
+
+    clickHeaderTab(item) {
+        return this.clickOn('span=' + item, this.headerBar);
+    }
+
+    clickSubTab(item) {
+        return this.clickOn('span=' + item, this.subBar);
+    }
+
+    clickTopTab(item) {
+        return this.clickOn('a*=' + item, this.topBar);
+    }
+
+    clickNextPage() {
+        return this.clickOn(this.nextPageBtn);
+    }
+
+    clickPrevPage() {
+        return this.clickOn(this.prevPageBtn);
+    }
+
+    clickToModal(str) {
+        return this.clickBtn(str, this.modalWrapper);
+    }
+
+    closeModal() {
+        this.modalWrapper.isExisting() && this.clickOn('.close-button', this.modalWrapper);
+        return this;
+    }
+
+    clickMobileMenu(item) {
+        const wrap = this.getClassName('[class^=section-row_]');
+        return this.clickOn(`${wrap}=${item}`);
+    }
+
+    setElemsOnPage(number) {
+        return this.clickOn(this.pagination.waitClick().$('option=' + number));
+    }
+
+    clickOption(str) {
+        return this.clickOn('li*=' + str, this.dropdownMenu);
+    }
+
+    clickArrow(wrapper = this.root) {
+        return this.clickOn(wrapper.$(this.arrow).$('..'));
+    }
+
+    clickDots(wrapper = this.root) {
+        return this.clickOn(this.dots, wrapper);
+    }
+
+    isExist(input) {
+        let exist = false;
+        if (typeof input === 'string')
+            exist = $(input.includes('=') ? input : `span=${input}`).isExisting();
+        if (typeof input === 'object')
+            exist = input.isExisting();
+        return exist;
+    }
+    /********************************* Input *************************************/
+    get collapseWrapper() { return '[class^="collapse_"]'; }
+
+    get inputFile() {
+        const input = 'input[type=file]';
+        const idx = (isMobile && $$(input).length > 1) ? 1 : 0;
+        return $$(input)[idx];
+    }
+
+    setSearch(str, wrap = this.root) {
+        if (typeof wrap === 'string') { wrap = $(wrap); }
+        const selector = wrap.$('input[placeholder^="Search..."]');
+        return selector.waitSetValue(str) && this.waitLoader();
+    }
+
+    clearSearch() {
+        return this.clickOn('.clear-icon');
+    }
+
+    getClassName(str) {
+        return $(str).isExisting() ? `.${$(str).getProperty('classList')[0]}` : str;
+    }
+
+    getString(selector, regex = /.+/u) {
+        return (selector.getText().match(regex) || [])[0];
+    }
+
+    getFloat(selector) {
+        return (selector.getText().match(/(\d+.\d+)|(\d+)/u) || ['0'])[0];
+    }
+
+    getNumber(selector) {
+        return (selector.getText().match(/[0-9\-]+/u) || ['0'])[0];
+    }
+
+    getArray(selector, regex = /.+/u) {
+        return selector.map(el => (el.getText().match(regex) || [])[0])
+            .filter(el => el !== undefined);
     }
 
     type(text, selector = 'textarea') {
@@ -238,24 +229,110 @@ module.exports = class Page {
         return this;
     }
 
-    /********************************* Tables *************************************/
+    calendarDay(str) {
+        return $('div[data-visible=true]').$('.CalendarDay=' + str);
+    }
 
+    setDay(day = '15') {
+        return this.clickOn(this.calendarDay(day));
+    }
+
+    prevMonth() {
+        return this.clickOn('button[aria-label^="Move backward"]');
+    }
+
+    nextMonth() {
+        return this.clickOn('button[aria-label^="Move forward"]');
+    }
+
+    isDayAvailable(day) {
+        return !this.calendarDay(day).getAttribute('aria-label').includes('Not available');
+    }
+
+    setDate(day) {
+        this.isDayAvailable(day) || this.prevMonth().prevMonth().nextMonth();
+        this.setDay(day);
+        return this;
+    }
+    /********************************* Tables *************************************/
     get tableWrapper() { return $('.FlexTable'); }
     get tableRow() { return '.table-row'; }
     get tableItem() { return '.FlexTableItem'; }
     get tableColumns() { return $(this.tableRow).$$(this.tableItem); }
-    get tableHeader() { return $('div[class^=panel-heading]'); }
+    get tableHeader() { return $('[class^=panel-heading]'); }
     get sortWrapper() { return '.allow-sort-column'; }
-    get filterWrapper() { return $('div[class^="table-filter"]'); }
-    get dots() { return '.fa.fa-dots-three-horizontal'; }
+    get filterWrapper() { return $('[class^="table-filter"]'); }
 
-    isExist(input) {
-        let exist = false;
-        if (typeof input === 'string')
-            exist = $('span=' + input).isExisting();
-        if (typeof input === 'object')
-            exist = input.isExisting();
-        return exist;
+    clickSortBy(str) {
+        return this.clickOn('span', `${this.sortWrapper}*=${str}`);
+    }
+
+    clickFilterBy(item) {
+        return this.clickOn('.filter_*=' + item, this.filterWrapper);
+    }
+
+    tableItemsWith(str) {
+        str = str ? `*=${str}` : '';
+        return $$(`${this.tableItem}${str}`);
+    }
+
+    tableRowsWith(str) {
+        if (str) {
+            const selector = this.getClassName(this.tableRow);
+            return $$(`${selector}*=${str}`)
+                .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
+        } else {
+            return $$(this.tableRow);
+        }
+    }
+
+    cell(str, column = 0, row = 0) {
+        return this.tableRowsWith(str)[row].$$(this.tableItem)[column];
+    }
+
+    clickCell(str, column, row) {
+        return this.clickOn(this.cell(str, column, row));
+    }
+
+    clickMenuCell(str, row) {
+        const col = isMobile ? 0 : this.tableColumns.length - 1;
+        return this.clickDots(this.cell(str, col, row));
+    }
+    /********************************* Media *************************************/
+    get mediaUploader() { return $('.MediaUploader'); }
+    get uploadProgress() { return $('[class^=upload-progress]'); }
+    get rmvMediaBtn() { return this.mediaUploader.$('.asset-wrapper .fa.fa-trash-o'); }
+    get image() { return this.mediaUploader.$('.asset-wrapper .image'); }
+    get audio() { return this.mediaUploader.$('.asset-wrapper .soundwave'); }
+    get scale() { return $('.current-scale.visible'); }
+    get mediaViewer() { return $('.mediaViewer.is-open'); }
+
+    clickOnImg() {
+        return this.clickOn('.bg-image');
+    }
+
+    clickScalePlus() {
+        return this.clickOn('.fa.fa-search-plus');
+    }
+
+    clickScaleMinus() {
+        return this.clickOn('.fa.fa-search-minus');
+    }
+
+    clickScaleOrig() {
+        return this.clickOn('.fa.fa-maximize');
+    }
+
+    clickNextImg() {
+        return this.clickOn('div[class*="nav-next"]');
+    }
+
+    clickPrevImg() {
+        return this.clickOn('div[class*="nav-prev"]');
+    }
+
+    clickCloseView() {
+        return this.clickOn('.header-btn__close');
     }
 
     uploadMedia(files, wrapper = '#root') {
@@ -273,91 +350,15 @@ module.exports = class Page {
         }
     }
 
-    clickSortBy(str) {
-        return this.tableItemsWith(str)[0].$(this.sortWrapper)
-            .$('span').waitClick() && this.waitLoader();
-    }
-
-    clickFilterBy(item) {
-        return this.filterWrapper.$('.filter_*=' + item).waitClick()
-            && this.waitLoader();
-    }
-
-    clickDots(wrapper = this.root) {
-        if (typeof wrapper === 'string') { wrapper = $(wrapper); }
-        return wrapper.$(this.dots).waitClick() && this.waitLoader();
-    }
-
-    tableItemsWith(str) {
-        str = str ? ('*=' + str) : '';
-        return $$(this.tableItem + str);
-    }
-
-    tableRowsWith(str) {
-        if (str) {
-            return $$(this.tableRow + '*=' + str)
-                .filter((el, index) => index % 2 === 0); //filter scratch because it finds extra child .table-row-item class
-        } else {
-            return $$(this.tableRow);
-        }
-    }
-
-    cell(str, column = 0, row = 0) { return this.tableRowsWith(str)[row].$$(this.tableItem)[column]; }
-
-    clickCell(str, column, row) { return this.cell(str, column, row).waitClick() && this.waitLoader(); }
-
-    clickMenuCell(str, row) {
-        const col = isMobile ? 0 : this.tableColumns.length - 1;
-        return this.clickDots(this.cell(str, col, row));
-    }
-
-    clickArrow(wrapper = this.root) {
-        return wrapper.$(this.arrow).$('..').waitClick()
-            && this.waitLoader();
-    }
-
-    clickOption(str) {
-        return this.dropdownMenu.$('li*=' + str).waitClick() && this.waitLoader();
-    }
-
-    calendarDay(str) {
-        return $('div[data-visible=true]').$('.CalendarDay=' + str);
-    }
-
-    isDayAvailable(day) {
-        return !this.calendarDay(day).getAttribute('aria-label').includes('Not available');
-    }
-
-    prevMonth() {
-        return $('button[aria-label^="Move backward"]').waitClick() && this;
-    }
-
-    nextMonth() {
-        return $('button[aria-label^="Move forward"]').waitClick() && this;
-    }
-
-    setDay(day = '15') {
-        return this.calendarDay(day).waitClick() && this;
-    }
-
-    setDate(day) {
-        this.isDayAvailable(day) || this.prevMonth().prevMonth().nextMonth();
-        this.setDay(day);
+    waitUploader() {
+        const n = $$('[class^=upload-progress]').length;
+        browser.waitUntil(() => {
+            return (this.notification.isExisting()
+                || !this.uploadProgress.isExisting())
+        }, 90000, 'Time to upload is exceeded 90000ms');
+        browser.pause(n * 3000); // due to converting all formats to mp4 by backend
         return this;
     }
-
-    /********************************* Media *************************************/
-
-    get scale() { return $('.current-scale.visible'); }
-    get mediaViewer() { return $('.mediaViewer.is-open'); }
-
-    clickOnImg() { return $('.bg-image').waitClick() && this.waitLoader(); }
-    clickScalePlus() { return $('.fa.fa-search-plus').waitClick() && this; }
-    clickScaleMinus() { return $('.fa.fa-search-minus').waitClick() && this; }
-    clickScaleOrig() { return $('.fa.fa-maximize').waitClick() && this; }
-    clickNextImg() { return $('div[class*="nav-next"]').waitClick() && this; }
-    clickPrevImg() { return $('div[class*="nav-prev"]').waitClick() && this; }
-    clickCloseView() { return $('.header-btn__close').waitClick() && this; }
 
     checkFileExists(file, timeout) {
         const filePath = path.join(browser.config.downloadPath, file);
@@ -389,5 +390,29 @@ module.exports = class Page {
             });
         });
         fs.unlinkSync(filePath);
+    }
+
+    convertFile(file) {
+        const fs = require('fs');
+        const path = require('path');
+        const archiver = require('archiver');
+        const localFilePath = path.resolve(browser.config.mediaPath, file);
+
+        const zipData = [];
+        const source = fs.createReadStream(localFilePath);
+
+        return new Promise((resolve, reject) => {
+            archiver('zip')
+                .on('error', err => reject(err))
+                .on('data', data => zipData.push(data))
+                .on('end', () => browser.uploadFile(Buffer.concat(zipData)
+                    .toString('base64')).then(resolve, reject))
+                .append(source, { name: path.basename(localFilePath) })
+                .finalize((err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                });
+        });
     }
 };

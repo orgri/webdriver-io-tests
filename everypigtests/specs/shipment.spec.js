@@ -14,7 +14,7 @@ describe('Create shipment', () => {
         checkupPage.clickBtn('Start Group');
 
         if (isMobile)
-            expect(shipPage.mWrapper.isExisting(), 'mobile Wrapper').to.equal(true);
+            expect(shipPage.mobileWrapper.isExisting(), 'mobile Wrapper').to.equal(true);
         else
             expect(browser.getUrl(), 'shipment url')
                 .to.match(/(\/daily-checkup\/groups\/)([0-9]+)(\/create-shipment)$/);
@@ -47,7 +47,7 @@ describe('Create shipment', () => {
                 .setCondition('poor').clickBtn('Next')
                 .setComment(tdata.randComment).clickBtn('Next')
                 .setBarn().clickBtn('Next').removeComment()
-                .clickBtn('Start Group', shipPage.mWrapper);
+                .clickBtn('Start Group', shipPage.mobileWrapper);
         } else {
             shipPage.setHeads('1000').setAvgWeight('10')
                 .setCondition('poor')
@@ -64,7 +64,7 @@ describe('Create shipment', () => {
                 .fillValue('10').clickBtn('Next')
                 .setCondition('good').clickBtn('Next')
                 .setBarn().clickBtn('Next').setComment('Start group')
-                .clickBtn('Start Group', shipPage.mWrapper);
+                .clickBtn('Start Group', shipPage.mobileWrapper);
         } else {
             shipPage.setHeads('1000').setAvgWeight('10')
                 .setCondition('good').setComment('Start group')

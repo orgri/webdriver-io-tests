@@ -11,15 +11,14 @@ class SymptomsPage extends ReportPage {
 
     setPercent( val = 5, index) {
         const width = this.block(index).$('.toggler-wrapper').getCSSProperty('width').parsed.value;
-        val = Math.floor(width*(val-50)/100);
+        val = Math.floor(width * (val - 50) / 100);
         this.block(index).$('.toggler-wrapper').click({x: val});
         return this.pause();
     }
 
     setSymptom(value, percent, index) {
         if (this.isMobile) {
-            this.setPicker(value);
-            this.mClickNext();
+            this.setPicker(value).clickNext();
         } else {
             this.setDropdown(value, index);
         }

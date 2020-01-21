@@ -29,12 +29,12 @@ describe('Treats page, navigation (offline)', () => {
         tdata.specialChars.forEach((el) => {
             it('Search special chars: ' + el, () => {
                 //just check whether page crashes or not, need to clarify expected behaviour
-                $('.MobileListPicker').isExisting()
+                treatPage.hasPicker
                     || checkupPage.netOn(false).open().netOff()
                         .currentDC().chooseSection(2, 'Treats');
                 checkupPage.setSearch(el);
 
-                expect($('.MobileListPicker').isExisting(), 'picker isExisting').to.equal(true);
+                expect(treatPage.hasPicker, 'picker isExisting').to.equal(true);
             });
         });
 
@@ -43,8 +43,8 @@ describe('Treats page, navigation (offline)', () => {
             treatPage.setSearch(treat);
 
             expect(treatPage.mobileRow(treat).isExisting(), 'mobileRow(treat).isExisting').to.equal(true) &&
-            expect(treatPage.mRows, 'mRows').to.have.lengthOf(1) &&
-            expect(treatPage.mRows[0].getText(), 'mRows[0]').to.have.string(treat);
+            expect(treatPage.pickerRows, 'pickerRows').to.have.lengthOf(1) &&
+            expect(treatPage.pickerRows[0].getText(), 'pickerRows[0]').to.have.string(treat);
         });
 
         it('Not able to tap Next without choosed treat', () => {
@@ -52,7 +52,7 @@ describe('Treats page, navigation (offline)', () => {
         });
 
         it('Back to checkup', () => {
-            treatPage.mBack();
+            treatPage.back();
 
             expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
@@ -74,7 +74,7 @@ describe('Report single treat (offline)', () => {
         it('Cancel report', () => {
                 treatPage.setWithGalsDosage(tdata.randUnits, tdata.randHeads, 
                     tdata.randDosage, tdata.randGals)
-                    .cancel();
+                    .clickBtn('Cancel');
                 checkupPage.section(2).scrollIntoView({block: "center"});
     
                 expect(checkupPage.isEmpty(2), 'isEmpty(2)').to.equal(true);

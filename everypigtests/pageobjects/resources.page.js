@@ -12,9 +12,9 @@ class ResourcesPage extends ReportPage {
     get assetBox() { return $$('[class^=asset-item-box]'); }
     get tenantRes() { return $('.TenantResources'); }
     get uploadList() { return $('[class^=uploads-list_]'); }
-
-    //tableRow is changed to avoid header of table
-    get tableRow() { return '.table-row:not(.show-for-large)'; }
+    get assetType() { return this.cell('', 1); }
+    get addWrapper() { return isMobile ? '.StickyFooter' : '[class^=resources-sub-nav]'; }
+    get tableRow() { return '.table-row:not(.show-for-large)'; } //tableRow is changed to avoid header of table
 
     assetName(idx = 0) {
         return isMobile
@@ -22,12 +22,17 @@ class ResourcesPage extends ReportPage {
             : this.cell('',0, idx).$('[class^=asset-name]');
     }
 
-    get assetType() { return this.cell('', 1); }
-    get addWrapper() { return isMobile ? '.StickyFooter' : '[class^=resources-sub-nav]'; }
+    clickAddLink() {
+        return this.clickOn('.add-resource-square=Link');
+    }
 
-    clickAddLink() { return $('.add-resource-square=Link').waitClick() && this.waitLoader(); }
-    clickGrigView() { return $('i.fa.fa-grid-two-up').waitClick() && this.waitLoader(); }
-    clickListView() { return $('i.fa.fa-ulist').waitClick() && this.waitLoader(); }
+    clickGrigView() {
+        return this.clickOn('i.fa.fa-grid-two-up');
+    }
+
+    clickListView() {
+        return this.clickOn('i.fa.fa-ulist');
+    }
 
     clickBtn(str, wrapper) {
         wrapper = (str === 'Add') ? this.addWrapper : wrapper;
@@ -39,10 +44,17 @@ class ResourcesPage extends ReportPage {
         return isMobile ? this.clickDots(wrap) : super.clickMenuCell(str, row);
     }
 
-    setName(str) { return this.input[0].waitSetValue(str) && this; }
-    setUrl(str) { return this.input[1].waitSetValue(str) && this; }
+    setName(str) {
+        return this.input[0].waitSetValue(str) && this;
+    }
 
-    waitUpload() { return this.uploadList.waitForExist(undefined, true) && this; }
+    setUrl(str) {
+        return this.input[1].waitSetValue(str) && this;
+    }
+
+    waitUpload() {
+        return this.uploadList.waitForExist(undefined, true) && this;
+    }
 }
 
 module.exports = new ResourcesPage();

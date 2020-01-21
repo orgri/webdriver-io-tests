@@ -11,81 +11,54 @@ module.exports = class ReportPage extends Page {
         this.labelWrapper = label;
         this.selectWrapper = select;
     }
-
 /********************************************** Navigation *****************************************************/
-
-    get cancelBtn() { return $('.button=Cancel'); }
-    get closeBtn() { return $('.close-center-box'); }
-    get submitBtn() { return $('.button.submit'); }
-    get submitBtnDisabled() { return $('.button.submit.disabled'); }
-    get mNextBtn() { return $('.button=Next'); }
-    get mNextBtnDisabled() { return $('.button.primary.disabled'); }
-    get mSubmitBtn() { return $('.StickyFooter').$('.button*=Continue'); }
-    get mSubmitBtnDisabled() { return $('.button.primary.disabled'); }
-    get mClose() { return $('.back-link.hide-for-large'); }
-    get backLink() { return $('div[class^="mobile-header"]').$('a[class^="back-link"]'); }
-    get isNextDisabled() { return this.mNextBtnDisabled.isExisting(); }
-
-    get isSubmitDisabled() {
-        return (this.isMobile) ? this.mSubmitBtnDisabled.isExisting()
-            : this.submitBtnDisabled.isExisting();
-    }
+    get box() { return $('.CenterBoxComponent'); }
+    get submitBtn() { return isMobile ? '.StickyFooter button' : '.submit'; }
+    get closeBtn() { return isMobile ? '.back-link.hide-for-large' : '.close-center-box'; }
+    get isNextDisabled() { return $('.button.primary.disabled').isExisting(); }
+    get isSubmitDisabled() { return  $(this.submitBtn + '.disabled').isExisting(); }
+    get hasClose() { return $(this.submitBtn).isExisting(); }
 
     waitForOpen() {
         this.box.waitForExist(5000, false,
-            "this.box" + ' still not existing after ' + 5000 + 'ms on ' + browser.getUrl());
+            `this.box still not existing after 5000 ms on ${browser.getUrl()}`);
         this.box.waitForDisplayed();
         return this;
     }
 
-    close() {
-        if (isMobile) {
-            this.box.isDisplayed() && this.box.scrollIntoView(true);
-            this.mClose.waitClick();
-        } else {
-            this.closeBtn.waitClick();
-        }
-        return this.waitLoader();
-    }
-
-    cancel() { return this.cancelBtn.waitClick() && this.waitLoader(); }
-
     submit() {
         this.resetIndex();
-        if (this.isSubmitDisabled) {
-            return this;
-        } else if (this.isMobile) {
-            this.mSubmitBtn.waitClick();
-        } else if (this.submitBtn.isExisting()) {
-            this.submitBtn.waitClick();
-        }
-        return this.waitLoader();
+        !this.isSubmitDisabled && this.clickOn(this.submitBtn);
+        return this;
     }
 
-    mBack() { return this.backLink.waitClick() && this.waitLoader(); }
-
-    mClickNext() {
-        this.mNextBtn.isExisting() && this.mNextBtn.isDisplayed()
-            && this.mNextBtn.waitClick();
-        return this.waitLoader();
+    back() {
+        return this.clickOn('[class^=mobile-header] [class^=back-link]');
     }
 
+    close() {
+        this.box.isDisplayed() && this.box.scrollIntoView();
+
+        return this.clickOn(this.closeBtn);
+    }
+
+    clickNext() {
+        const next = $('.button=Next');
+        next.isExisting() && next.isDisplayed() && this.clickOn(next);
+        return this;
+    }
 /********************************************** Report Actions *****************************************************/
-
-    get box() { return $('.CenterBoxComponent'); }
-    get mPigsUnderCare() { return $$('.PigsUnderCareLine.mobile')[0].getText().match(/[0-9]+$/)[0]; }
-    get pigsUnderCare() { return $$('.PigsUnderCareLine').slice(-1)[0].getText().match(/[0-9]+$/)[0]; }
-    get pigs() { return (this.isMobile) ? this.mPigsUnderCare : this.pigsUnderCare; }
-    get addNoteBtn() { return ('.link*=Add A Note'); }
-    get addRowBtn() { return $('.add-' + this.pagename); }
-    get trashBtn() { return '.trash-cell'; }
-    get comment() { return ('.comment.opened textarea'); }
-    get commentClosed() { return ('.comment.closed'); }
-    get removeCommentBtn() { return ('.remove-comment.visible'); }
-    get mRowPicker() { return this.getClassName('[class^=MobileRow]'); }
-    get mRows() { return $$(this.mRowPicker); }
+    get pigsUnderCare() { return $(`.PigsUnderCareLine.${isMobile ? 'mobile' : 'show-for-large'}`); }
+    get pigs() { return this.getNumber(this.pigsUnderCare); }
+    get addNoteBtn() { return '.link*=Add A Note'; }
+    get addRowBtn() { return $(`.add-${this.pagename}`); }
+    get trashBtn() { return $('.trash-cell'); }
+    get comment() { return '.comment'; }
+    get rmvCommentBtn() { return $('.remove-comment.visible'); }
+    get rowPicker() { return this.getClassName('[class^=MobileRow]'); }
+    get pickerRows() { return $$(this.rowPicker); }
     get rowIndex() { return '.row-index'; }
-    get selectIcon() { return '.icon.selected'; }
+    get hasPicker() { return $('.MobileListPicker').isExisting(); }
 
     block(id) {
         let selector = (typeof id === 'object') ? id : this.root;
@@ -95,7 +68,7 @@ module.exports = class ReportPage extends Page {
             if (id === undefined) {
                 selector = $$(this.row)[this.index];
             } else if (typeof id === 'string') {
-                selector = $(this.row + '*=' + id);
+                selector = $(`${this.row}*=${id}`);
             } else if (typeof id === 'number' && id < length) {
                 selector = $$(this.row)[id];
             } else if (typeof id === 'number' && id >= length) {
@@ -105,16 +78,18 @@ module.exports = class ReportPage extends Page {
         return selector;
     }
 
-    mobileRow(text) { return $(this.mRowPicker + '*=' + text); }
+    mobileRow(str) {
+        return $('.MobileRow*=' + str);
+    }
 
     input(id, name, wrap = this.inputWrapper) {
         wrap = wrap.includes('class') ? this.getClassName(wrap) : wrap;
-        wrap = name ? (wrap + '*=' + name) : wrap;
+        wrap = name ? `${wrap}*=${name}` : wrap;
         return this.block(id).$(wrap).$('input:not([type=radio])');
     }
 
     inputLabel(id, name, wrap = this.labelWrapper) {
-        wrap = name ? (wrap + '*=' + name) : wrap;
+        wrap = name ? `${wrap}*=${name}` : wrap;
         return this.block(id).$(wrap);
     }
 
@@ -126,10 +101,12 @@ module.exports = class ReportPage extends Page {
         return this.select(...args).$('input');
     }
 
-    isSelected(text) { return this.mobileRow(text).$(this.selectIcon).isExisting(); }
+    isSelected(text) {
+        return this.mobileRow(text).$('.icon.selected').isExisting();
+    }
 
     clickSelect(...args) {
-        return this.select(...args).waitClick() && this.waitLoader();
+        return this.clickOn(this.select(...args));
     }
 
     setInput(value, ...args) {
@@ -145,45 +122,45 @@ module.exports = class ReportPage extends Page {
 
         browser.keys('Tab');
         expect(this.selectInput(...args)
-            .getAttribute('aria-activedescendant'), 'There is no option corresponding to input ' + value)
+            .getAttribute('aria-activedescendant'), `There is no option corresponding to input ${value}`)
             .to.not.have.string('null');
         return this;
     }
 
     setPicker(value) {
         this.waitLoader();
-        $(this.mRowPicker).isExisting() || this.clickSelect();
-        this.mobileRow(value).waitClick();
-        return this;
+        $(this.rowPicker).isExisting() || this.clickSelect();
+        return this.clickOn(this.mobileRow(value));
     }
 
     addRow() {
-        this.addRowBtn.waitClick();
+        this.clickOn(this.addRowBtn);
         this.index++;
         return this;
     }
 
-    addNote() {
-        $(this.addNoteBtn).waitClick();
-        $(this.comment).waitForExist();
+    addNote(id = this.root) {
+        this.clickOn(this.addNoteBtn, this.block(id))
+            .block(id).$(`${this.comment}.opened`).waitForExist();
         return this;
     }
 
-    setComment(text) {
-        $(this.commentClosed).isExisting() && this.addNote();
-        $(this.comment).waitSetValue(text);
+    setComment(text, id = this.root) {
+        this.block(id).$(`${this.comment}.closed`).isExisting() && this.addNote(id);
+        const selector = this.block(id).$(`${this.comment} textarea`);
+        this.type(text, selector);
         return this;
     }
 
     removeComment() {
-        $(this.removeCommentBtn).isExisting() && $(this.removeCommentBtn).isDisplayed()
-            && $(this.removeCommentBtn).waitClick();
+        this.rmvCommentBtn.isExisting() && this.rmvCommentBtn.isDisplayed()
+            && this.clickOn(this.rmvCommentBtn);
         return this;
     }
 
-    deleteRow(id) {
-        if ($(this.trashBtn).isDisplayed()) {
-            this.block(id).$(this.trashBtn).waitClick();
+    deleteRow(id = 0) {
+        if (this.trashBtn.isDisplayed()) {
+            this.clickOn(this.trashBtn, this.block(id));
             this.index > 0 && this.index--;
         }
         return this;
@@ -191,24 +168,26 @@ module.exports = class ReportPage extends Page {
 
     clear() {
         this.removeComment();
-        const rows = $$(this.rowIndex).length;
-        for (let i = 0; i < rows; i++) {
-            this.deleteRow(0);
-        }
-        this.submit();
-        return this;
+        $$(this.rowIndex).forEach((el, i) => i !== 0 && this.deleteRow());
+        return this.waitLoader();
     }
 
-    resetIndex() { this.index = 0; }
+    clearMedia() {
+        $$('.asset-wrapper').forEach(() => this.clickOn(this.rmvMediaBtn).pause(1000));
+        return this.waitLoader();
+    }
 
+    resetIndex() {
+        this.index = 0;
+        return this;
+    }
     /********************************************** Report Info *****************************************************/
-
     get commentWrapper() { return '[class^=Translation_] > span'; }
 
     info(type, section, rowWrap) {
         rowWrap = $(rowWrap).isExisting() ? this.getClassName(rowWrap): 'div';
-        return (section.$(rowWrap + '*=' + type).isExisting())
-            ? section.$$(rowWrap + '*=' + type).map(el => this.getFloat(el)) : [];
+        return (section.$(`${rowWrap}*=${type}`).isExisting())
+            ? section.$$(`${rowWrap}*=${type}`).map(el => this.getFloat(el)) : [];
     }
 
     moveInfo(section, rowWrap, commentWrap = this.commentWrapper) {
@@ -341,4 +320,9 @@ module.exports = class ReportPage extends Page {
         }
     }
 
+    noteInfo(section, noteWrap = this.commentWrapper) {
+        if (typeof section === 'string') { section = $(section); }
+        const note = section.$(noteWrap);
+        return note.isExisting() ? this.getString(note) : undefined;
+    }
 };

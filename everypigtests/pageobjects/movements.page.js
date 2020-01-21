@@ -11,8 +11,15 @@ class MovementsPage extends ReportPage {
         this.selectWrapper = '.movement-type-select';
     }
 
-    setHeads(number, index) { return this.input(index, 'Head').waitSetValue(number) && this; }
-    setAvgWeight(number, index) { return this.input(index, 'Est. Avg. Weight').waitSetValue(number) && this; }
+    get hasPicker() { return $('.MobilePortalSelector').isExisting(); }
+
+    setHeads(number, index) {
+        return this.input(index, 'Head').waitSetValue(number) && this;
+    }
+
+    setAvgWeight(number, index) {
+        return this.input(index, 'Est. Avg. Weight').waitSetValue(number) && this;
+    }
  
     setCondition(condition, index) {
         switch (condition) {
@@ -32,14 +39,9 @@ class MovementsPage extends ReportPage {
         return this;
     }
 
-    clickSelectParam(index) {
-        return this.block(index).$(this.selectWrapper).waitClick() && this;
-    }
-
     setShipment(nHeads, weight, condition, index) {
         if (this.isMobile) {
-            this.setPicker('Shipment');
-            this.mClickNext();
+            this.setPicker('Shipment').clickNext();
         } else {
             this.setDropdown('Shipment', index);
         }
@@ -51,8 +53,7 @@ class MovementsPage extends ReportPage {
 
     setTransfer(nHeads, index) {
         if (this.isMobile) {
-            this.setPicker('Transfer');
-            this.mClickNext();
+            this.setPicker('Transfer').clickNext();
         } else {
             this.setDropdown('Transfer', index);
         }
@@ -62,8 +63,7 @@ class MovementsPage extends ReportPage {
 
     setSale(nHeads, index) {
         if (this.isMobile) {
-            this.setPicker('Sale');
-            this.mClickNext();
+            this.setPicker('Sale').clickNext();
         } else {
             this.setDropdown('Sale', index);
         }
@@ -73,8 +73,7 @@ class MovementsPage extends ReportPage {
 
     setFixAdding(nHeads, weight, condition, index) {
         if (this.isMobile) {
-            this.setPicker('add');
-            this.mClickNext();
+            this.setPicker('add').clickNext();
         } else {
             this.setDropdown('add', index);
         }
@@ -84,8 +83,7 @@ class MovementsPage extends ReportPage {
 
     setFixRemoving(nHeads, index) {
         if (this.isMobile) {
-            this.setPicker('remov');
-            this.mClickNext();
+            this.setPicker('remov').clickNext();
         } else {
             this.setDropdown('remov', index);
         }      
@@ -95,8 +93,7 @@ class MovementsPage extends ReportPage {
 
     setMovement(type, nHeads, weight, condition, index) {
         if (this.isMobile && type) {
-            this.setPicker(type);
-            this.mClickNext();
+            this.setPicker(type).clickNext();
         } else if (type) {
             this.setDropdown(type, index);
         }
@@ -105,7 +102,6 @@ class MovementsPage extends ReportPage {
         (condition === undefined) || this.inputLabel(index, 'Condition').isExisting() && this.setCondition(condition, index);
         return this;
     }
-
 }
 
 module.exports = new MovementsPage();

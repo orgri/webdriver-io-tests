@@ -11,15 +11,18 @@ class DeathsPage extends ReportPage {
     }
 
     get message() { return $('.MessageBox'); }
-    get isMortReason() { return $('.add-mortality-reason').isExisting(); }
-/*
-    clickSelectParam(index) {
-        return this.block(index).$(this.selectWrapper).waitClick() && this;
+
+    setChronic(value, index) {
+        return this.input(index, 'Chronic').setValue(value) && this;
     }
-*/
-    setChronic(value, index) { return this.input(index, 'Chronic').setValue(value) && this; }
-    setAcute(value, index) { return this.input(index, 'Acute').setValue(value) && this; }
-    setEuthanasia(value, index) { return this.input(index, 'Euthanasia').setValue(value) && this; }
+
+    setAcute(value, index) {
+        return this.input(index, 'Acute').setValue(value) && this;
+    }
+
+    setEuthanasia(value, index) {
+        return this.input(index, 'Euthanasia').setValue(value) && this;
+    }
 
     setMortalities(chronic, acute, euthanas, index) {
         this.box.waitForExist();
@@ -31,8 +34,7 @@ class DeathsPage extends ReportPage {
 
     setMortWithReason(reason, chronic, acute, euthanas, index) {
         if (this.isMobile) {
-            this.setPicker(reason);
-            this.mClickNext();
+            this.setPicker(reason).clickNext();
         } else {
             this.setDropdown(reason, index);
         }
@@ -41,10 +43,9 @@ class DeathsPage extends ReportPage {
     }
 
     reset() {
-        this.removeComment();
-        this.setMortalities('0', '0', '0');
-        this.submit();
-        return this;
+        return this.removeComment()
+            .setMortalities('0', '0', '0')
+            .submit();
     }
 }
 

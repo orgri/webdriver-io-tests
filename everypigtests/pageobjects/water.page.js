@@ -8,7 +8,9 @@ class WaterPage extends ReportPage {
         this.inputWrapper = '.input-wrapper';
     }
 
-    setGals(number) { return this.input('Gallons').waitSetValue(number) && this; }
+    setGals(number) {
+        return this.input('Gallons').waitSetValue(number) && this;
+    }
 }
 
 module.exports = new WaterPage();

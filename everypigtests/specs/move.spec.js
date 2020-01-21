@@ -38,8 +38,8 @@ describe('Moves page, navigation', () => {
             movePage.setSearch('Sale');
 
             expect(movePage.mobileRow('Sale').isExisting(), 'mobileRow(Sale).isExisting').to.equal(true);
-            expect(movePage.mRows, 'mRows').to.have.lengthOf(1);
-            expect(movePage.mRows[0].getText(), 'mRows[0]').to.match(/Sale/);
+            expect(movePage.pickerRows, 'pickerRows').to.have.lengthOf(1);
+            expect(movePage.pickerRows[0].getText(), 'pickerRows[0]').to.match(/Sale/);
         });
 
         it('Not able to tap Next without choosed movement', () => {
@@ -47,7 +47,7 @@ describe('Moves page, navigation', () => {
         });
 
         it('Back to checkup', () => {
-            movePage.mBack();
+            movePage.back();
 
             expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
         });
@@ -132,7 +132,7 @@ describe('Report single move', () => {
             movePage.setMovement(tdata.randMoveType, tdata.randHeads,
                 tdata.randWeight, tdata.randCondition)
                 .setComment(tdata.randComment)
-                .cancel();
+                .clickBtn('Cancel');
             checkupPage.section(0).scrollIntoView({ block: "center" });
 
             expect(checkupPage.isEmpty(0), 'isEmpty').to.equal(true);

@@ -107,7 +107,7 @@ describe('Report death', () => {
 
     if (!isMobile) {
         it('Cancel report', function () {
-            deathPage.setMortalities('1', '1', '1').cancel();
+            deathPage.setMortalities('1', '1', '1').clickBtn('Cancel');
 
             expect(checkupPage.isEmpty(1), 'isEmpty(1)').to.equal(true);
         });
@@ -232,8 +232,8 @@ describe('Death reason page, navigation', () => {
         deathPage.setSearch(reason);
 
         expect(deathPage.mobileRow(reason).isExisting(), 'mobileRow(Reason 1).isExisting').to.equal(true) &&
-            expect(deathPage.mRows, 'mRows').to.have.lengthOf(1) &&
-            expect(deathPage.mRows[0].getText(), 'mRows[0]').to.have.string(reason);
+            expect(deathPage.pickerRows, 'pickerRows').to.have.lengthOf(1) &&
+            expect(deathPage.pickerRows[0].getText(), 'pickerRows[0]').to.have.string(reason);
     });
 
     it('Not able to tap Next without choosed death reason', () => {
@@ -241,7 +241,7 @@ describe('Death reason page, navigation', () => {
     });
 
     it('Back to checkup', () => {
-        deathPage.mBack();
+        deathPage.back();
 
         expect(browser.getUrl(), 'treats url').to.match(/(\/daily-checkup\/)([0-9]+)$/);
     });
@@ -358,7 +358,7 @@ describe('Report death reason', () => {
         if (deathPage.isMobile) {
             this.skip();
         } else {
-            deathPage.setMortWithReason(tdata.randReason, '1', '1', '1').cancel();
+            deathPage.setMortWithReason(tdata.randReason, '1', '1', '1').clickBtn('Cancel');
 
             expect(checkupPage.isEmpty(1), 'isEmpty(1)').to.equal(true);
         }

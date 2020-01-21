@@ -11,6 +11,7 @@ class MedicationsPage extends ReportPage {
         this.selectWrapper = '.select-treatment-wrapper';
     }
 
+    get pigsUnderCare() { return $('.PigsUnderCareLine.mobile'); }
     get total() { return $('#head-total-count'); }
  
     setHead(number, index) {
@@ -19,21 +20,25 @@ class MedicationsPage extends ReportPage {
         browser.keys('Tab');
         return this;
     }
+
     setUnits(number, index) {
         this.input(index, 'Units').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
+
     setGals(number, index) {
         this.input(index, 'Gals').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
+
     setCcs(number, index) {
         this.input(index, 'ccs').waitSetValue(number);
         browser.keys('Tab');
         return this;
     }
+
     setMls(number, index) {
         this.input(index, 'Milliliters').waitSetValue(number);
         browser.keys('Tab');
@@ -50,8 +55,7 @@ class MedicationsPage extends ReportPage {
 
     setWithGalsDosage(product, heads, units, gals, index) {
         if (this.isMobile) {
-            this.setPicker(product);
-            this.mClickNext();
+            this.setPicker(product).clickNext();
         } else {
             this.setDropdown(product, index);
         }
@@ -63,8 +67,7 @@ class MedicationsPage extends ReportPage {
 
     setWithMlsDosage(product, heads, mls, index) {
         if (this.isMobile) {
-            this.setPicker(product);
-            this.mClickNext();
+            this.setPicker(product).clickNext();
         } else {
             this.setDropdown(product, index);
         }
@@ -75,8 +78,7 @@ class MedicationsPage extends ReportPage {
 
     setWithCcsDosage(product, heads, ccs, index) {
         if (this.isMobile) {
-            this.setPicker(product);
-            this.mClickNext();
+            this.setPicker(product).clickNext();
         } else {
             this.setDropdown(product, index);
         }
@@ -87,8 +89,7 @@ class MedicationsPage extends ReportPage {
 
     setWithoutDosage(product, heads, index) {
         if (this.isMobile) {
-            this.setPicker(product);
-            this.mClickNext();
+            this.setPicker(product).clickNext();
         } else {
             this.setDropdown(product, index);
         }
@@ -98,8 +99,7 @@ class MedicationsPage extends ReportPage {
 
     setTreat(product, heads, dosage, gals, index) {
         if (this.isMobile) {
-            this.setPicker(product);
-            this.mClickNext();
+            this.setPicker(product).clickNext();
         } else {
             this.setDropdown(product, index);
         }
