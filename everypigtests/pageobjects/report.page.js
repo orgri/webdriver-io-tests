@@ -82,19 +82,16 @@ module.exports = class ReportPage extends Page {
         return $('.MobileRow*=' + str);
     }
 
-    input(id, name, wrap = this.inputWrapper) {
-        wrap = wrap.includes('class') ? this.getClassName(wrap) : wrap;
-        wrap = name ? `${wrap}*=${name}` : wrap;
-        return this.block(id).$(wrap).$('input:not([type=radio])');
+    input(id, label = '') {
+        return this.block(id).$(this.inputWrapper + label).$('input:not([type=radio])');
     }
 
-    inputLabel(id, name, wrap = this.labelWrapper) {
-        wrap = name ? `${wrap}*=${name}` : wrap;
-        return this.block(id).$(wrap);
+    inputLabel(id, label = '') {
+        return this.block(id).$(this.labelWrapper + label);
     }
 
-    select(id, wrap = this.selectWrapper) {
-        return this.block(id).$(wrap);
+    select(id, label = '') {
+        return this.block(id).$(this.selectWrapper + label);
     }
 
     selectInput(...args) {
@@ -109,8 +106,9 @@ module.exports = class ReportPage extends Page {
         return this.clickOn(this.select(...args));
     }
 
-    setInput(value, ...args) {
-        return this.input(...args).waitSetValue(value) && this;
+    setInput(value, id, wrap = this.inputWrapper) {
+        const selector = this.block(id).$(wrap).$('input:not([type=radio])');
+        return selector.waitSetValue(value) && this;
     }
 
     setDropdown(value, ...args) {
@@ -131,6 +129,18 @@ module.exports = class ReportPage extends Page {
         this.waitLoader();
         $(this.rowPicker).isExisting() || this.clickSelect();
         return this.clickOn(this.mobileRow(value));
+    }
+
+    clickPlusSteps(steps = 3, id, wrap = '') {
+        wrap = this.block(id).$('label' + wrap);
+        for (let i = 0; i < steps; i++) this.clickOn('.plus', wrap);
+        return this;
+    }
+
+    clickMinusSteps(steps = 3, id, wrap = '') {
+        wrap = this.block(id).$('label' + wrap);
+        for (let i = 0; i < steps; i++) this.clickOn('.minus', wrap);
+        return this;
     }
 
     addRow() {

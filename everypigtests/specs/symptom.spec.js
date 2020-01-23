@@ -10,7 +10,7 @@ describe('Symptoms page, navigation', () => {
     it('Choose group', () => {
         checkupPage.randCheckup();
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect(checkupPage.isCheckup, 'checkup section existing').to.equal(true);
     });
 
     if (isMobile) {

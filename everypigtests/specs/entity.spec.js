@@ -21,7 +21,7 @@ describe('Manage entities', () => {
             .clickBtn('Set Ownership').setDropdown('TA').clickBtn('Save')
             .clickBtn('Set Farm').setDropdown('0000').clickBtn('Save')
             .clickOn('span=Use A Custom Group ID')
-            .setInput(group, 'Custom Group ID', undefined, '.modal-wrapper')
+            .setInput(group, 'Custom Group ID', '.modal-wrapper')
             .clickToModal('Save').clickBtn('Create Group');
 
         expect(page.notification.getText(), 'notification').to.equal('Group was successfully created');

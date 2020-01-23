@@ -526,7 +526,7 @@ describe('Farmfeed Filters', () => {
         const list = '[class^=search-list]';
         activities = page.row + ' [class^=activity-actions-bar]';
 
-        page.open().setInput('ta', $('.FarmfeedSearch'), undefined, 'div');
+        page.open().setInput('ta', $('.FarmfeedSearch'), 'div');
         browser.keys('Enter');
         page.waitLoader()
             .clickOn('.DatesFilter')
@@ -603,7 +603,7 @@ describe('Farmfeed Filters', () => {
             .clickBtn('Done', dropdown)
 
             .clickOn('span=Save Filter')
-            .setInput('First filter', $('.modal-wrapper'), 'Filter Name', 'section')
+            .setInput('First filter', $('.modal-wrapper'), 'section*=Filter Name')
             .clickBtn('Save')
             .clickBtn('View Filter');
 
@@ -631,8 +631,8 @@ describe('Farmfeed Filters', () => {
             .clickOn('span=Add Filter')
             .clickOn('li=Est. Avg. Weight')
             .clickOn('label=has range', dropdown)
-            .setInput('9', $(dropdown), 'from')
-            .setInput('11', $(dropdown), 'to')
+            .setInput('9', $(dropdown), '.value-input-line*=from')
+            .setInput('11', $(dropdown), '.value-input-line*=to')
             .clickBtn('Done', dropdown)
 
             .clickOn('span=Add Filter')
@@ -643,7 +643,7 @@ describe('Farmfeed Filters', () => {
 
             .clickOn('span=Save Filter')
             .clickOn('b=Create New Filter')
-            .setInput('Second filter', $('.modal-wrapper'), undefined, 'div')
+            .setInput('Second filter', $('.modal-wrapper'), 'div')
             .clickBtn('Save');
 
         activities = $(page.row);

@@ -14,11 +14,11 @@ class MovementsPage extends ReportPage {
     get hasPicker() { return $('.MobilePortalSelector').isExisting(); }
 
     setHeads(number, index) {
-        return this.input(index, 'Head').waitSetValue(number) && this;
+        return this.input(index, '*=Head').waitSetValue(number) && this;
     }
 
     setAvgWeight(number, index) {
-        return this.input(index, 'Est. Avg. Weight').waitSetValue(number) && this;
+        return this.input(index, '*=Est. Avg. Weight').waitSetValue(number) && this;
     }
  
     setCondition(condition, index) {
@@ -98,8 +98,8 @@ class MovementsPage extends ReportPage {
             this.setDropdown(type, index);
         }
         (nHeads === undefined) || this.setHeads(nHeads, index);
-        (weight === undefined) || this.inputLabel(index, 'Est. Avg. Weight').isExisting() && this.setAvgWeight(weight, index);
-        (condition === undefined) || this.inputLabel(index, 'Condition').isExisting() && this.setCondition(condition, index);
+        (weight === undefined) || this.inputLabel(index, '*=Est. Avg. Weight').isExisting() && this.setAvgWeight(weight, index);
+        (condition === undefined) || this.inputLabel(index, '*=Condition').isExisting() && this.setCondition(condition, index);
         return this;
     }
 }

@@ -381,7 +381,7 @@ describe('Edit Symptoms', () => {
     });
 });
 
-describe('Edit Temps', () => {
+describe.only('Edit Temps', () => {
     const tempsPage = require('../pageobjects/temps.page');
     let date, rslt;
     const high = tdata.randHighTemp, low = tdata.randLowTemp,
@@ -394,8 +394,24 @@ describe('Edit Temps', () => {
             .to.equal('Daily Checkups');
     });
 
-    it('Make changes to checkup', () => {
+    it('Set High by steps', () => {
         sheetsPage.clickOn('*=' + date[1]).chooseSection('Temps');
+        tempsPage.setTemps('50', '10')
+            .clickPlusSteps(4, 'High')
+            .clickMinusSteps(2, 'High');
+
+        expect(tempsPage.input('High').getValue(), 'high').to.equal('52');
+    });
+
+    it('Set Low by steps', () => {
+        tempsPage.clickPlusSteps(4, 'Low')
+            .clickMinusSteps(2, 'Low');
+
+        expect(tempsPage.input('Low').getValue(), 'low').to.equal('12');
+    });
+
+    it('Make changes to checkup', () => {
+        //sheetsPage.clickOn('*=' + date[1]).chooseSection('Temps');
         tempsPage.setTemps(high + '', low + '').setComment(comment).submit();
         sheetsPage.section('Temps').scrollIntoView({ block: 'center' });
         rslt = sheetsPage.tempsInfo;

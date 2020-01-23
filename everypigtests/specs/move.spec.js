@@ -64,7 +64,7 @@ describe('Moves page, input', () => {
     it('Choose group', () => {
         checkupPage.randCheckup();
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect(checkupPage.isCheckup, 'checkup section existing').to.equal(true);
     });
 
     it('Not able to set Heads bigger than 99999', () => {

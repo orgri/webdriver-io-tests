@@ -13,15 +13,15 @@ class DeathsPage extends ReportPage {
     get message() { return $('.MessageBox'); }
 
     setChronic(value, index) {
-        return this.input(index, 'Chronic').setValue(value) && this;
+        return this.input(index, '*=Chronic').setValue(value) && this;
     }
 
     setAcute(value, index) {
-        return this.input(index, 'Acute').setValue(value) && this;
+        return this.input(index, '*=Acute').setValue(value) && this;
     }
 
     setEuthanasia(value, index) {
-        return this.input(index, 'Euthanasia').setValue(value) && this;
+        return this.input(index, '*=Euthanasia').setValue(value) && this;
     }
 
     setMortalities(chronic, acute, euthanas, index) {

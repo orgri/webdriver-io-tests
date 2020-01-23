@@ -12,25 +12,49 @@ describe('Death page, input', () => {
         admin.openPrefs().setOff('Track Mortality Reasons');
         checkupPage.randCheckup();
 
-        expect($(checkupPage.sectionWrapper).isExisting(), 'checkup section existing').to.equal(true);
+        expect(checkupPage.isCheckup, 'checkup section existing').to.equal(true);
     }, 1);
+
+    it('Set Chronic by steps', () => {
+        deathPage.reset()
+            .clickPlusSteps(4, 0, '*=Chronic')
+            .clickMinusSteps(2, 0, '*=Chronic');
+
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('2');
+    });
+
+    it('Set Acute by steps', () => {
+        deathPage.reset()
+            .clickPlusSteps(4, 0, '*=Acute')
+            .clickMinusSteps(2, 0, '*=Acute');
+
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('2');
+    });
+
+    it('Set Acute by steps', () => {
+        deathPage.reset()
+            .clickPlusSteps(4, 0, '*=Euthanasia')
+            .clickMinusSteps(2, 0, '*=Euthanasia');
+
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('2');
+    });
 
     it('Not able to set Chronic bigger than 99999', () => {
         deathPage.setMortalities('1234567890');
 
-        expect(deathPage.input(0, 'Chronic').getValue(), 'chronic').to.equal('12345');
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('12345');
     });
 
     it('Not able to set Acute bigger than 99999', () => {
         deathPage.setMortalities('0', '1234567890');
 
-        expect(deathPage.input(0, 'Acute').getValue(), 'acute').to.equal('12345');
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('12345');
     });
 
     it('Not able to set Euthanasia bigger than 99999', () => {
         deathPage.setMortalities('0', '0', '1234567890');
 
-        expect(deathPage.input(0, 'Euthanasia').getValue(), 'euthanasia').to.equal('12345');
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('12345');
     });
 
     it('Not able to report number of deaths bigger than total pigs', () => {
@@ -50,37 +74,37 @@ describe('Death page, input', () => {
     it('Not able to set negative value in Chronic', () => {
         deathPage.setMortalities('-123');
 
-        expect(deathPage.input(0, 'Chronic').getValue(), 'chronic').to.equal('123');
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('123');
     });
 
     it('Not able to set negative value in Acute', () => {
         deathPage.setMortalities('0', '-123');
 
-        expect(deathPage.input(0, 'Acute').getValue(), 'acute').to.equal('123');
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('123');
     });
 
     it('Not able to set negative value in Euthanasia', () => {
         deathPage.setMortalities('0', '0', '-123');
 
-        expect(deathPage.input(0, 'Euthanasia').getValue(), 'euthanasia').to.equal('123');
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('123');
     });
 
     it('Not able to set letters in Chronic', () => {
         deathPage.setMortalities('qwerty ~!@#$%^&*()');
 
-        expect(deathPage.input(0, 'Chronic').getValue(), 'chronic').to.equal('0');
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('0');
     });
 
     it('Not able to set letters in Acute', () => {
         deathPage.setMortalities('0', 'qwerty ~!@#$%^&*()');
 
-        expect(deathPage.input(0, 'Acute').getValue(), 'acute').to.equal('0');
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('0');
     });
 
     it('Not able to set letters in Euthanasia', () => {
         deathPage.setMortalities('0', '0', 'qwerty ~!@#$%^&*()');
 
-        expect(deathPage.input(0, 'Euthanasia').getValue(), 'euthanasia').to.equal('0');
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('0');
     });
 
     it('Not able to submit report without changes', () => {
@@ -263,19 +287,19 @@ describe('Death reason page, input', () => {
     it('Not able to set Chronic bigger than 99999', () => {
         deathPage.setMortWithReason(tdata.randReason, '1234567890');
 
-        expect(deathPage.input(0, 'Chronic').getValue(), 'chronic').to.equal('12345');
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('12345');
     });
 
     it('Not able to set Acute bigger than 99999', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '1234567890');
 
-        expect(deathPage.input(0, 'Acute').getValue(), 'acute').to.equal('12345');
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('12345');
     });
 
     it('Not able to set Euthanasia bigger than 99999', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '0', '1234567890');
 
-        expect(deathPage.input(0, 'Euthanasia').getValue(), 'euthanasia').to.equal('12345');
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('12345');
     });
 
     it('Not able to report number of deaths bigger than total pigs', () => {
@@ -295,37 +319,37 @@ describe('Death reason page, input', () => {
     it('Not able to set negative value in Chronic', () => {
         deathPage.setMortWithReason(tdata.randReason, '-123');
 
-        expect(deathPage.input(0, 'Chronic').getValue(), 'chronic').to.equal('123');
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('123');
     });
 
     it('Not able to set negative value in Acute', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '-123');
 
-        expect(deathPage.input(0, 'Acute').getValue(), 'acute').to.equal('123');
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('123');
     });
 
     it('Not able to set negative value in Euthanasia', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '0', '-123');
 
-        expect(deathPage.input(0, 'Euthanasia').getValue(), 'euthanasia').to.equal('123');
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('123');
     });
 
     it('Not able to set letters in Chronic', () => {
         deathPage.setMortWithReason(tdata.randReason, '-qwerty ~!@#$%^&*()');
 
-        expect(deathPage.input(0, 'Chronic').getValue(), 'chronic').to.equal('0');
+        expect(deathPage.input(0, '*=Chronic').getValue(), 'chronic').to.equal('0');
     });
 
     it('Not able to set letters in Acute', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '-qwerty ~!@#$%^&*()');
 
-        expect(deathPage.input(0, 'Acute').getValue(), 'acute').to.equal('0');
+        expect(deathPage.input(0, '*=Acute').getValue(), 'acute').to.equal('0');
     });
 
     it('Not able to set letters in Euthanasia', () => {
         deathPage.setMortWithReason(tdata.randReason, '0', '0', '-qwerty ~!@#$%^&*()');
 
-        expect(deathPage.input(0, 'Euthanasia').getValue(), 'euthanasia').to.equal('0');
+        expect(deathPage.input(0, '*=Euthanasia').getValue(), 'euthanasia').to.equal('0');
     });
 
     it('Not able to submit report without changes', () => {
