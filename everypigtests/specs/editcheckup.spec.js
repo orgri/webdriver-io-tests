@@ -381,7 +381,7 @@ describe('Edit Symptoms', () => {
     });
 });
 
-describe.only('Edit Temps', () => {
+describe('Edit Temps', () => {
     const tempsPage = require('../pageobjects/temps.page');
     let date, rslt;
     const high = tdata.randHighTemp, low = tdata.randLowTemp,

@@ -31,7 +31,7 @@ exports.config = {
             './everypigtests/specs/offline.checkup.spec.js',
             './everypigtests/specs/barnsheets.spec.js',
             './everypigtests/specs/resources.spec.js',
-            './everypigtests/specs/entity.spec.js',
+            './everypigtests/specs/entity.spec.js'
         ],
         farmfeed: [
             './everypigtests/specs/farmfeed.spec.js'
@@ -167,12 +167,12 @@ exports.config = {
     services: [/*'chromedriver',*/ 'selenium-standalone'],
     seleniumInstallArgs: {
         drivers: {
-            chrome: {version: '78.0.3904.70'}
+            chrome: {version: '79.0.3945.36'}
         }
     },
     seleniumArgs: {
         drivers: {
-            chrome: {version: "78.0.3904.70"}
+            chrome: {version: '79.0.3945.36'}
         }
     },
     // options

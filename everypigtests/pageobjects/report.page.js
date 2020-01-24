@@ -82,28 +82,28 @@ module.exports = class ReportPage extends Page {
         return $('.MobileRow*=' + str);
     }
 
+    isSelected(text) {
+        return this.mobileRow(text).$('.icon.selected').isExisting();
+    }
+
     input(id, label = '') {
         return this.block(id).$(this.inputWrapper + label).$('input:not([type=radio])');
     }
 
-    inputLabel(id, label = '') {
-        return this.block(id).$(this.labelWrapper + label);
+    label(id, str = '') {
+        return this.block(id).$(this.labelWrapper + str);
     }
 
     select(id, label = '') {
         return this.block(id).$(this.selectWrapper + label);
     }
 
-    selectInput(...args) {
-        return this.select(...args).$('input');
+    selectInput(id, label) {
+        return this.select(id, label).$('input');
     }
 
-    isSelected(text) {
-        return this.mobileRow(text).$('.icon.selected').isExisting();
-    }
-
-    clickSelect(...args) {
-        return this.clickOn(this.select(...args));
+    clickSelect(id, label) {
+        return this.clickOn(this.select(id, label));
     }
 
     setInput(value, id, wrap = this.inputWrapper) {

@@ -15,7 +15,7 @@ class MedicationsPage extends ReportPage {
     get total() { return $('#head-total-count'); }
  
     setHead(number, index) {
-        this.inputLabel(index, '*=Head').waitClick();
+        this.label(index, '*=Head').waitClick();
         this.input(index, '*=Head Treated').addValue(number);
         browser.keys('Tab');
         return this;
@@ -104,10 +104,10 @@ class MedicationsPage extends ReportPage {
             this.setDropdown(product, index);
         }
         (heads === undefined) || this.setHead(heads, index);
-        (dosage === undefined) || this.inputLabel(index, '*=Units').isExisting() && this.setUnits(dosage, index);
-        (gals === undefined) || this.inputLabel(index, '*=Gals').isExisting() && this.setGals(gals, index);
-        (dosage === undefined) || this.inputLabel(index, '*=ccs').isExisting() && this.setCcs(dosage, index);
-        (dosage === undefined) || this.inputLabel(index, '*=Milliliters').isExisting() && this.setMls(dosage, index);
+        (dosage === undefined) || this.label(index, '*=Units').isExisting() && this.setUnits(dosage, index);
+        (gals === undefined) || this.label(index, '*=Gals').isExisting() && this.setGals(gals, index);
+        (dosage === undefined) || this.label(index, '*=ccs').isExisting() && this.setCcs(dosage, index);
+        (dosage === undefined) || this.label(index, '*=Milliliters').isExisting() && this.setMls(dosage, index);
         return this;
     }
 }

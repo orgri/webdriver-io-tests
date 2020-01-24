@@ -98,8 +98,8 @@ class MovementsPage extends ReportPage {
             this.setDropdown(type, index);
         }
         (nHeads === undefined) || this.setHeads(nHeads, index);
-        (weight === undefined) || this.inputLabel(index, '*=Est. Avg. Weight').isExisting() && this.setAvgWeight(weight, index);
-        (condition === undefined) || this.inputLabel(index, '*=Condition').isExisting() && this.setCondition(condition, index);
+        (weight === undefined) || this.label(index, '*=Est. Avg. Weight').isExisting() && this.setAvgWeight(weight, index);
+        (condition === undefined) || this.label(index, '*=Condition').isExisting() && this.setCondition(condition, index);
         return this;
     }
 }
